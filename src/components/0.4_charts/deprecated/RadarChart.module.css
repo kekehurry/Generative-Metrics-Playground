@@ -1,0 +1,14 @@
+.tuneColor {
+}
+
+.tuneColor text {
+  fill: white !important;
+}
+
+.tuneColor line {
+  stroke: rgba(69, 69, 69, 1);
+}
+
+.tuneColor circle {
+  stroke: rgba(69, 69, 69, 1);
+}
