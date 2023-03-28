@@ -35,8 +35,9 @@ const IndicatorChart = ({ chord_data }) => {
 
   useEffect(() => {
     if (!containerWidth) return;
-    if (!chord_data.matrix) return;
 
+    if ((!chord_data.matrix) || (!chord_data.matrix) || (!chord_data.data)) return;
+    
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
     const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
@@ -55,6 +56,22 @@ const IndicatorChart = ({ chord_data }) => {
       .attr("font-size", 10);
 
     let chords = chord(chord_data.matrix);
+
+    for (let i = 0; i < chords.length; i++) {
+      for (let j = 0; j < chord_data.data.length; j++) {
+        if (
+          chord_data.names[chords[i].source.index] ==
+          chord_data.data[j].Stakeholders
+        ) {
+          if (
+            chord_data.names[chords[i].target.index] ==
+            chord_data.data[j].Target
+          ) {
+            chords[i].content = chord_data.data[j].content;
+          }
+        }
+      }
+    }
     // console.log(chords);
 
     // Fade arcs the mouse is not over and highlight one the mouse is over
@@ -156,13 +173,13 @@ const IndicatorChart = ({ chord_data }) => {
       // .on('mouseover', tooltip.show)
       .on("mouseout", onMouseOut)
       // .on('mouseout', tooltip.hide)
-      .append("title");
-    //   .text(
-    //     (d) =>
-    //       `${chord_data.names[d.source.index]} to ${
-    //         chord_data.names[d.target.index]
-    //       }: \n${content[d.source.index][d.target.index]}`
-    //   );
+      .append("title")
+      .text(
+        (d) =>
+          `${chord_data.names[d.source.index]} to ${
+            chord_data.names[d.target.index]
+          }: \n${d.content[d.source.index][d.target.index]}`
+      );
   }, [chord_data, containerWidth, containerHeight]);
 
   return (

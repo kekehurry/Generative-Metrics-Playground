@@ -44,6 +44,7 @@ const App = () => {
       .then((response) => response.text())
       .then((csvData) => {
         let data = d3.csvParse(csvData);
+        delete data.columns;
         let names = Array.from(
           new Set(data.flatMap((d) => [d.Stakeholders, d.Target]))
         );
@@ -52,8 +53,8 @@ const App = () => {
         for (const { Stakeholders, Target, count } of data)
           matrix[index.get(Stakeholders)][index.get(Target)] += Number(count);
 
-        // console.log(names, matrix);
-        setChordData({ names: names, matrix: matrix });
+        console.log(names, matrix, data);
+        setChordData({ names: names, matrix: matrix, data: data });
       });
   }, []);
 
