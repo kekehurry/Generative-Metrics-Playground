@@ -19,6 +19,7 @@ const App = () => {
   });
   const [isMobile, setIsMobile] = useState(false);
   const [chordData, setChordData] = useState({});
+  const [pieData, setPieData] = useState({});
 
   // handle windows resize
   useEffect(() => {
@@ -38,7 +39,7 @@ const App = () => {
     else setIsMobile("ontouchstart" in document.documentElement);
   }, [windowSize.width, windowSize.height]);
 
-  // load date
+  // load chord data
   useEffect(() => {
     fetch(CHOARD_DATA_PATH)
       .then((response) => response.text())
@@ -58,11 +59,23 @@ const App = () => {
       });
   }, []);
 
+  // load pie data
+  useEffect(() => {
+    fetch()
+      .then((response) => response.text())
+      .then((csvData) => {
+        let data = d3.csvParse(csvData);
+        delete data.columns;
+       // process data
+        setPieData({ data: data });
+      });
+  }, []);
+
   return isMobile ? (
     <ResPage />
   ) : (
     <div>
-      <IndicatorChart chord_data={chordData} />
+      <IndicatorChart chord_data={chordData} pie_data={pieData}/>
     </div>
   );
 };
