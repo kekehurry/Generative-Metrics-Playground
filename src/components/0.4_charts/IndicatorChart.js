@@ -31,6 +31,8 @@ const IndicatorChart = ({ chord_data }) => {
     bottom: 40,
     right: 0,
   };
+
+  
   const [containerWidth, containerHeight] = useResizeObserver(containerRef);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const IndicatorChart = ({ chord_data }) => {
       .attr("width", "100%");
 
     svg
-      .attr("viewBox", [-width / 2, -height / 2, width, height])
+      .attr("viewBox", [-width / 6, -height / 6, width, height])
       .style("width", "100%")
       .style("height", "auto")
       .attr("font-family", "sans-serif")
@@ -195,6 +197,7 @@ const IndicatorChart = ({ chord_data }) => {
       <svg ref={ref}>
         <g />
       </svg>
+
     </div>
   );
 };

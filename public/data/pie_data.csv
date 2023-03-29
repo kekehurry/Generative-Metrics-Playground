@@ -1,0 +1,77 @@
+Stakeholders,Target,Class,Category,Group,Index
+Residents,Workforce,Environmental,Housing,Housing,Commute distance
+Residents,Workforce,Social,Housing,Housing,Job-housing ratio
+Residents,Workforce,Social,Housing,Housing,Job-housing fit
+Residents,Local Business Owners,Social,Access to service,Access to service,Service convenient level
+Residents,Local Business Owners,Social,Access to service,Access to service,Access to convenient amenities
+Residents,Government,Social,Access to civic space,Access to civic space,Access to education facilities
+Residents,Government,Environmental,Access to civic space,Access to civic space,Transit accessibility
+Residents,Workforce,Social,Communication,Communication,Communication
+Residents,Local Business Owners,Environmental,Access to service,Access to service,Access to Nutritious Food
+Residents,Government,Environmental,Access to civic space,Access to civic space,Physical activities
+Residents,Government,Environmental,Safety & Security,Safety & Security,"
+Access to police"
+Residents,Government,Environmental,Safety & Security,Safety & Security,Crime rate
+Residents,Government,Environmental,Safety & Security,Safety & Security,Traffic accident
+Residents,Government,Economic,Finance,Finance,Tax rate
+Residents,Government,Environmental,Safety & Security,Safety & Security,Habitability
+Residents,Nonprofit Institution,Environmental,Access to service,Access to service,Access to service
+Residents,Developer,Economic,Finance,Finance,Housing price
+Local Business Owners,Residents,Economic,Number of visits,Budget,Consumption Potential
+Local Business Owners,Residents,Economic,Consumption,Visit,Visitor Access
+Local Business Owners,Workforce,Economic,Number of visits,Budget,Consumption Potential
+Local Business Owners,Workforce,Economic,Consumption,Displacement,Business Displace/competition
+Local Business Owners,Local Business Owners,Economic,Displacement,Job-housing,Local hiring
+Local Business Owners,Workforce,Social,Employment,Safety,Access to police
+Local Business Owners,Government,Environmental,Safety & Security,Safety,Crime rate
+Local Business Owners,Government,Environmental,Safety & Security,Budget,Tax rate
+Local Business Owners,Government,Economic,Finance,Service,Service population supporting
+Local Business Owners,Residents,Social,Number of visits,Job-housing,Local hiring
+Local Business Owners,Nonprofit Institution,Economic,Number of visits,Health,Use of toxic materials in economy
+Industry group,Residents,Social,Housing,Health,Presentage of recyclable products used
+Industry group,Government,Environmental,Safety & Security,Health,Ratio of renewable to nonrenewable enerty
+Industry group,Government,Environmental,Safety & Security,Budget,Build up area
+Industry group,Government,Environmental,Safety & Security,Job-housing,Local hiring
+Industry group,Government,Environmental,Finance,Job-housing,Housing
+Industry group,Developer,Economic,Finance,Service,Service convenient level
+Industry group,Workforce,Social,Employment,Service,Access to convenient amenities
+Nonprofit Institution,Workforce,Social,Employment,Job-housing,Local hiring
+Nonprofit Institution,Residents,Social,Housing,Job-housing,Housing
+Nonprofit Institution,Local Business Owners,Social,Access to service,Service,Service convenient level
+Nonprofit Institution,Local Business Owners,Social,Access to service,Service,Access to convenient amenities
+Nonprofit Institution,Developer,Social,Innovation,Innovation,Innovation
+Workforce,Residents,Social,Housing,Job-housing,Housing Access
+Workforce,Local Business Owners,Social,Access to service,Service,Catering access
+Workforce,Industry group,Social,Commute,Job-housing,Number of commuter
+Workforce,Local Business Owners,Social,Commute,Job-housing,Number of commuter
+Workforce,Nonprofit Institution,Social,Commute,Job-housing,Number of commuter
+Workforce,Government,Environmental,Access to civic space,Service,Parking availability
+Workforce,Government,Economic,Finance,Tax rate,Tax rate
+Workforce,Residents,Social,Communication,Innovation,Communication
+Workforce,Developer,Economic,Finance,Budget,Affordability
+Workforce,Industry group,Social,Innovation,Innovation,Diversity of job base
+Workforce,Local Business Owners,Social,Innovation,Innovation,Diversity of job base
+Workforce,Nonprofit Institution,Social,Innovation,Innovation,Diversity of job base
+Workforce,Workforce,Economic,Finance,Budget,Hours of paid work at the living wage
+Workforce,Local Business Owners,Economic,Finance,Budget,Wages paid and spent locally
+Government,Residents,Economic,Finance,Budget,Taxes
+Government,Workforce,Economic,Finance,Budget,Taxes
+Government,Industry group,Economic,Finance,Budget,Taxes
+Government,Industry group,Social,Regulation,Budget,Regulation
+Government,Local Business Owners,Economic,Finance,Budget,Taxes
+Government,Government,Economic,Finance,Budget,Management cost for public amenities
+Government,Government,Economic,Finance,Budget,Diversity of revenue sources
+Government,Residents,Environmental,Civic service,Service,Public Services coverage rate
+Government,Residents,Social,Social,Equity,Gender equity
+Government,Workforce,Social,Social,Equity,Gender equity
+Government,Residents,Social,Social,Social cohension,Social cohension
+Government,Local Business Owners,Economic,Finance,Finance,Economy sustainability
+Government,Residents,Social,Approval rate,Approval rate,Voting rate
+Government,Residents,Social,Civic service,Service,Public services coverage rate
+Government,Residents,Environmental,Civic service,Health,Environmental quality
+Developer,Developer,Economic,Finance,Budget,Change of Property value
+Developer,Developer,Economic,Finance,Budget,Everage FAR
+Developer,Residents,Economic,Finance,Budget,Housing price
+Developer,Residents,Environmental,Space,Space,Build up area
+Developer,Industry group,Economic,Space,Space,Build up area
+Developer,Nonprofit Institution,Social,Opportunity,Opportunity,Opportunity
