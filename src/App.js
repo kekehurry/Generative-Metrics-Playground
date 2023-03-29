@@ -86,6 +86,7 @@ const App = () => {
     return points.join(" ");
   }
 
+  
 
   // handle windows resize
   useEffect(() => {
@@ -105,7 +106,7 @@ const App = () => {
     else setIsMobile("ontouchstart" in document.documentElement);
   }, [windowSize.width, windowSize.height]);
 
-  // load date
+  // load chord data
   useEffect(() => {
     fetch(CHOARD_DATA_PATH)
       .then((response) => response.text())
@@ -150,29 +151,6 @@ const App = () => {
       });
 
   }, []);
-
-  // // load date pie
-  // useEffect(() => {
-  //   fetch(PIE_DATA_PATH)
-  //     .then((response) => response.text())
-  //     .then((csvData) => {
-  //       let data = d3.csvParse(csvData);
-  //       delete data.columns;
-
-  //       let pie_data = buildHierarchy(data)
-  //       let partition = data => {
-  //         const root = d3.hierarchy(data)
-  //             .sum(d => d.value)
-  //             .sort((a, b) => b.value - a.value);
-  //         return d3.partition()
-  //             .size([2 * Math.PI, root.height + 1])
-  //           (root);
-  //       }
-  //       let root = partition(pie_data)
-
-  //       setPieData({ root: root, pie_data: pie_data,data:data});
-  //     });
-  // }, []);
 
   return isMobile ? (
     <ResPage />

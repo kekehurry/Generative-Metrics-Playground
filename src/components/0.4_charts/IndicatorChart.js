@@ -21,7 +21,7 @@ const ribbon = d3
 
 const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
 
-const IndicatorChart = ({ chord_data }) => {
+const IndicatorChart = ({ chord_data, pie_data }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -35,10 +35,12 @@ const IndicatorChart = ({ chord_data }) => {
   
   const [containerWidth, containerHeight] = useResizeObserver(containerRef);
 
+  // to add other functions...
+
   useEffect(() => {
     if (!containerWidth) return;
 
-    if ((!chord_data.matrix) || (!chord_data.matrix) || (!chord_data.data)) return;
+    if ((!chord_data.names) || (!chord_data.matrix) || (!chord_data.data)) return;
     
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
