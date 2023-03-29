@@ -6,7 +6,7 @@ import * as d3 from "d3";
 
 import ResPage from "./components/0.3_resolution/ResPage";
 import IndicatorChart from "./components/0.4_charts/IndicatorChart";
-import PieChart from "./components/0.4_charts/PieChart";
+import PieChart from "./components/0.4_charts/pieChart";
 
 const CHOARD_DATA_PATH = "/data/chord_new.csv";
 const PIE_DATA_PATH = "/data/pie_new.csv";

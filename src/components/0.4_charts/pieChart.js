@@ -15,12 +15,16 @@ const PieChart = ({ pieData }) => {
       
         const width = containerWidth ? containerWidth*0.7 : 10;
         const height = containerWidth ? containerWidth*0.7 : 10;
-        const color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, pieData.pie_data.children.length + 1))
-        const format = d3.format(",d")
-        const radius = width / 10
+        // const width = 1000
+        // const height = 1000
+        const colorRange = ['#4f5698', '#0c8a82', '#50abb7', '#84952c', '#d6a408', '#d86521','#743579'];
+        const color = d3.scaleOrdinal(colorRange.slice(0, pieData.pie_data.children.length + 1));
+        const format = d3.format(",d");
+        const radius = width / 10;
 
 
         const svg = d3.select(ref.current);
+
 
         // // build SVG
         // let svg = d3
@@ -30,13 +34,12 @@ const PieChart = ({ pieData }) => {
 
         svg
           .attr("viewBox", [-width / 2, -height / 2, width, height])
-          .style("width", "40%")
-          .style("height", "auto")
+          // .style("width", "40%")
+          // .style("height", "auto")
+          .style("max-width", `${width}px`)
           .attr("font-family", "sans-serif")
-          .attr("font-size", 10);
+          .attr("font-size", '15px');
       
-        const g = svg.append("g")
-          .attr("transform", `translate(${width / 2},${width / 2})`);  
 
         //draw the arc
         const arc = d3.arc()
@@ -45,14 +48,15 @@ const PieChart = ({ pieData }) => {
             .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
             .padRadius(radius * 1.5)
             .innerRadius(d => d.y0 * radius)
-            .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1))
+            .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
         const mousearc = d3
             .arc()
             .startAngle(d => d.x0)
             .endAngle(d => d.x1)
             .innerRadius(d => d.y0 * radius )
-            .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1))
+            .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
+
 
         // const g = svg.append("g")
         //     .attr("transform", `translate(${width / 2},${width / 2})`);
@@ -62,12 +66,13 @@ const PieChart = ({ pieData }) => {
         element.value = { sequence: [], percentage: 0.0 };
     
         const tooltip = d3tip()
-          .style('border', 'solid 2px black')
-          .style('background-color', 'white')
+          .style('border', 'solid 4px black')
+          .style('background-color', '#ffffff')
           .style('border-radius', '10px')
-          .style("padding", "5px")
+          .style("padding", "3px")
           .style('float', 'left')
           .style('font-family', 'monospace')
+          // .style('font-size', '30px')
           .html((event, d) => `
               <div style='float: left'>
               Name: ${d.data.name} <br/>
@@ -75,34 +80,56 @@ const PieChart = ({ pieData }) => {
               </div>`);
         
         svg.call(tooltip);
-    
+
         const label = svg
-          .append("text")
-          .attr("text-anchor", "middle")
-          .attr("fill", "#888")
-          .style("visibility", "hidden");
+            .raise()
+            .attr("text-anchor", "left")
+            .style("user-select", "none")
+          .selectAll("text")
+          .data(pieData.root.descendants().slice(1))
+          .join("text")
+            .each(d => { d.angle = (d.x0 + d.x1) / 2  })
+            .attr("fill-opacity", "100%")
+            // .attr("fill-size",'0.35em')
+            .attr("transform", d => `
+              rotate(${(d.angle * 180 / Math.PI - 90)})
+              translate(${d.y0*radius })
+              ${d.angle > Math.PI ? "rotate(180)" : ""}
+              `)
+            .attr("dy", "0.35em")
+            .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
+            .text(d => d.data.name);
+        
+          label.raise();
     
-        label
-          .append("tspan")
-          .attr("class", "percentage")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("dy", "-0.1em")
-          .attr("font-size", "3em")
-          .text("");
+        // const label = svg
+        //   .append("text")
+        //   .attr("text-anchor", "middle")
+        //   .attr("fill", "#888")
+        //   .style("visibility", "hidden");
+    
+        // label
+        //   .append("tspan")
+        //   .attr("class", "percentage")
+        //   .attr("x", 0)
+        //   .attr("y", 0)
+        //   .attr("dy", "-0.1em")
+        //   .attr("font-size", "5em")
+        //   .text("");
       
-        label
-          .append("tspan")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("dy", "1.5em")
-          .text("of indicators begin with this category");
+        // label
+        //   .append("tspan")
+        //   .attr("x", 0)
+        //   .attr("y", 0)
+        //   .attr("dy", "1.5em")
+        //   .text("of indicators begin \n with this category");
     
         // svg
         //   .attr("viewBox", `${-width} ${-width} ${width} ${width}`)
         //   .style("max-width", `${width}px`)
         //   .style("font", "12px sans-serif");
-    
+
+        // Draw arc
         const path = svg
           .selectAll("path")
           .data(
@@ -126,7 +153,7 @@ const PieChart = ({ pieData }) => {
           .on('mouseout', tooltip.hide)
           .on("mouseleave", () => {
               path.attr("fill-opacity", 0.65);
-              label.style("visibility", "hidden");
+              // label.style("visibility", "hidden");
               // Update the value of this view
               element.value = { sequence: [], percentage: 0.0 };
               element.dispatchEvent(new CustomEvent("input"));
@@ -149,14 +176,14 @@ const PieChart = ({ pieData }) => {
               .slice(1);
               // Highlight the ancestors
               path.attr("fill-opacity", node =>
-              sequence.indexOf(node) >= 0 ? 1.0 : 0.3
+              sequence.indexOf(node) >= 0 ? 0.7 : 0.3
               );
               const percentage = ((100 * d.value) / pieData.root.value ).toPrecision(3);
-              // Center label
-              label
-              .style("visibility", null)
-              .select(".percentage")
-              .text(percentage + "%");
+              // // Center label
+              // label
+              // .style("visibility", null)
+              // .select(".percentage")
+              // .text(percentage + "%");
               // Update the value of this view with the currently hovered sequence and percentage
               element.value = { sequence, percentage };
               element.dispatchEvent(new CustomEvent("input"));
