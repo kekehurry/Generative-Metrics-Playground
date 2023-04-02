@@ -17,7 +17,7 @@ import {Slider_1, Slider_2, Slider_3, Slider_4} from "./components/Slider"
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 const PIE_DATA_PATH = "/data/pie_data.csv";
-const RADAR_DATA_PATH = '/data/radar_all.json';
+const RADAR_DATA_PATH = '/data/radar.json';
 
 const Button = styled.button`
     background-color: darkgray;
@@ -50,7 +50,7 @@ const App = () => {
 
 
   const handleClick = () => {
-    const randomNumber =Math.floor(Math.random()*10);
+    const randomNumber = Math.floor(Math.random() * 201);
     setVersion(randomNumber);
   };
 
@@ -223,10 +223,11 @@ const App = () => {
   ) : (
     <div className="App">
       <h1 >
-        Generative CityScope - Metrics
+        Generative CityScope <br />
+        - Metrics
       </h1>
       <h2 >
-        Define the future community
+        "Define the future community."
       </h2>
 
       <div className="chart-container">
@@ -236,13 +237,13 @@ const App = () => {
         onClick={() => {
           setOpenModal(true);
         }}
-        style ={{ position: "fixed", top: "30%", left: "40%", transform: "translate(-50%, -50%)"}} 
+        style ={{ position: "fixed", top: "35%", left: "22%", transform: "translate(-50%, -50%)"}} 
       >
         Generate
       </Button>
       {openModal && <Modal closeModal={setOpenModal} />}
 
-      <Button onClick={handleClick} className="openModalBtn" style={{position: "fixed", top: "30%", left: "60%", transform: "translate(-50%, -50%)"}}>
+      <Button onClick={handleClick} className="openModalBtn" style={{position: "fixed", top: "35%", left: "10%", transform: "translate(-50%, -50%)"}}>
       {/* style={{ color: "black", fontSize: "20px",position: "relative", top: "60px", left:"750px"}} */}
         See Performance
       </Button>
@@ -263,17 +264,14 @@ const App = () => {
         <Slider_1  handleChange1={handleChange1} />
 
         <div className="slider-label" > 
-        {/* style={{ position: 'absolute', top: '270px' }} */}
           Office Space:</div>
         <Slider_2  handleChange2={handleChange2}/>
 
         <div className="slider-label" > 
-        {/* style={{ position: 'absolute', top: '270px' }} */}
           Amenity Space:</div>
         <Slider_3  handleChange3={handleChange3}/>
 
         <div className="slider-label" > 
-        {/* style={{ position: 'absolute', top: '270px' }} */}
           Civic Space:</div>
         <Slider_4  handleChange4={handleChange4}/>
 

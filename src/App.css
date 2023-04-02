@@ -7,57 +7,68 @@
 }
 
 h1 {
-  position: absolute;
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
-  top: 50px;
-  text-align: center;
+  position: fixed;
+  right: 71%;
+  width: 70%;
+  transform: translateX(100%);
+  top: 20px;
+  text-align: right;
+  margin: 10px;
   color: white;
-  font-size: 60px;
+  font-size: 95px;
 }
 
 h2 {
-  position: absolute;
-  top: 150px;
-  text-align: center;
-  font-size: 40px;
+  position: fixed;
+  top: 250px;
+  width: 50%;
+  right: 51%;
+  margin: 10px;
+  transform: translateX(100%);
+  text-align: right;
+  font-size: 30px;
   color: white;
+  font-family:'Courier New', Courier, monospace;
 }
 
 .App .chart-container {
-  position: relative;
-  align-items: center;
-  bottom: -28%;
-  height: 80%;
+  position: absolute;
+  /* align-items: center; */
+  bottom: 0;
+  left:0;
+  right:0;
+  height: 68%;
   width: 100%;
   color: white;
-  transform: "translate(-50%, -50%)";
+  /* transform: translate(-50%, -50%); */
   z-index: 1;
 }
 
-.App .chart-container .pie-chart {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width:auto;
-  height: 100%;
-  
-}
-
 .App .chart-container .indicator-chart {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  bottom: 0;
+  /* left: 0; */
   width: auto;
   height: 100%;
 }
 
+.App .chart-container .pie-chart {
+  position: relative;
+  bottom: 0;
+  /* left: 50%; */
+  width:auto;
+  height: 100%;
+  /* transform: translateX(-50%); */
+}
+
+
 .App .chart-container .radar-chart {
-  position: absolute;
+  position: relative;
   bottom: 0;
   right: 0;
   width: auto;
   height: 100%;
+  z-index: 2;
 }
 
 
@@ -88,13 +99,17 @@ h2 {
 }
 
 .App .openModalBtn{
-  width: 200px;
+  width: 150px;
   height: 40px;
-  border: none;
+  border: 3px solid rgba(255, 255, 255, 0.845);
   border-radius: 6px;
-  background-color: cornflowerblue;
+  background-color: transparent;
+  backdrop-filter: blur(5px);
   color:white;
   cursor: pointer;
+  z-index: 110;
+  font-family:'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
 .modalBackground {
@@ -105,6 +120,7 @@ h2 {
   display: fixed;
   justify-content: center;
   align-items: center;
+  z-index: 1;
 }
 
 .modalContainer {
@@ -164,37 +180,41 @@ h2 {
 
 .App .slider-container {
   position: absolute;
-  top: 190px;
-  left: 150px;
+  top: 10%;
+  left:5%;
+  /* left: 150px; */
   /* transform: translateX(-50%); */
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
-  align-items: center;
-  /* margin: 5px 0; */
-  height: 15%;
-  padding: 5px;
-  background-color: none;
+  height: 20%;
+  width: 23%;
+  padding: auto;
+  margin: 10px 0;
+  /* background-color: rgba(255, 255, 255, 0.206); */
+  backdrop-filter: blur(5px);
+  border-radius: 30px;
   z-index: 2;
 }
 
 .slider-label {
-  /* text-align: right; */
+  text-align: left;
   /* position: absolute; */
-  /* margin-bottom: 5px; */
+  margin: 5px;
   /* top:240px; */
   /* left: 300px; */
-  font-size: 15px;
+  font-size: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
 .horizontal-slider {
   width: 100%;
   max-width: 200px;
   height: 100vh;
-  margin: 10px;
+  /* margin: 10px; */
   position: absolute; 
-  left: 170px; 
-  bottom: 40px;
+  left: 200px; 
+  bottom: 35px;
 }
 
 
@@ -202,28 +222,32 @@ h2 {
   cursor: pointer;
   position: absolute;
   z-index: 100;
-  background: #ffffff;
-  border: 5px solid #3774ff;
+  background: #7d48ee;
+  border: 4px solid #7d48ee;
   border-radius: 100%;
   display: block;
-  box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.961);
+  /* box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.961); */
 }
 
-.example-thumb.active {
-  background-color: #fdfdfd;
+.example-thumb:hover {
+  box-shadow: 0 0 0 8px #7d48ee79;
 }
+
+/* .example-thumb.active {
+  background-color: #fdfdfd;
+} */
 
 .example-track {
   position: relative;
-  background: #ddd;
+  background: #dddddde1;
 }
 
 .example-track.example-track-0 {
-  background: #83a9ff;
+  background: #7d48ee;
 }
 
 .horizontal-slider .example-track {
-  top: 20px;
+  top: 19px;
   height: 4px;
 }
 
