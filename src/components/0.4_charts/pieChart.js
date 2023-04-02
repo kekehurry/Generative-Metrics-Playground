@@ -205,10 +205,10 @@ const PieChart = ({ pieData }) => {
         ref={containerRef}
         style={{
           position: "absolute",
-          left: "480px",
-          top: "150px",
+          left: "50px",
+          // top: "150px",
           height: "100%",
-          width: "40%",
+          width: "100%",
           background: "none",
         }}
       >

@@ -207,10 +207,10 @@ const IndicatorChart = ({ chord_data }) => {
       ref={containerRef}
       style={{
         position: "absolute",
-        left: "-50px",
-        top: "150px",
+        right: "580px",
+        // top: "150px",
         height: "100%",
-        width: "40%",
+        width: "100%",
         background: "none"
       }}
     >

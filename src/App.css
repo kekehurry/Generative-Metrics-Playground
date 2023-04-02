@@ -1,6 +1,63 @@
 .App {
+  display: flex;
+  justify-content: center;
   text-align: center;
+  height: 100vh;
   color: white
+}
+
+h1 {
+  position: absolute;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+  top: 50px;
+  text-align: center;
+  color: white;
+  font-size: 60px;
+}
+
+h2 {
+  position: absolute;
+  top: 150px;
+  text-align: center;
+  font-size: 40px;
+  color: white;
+}
+
+.App .chart-container {
+  position: relative;
+  align-items: center;
+  bottom: -28%;
+  height: 80%;
+  width: 100%;
+  color: white;
+  transform: "translate(-50%, -50%)";
+  z-index: 1;
+}
+
+.App .chart-container .pie-chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:auto;
+  height: 100%;
+  
+}
+
+.App .chart-container .indicator-chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: 100%;
+}
+
+.App .chart-container .radar-chart {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: 100%;
 }
 
 
@@ -105,15 +162,41 @@
   cursor: pointer;
 }
 
+.App .slider-container {
+  position: absolute;
+  top: 190px;
+  left: 150px;
+  /* transform: translateX(-50%); */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  /* margin: 5px 0; */
+  height: 15%;
+  padding: 5px;
+  background-color: none;
+  z-index: 2;
+}
+
+.slider-label {
+  /* text-align: right; */
+  /* position: absolute; */
+  /* margin-bottom: 5px; */
+  /* top:240px; */
+  /* left: 300px; */
+  font-size: 15px;
+}
+
 .horizontal-slider {
   width: 100%;
   max-width: 200px;
   height: 100vh;
-  margin: auto;
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
+  margin: 10px;
+  position: absolute; 
+  left: 170px; 
+  bottom: 40px;
 }
+
 
 .example-thumb {
   cursor: pointer;

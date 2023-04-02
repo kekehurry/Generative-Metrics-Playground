@@ -12,11 +12,11 @@ import PieChart from "./components/0.4_charts/pieChart";
 import IndicatorChart from "./components/0.4_charts/IndicatorChart";
 import RadarChart from "./components/0.4_charts/RadarChart";
 import Modal from "./components/Modal";
-// import Slider from "./components/slider"
+import {Slider_1, Slider_2, Slider_3, Slider_4} from "./components/Slider"
 
 
-const CHORD_DATA_PATH = "/data/chord_data.csv";
-const PIE_DATA_PATH = "/data/pie_new.csv";
+const CHORD_DATA_PATH = "/data/chord_data_2.csv";
+const PIE_DATA_PATH = "/data/pie_data.csv";
 const RADAR_DATA_PATH = '/data/radar_all.json';
 
 const Button = styled.button`
@@ -47,18 +47,28 @@ const App = () => {
   const [pieData, setPieData] = useState({});
   const [radarData, setRadarData] = useState({});
   const [openModal, setOpenModal] = useState(false);
-  // const [value,setValue] = useState(1);
+
 
   const handleClick = () => {
     const randomNumber =Math.floor(Math.random()*10);
     setVersion(randomNumber);
   };
 
-  // const changeValue = (event, value) => {
-  //   setVersion(value);
-  // };
+  const handleChange1 = (value) => {
+    setVersion(value);
+  };
 
+  const handleChange2 = (value) => {
+    setVersion(value);
+  };
 
+  const handleChange3 = (value) => {
+    setVersion(value);
+  };
+
+  const handleChange4 = (value) => {
+    setVersion(value);
+  };
   
   //   const [version, setVersionData] = useState({}); 用这里
 
@@ -73,7 +83,7 @@ const App = () => {
     const root = { name: "root", children: [] };
     for (let i = 0; i < csv.length; i++) {
       const sequence = csv[i][0];
-      const size = +csv[i][version];
+      const size = +csv[i][version+1];
       if (isNaN(size)) {
         // e.g. if this is a header row
         continue;
@@ -212,16 +222,14 @@ const App = () => {
     <ResPage />
   ) : (
     <div className="App">
-      <h1 style={{ color: "white", fontSize: "60px",position: "relative", top: "60px", textAlign: "center" }}>
+      <h1 >
         Generative CityScope - Metrics
       </h1>
-      <h2 style={{ color: "white", fontSize: "40px",position: "relative", top: "30px", textAlign: "center"}}>
+      <h2 >
         Define the future community
       </h2>
 
-      <PieChart pieData={pieData}/>
-      <IndicatorChart chord_data={chordData} />
-      <RadarChart radar_data={radarData} />
+      <div className="chart-container">
 
       <Button  
         className="openModalBtn" 
@@ -239,9 +247,37 @@ const App = () => {
         See Performance
       </Button>
 
-      {/* <Slider  >
-      </Slider> */}
 
+      <PieChart className='pie-chart' pieData={pieData} />
+
+      <IndicatorChart className='indicator-chart' chord_data={chordData} />
+
+      <RadarChart className='radar-chart' radar_data={radarData} />
+
+      </div>
+
+
+      <div className="slider-container">
+        <div className="slider-label">
+          Residential Space:</div>
+        <Slider_1  handleChange1={handleChange1} />
+
+        <div className="slider-label" > 
+        {/* style={{ position: 'absolute', top: '270px' }} */}
+          Office Space:</div>
+        <Slider_2  handleChange2={handleChange2}/>
+
+        <div className="slider-label" > 
+        {/* style={{ position: 'absolute', top: '270px' }} */}
+          Amenity Space:</div>
+        <Slider_3  handleChange3={handleChange3}/>
+
+        <div className="slider-label" > 
+        {/* style={{ position: 'absolute', top: '270px' }} */}
+          Civic Space:</div>
+        <Slider_4  handleChange4={handleChange4}/>
+
+      </div>
 
     </div>
   );

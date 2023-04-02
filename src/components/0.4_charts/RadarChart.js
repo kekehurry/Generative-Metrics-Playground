@@ -165,10 +165,10 @@ const RadarChart = ({ radar_data }) => {
       ref={containerRef}
       style={{
         position: "absolute",
-        left: "1050px",
-        top: "150px",
+        left: "680px",
+        // top: "150px",
         height: "100%",
-        width: "40%",
+        width: "100%",
         background: "none"
       }}
     >
