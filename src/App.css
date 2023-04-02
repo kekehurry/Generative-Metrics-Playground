@@ -1,6 +1,8 @@
 .App {
   text-align: center;
+  color: white
 }
+
 
 .App-logo {
   height: 40vmin;
@@ -27,6 +29,129 @@
 .App-link {
   color: #61dafb;
 }
+
+.App .openModalBtn{
+  width: 200px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  background-color: cornflowerblue;
+  color:white;
+  cursor: pointer;
+}
+
+.modalBackground {
+  width: 50vw;
+  height: 50vh;
+  background-color: rgba(200,200,200);
+  position: fixed;
+  display: fixed;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer {
+  width: 50vw;
+  height: 50vh;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: rgba(0,0,0,0.35) 0px 5px 15px;
+  display: fixed;
+  justify-content: center;
+  /* flex-direction: column; */
+  padding: 25px;
+}
+
+.modalContainer .title {
+  display: inline-block;
+  text-align: center;
+  flex-direction: column;
+  padding: 25px;
+}
+
+
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* .modalContainer .body {} */
+
+.modalContainer .footer {
+  flex: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer .footer button {
+  width: 150px;
+  height: 45px;
+  margin: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: cornflowerblue;
+  color:white;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.horizontal-slider {
+  width: 100%;
+  max-width: 200px;
+  height: 100vh;
+  margin: auto;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+}
+
+.example-thumb {
+  cursor: pointer;
+  position: absolute;
+  z-index: 100;
+  background: #ffffff;
+  border: 5px solid #3774ff;
+  border-radius: 100%;
+  display: block;
+  box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.961);
+}
+
+.example-thumb.active {
+  background-color: #fdfdfd;
+}
+
+.example-track {
+  position: relative;
+  background: #ddd;
+}
+
+.example-track.example-track-0 {
+  background: #83a9ff;
+}
+
+.horizontal-slider .example-track {
+  top: 20px;
+  height: 4px;
+}
+
+.horizontal-slider .example-thumb {
+  top: 12px;
+  width: 10px;
+  outline: none;
+  height: 10px;
+  line-height: 38px;
+}
+
 
 @keyframes App-logo-spin {
   from {

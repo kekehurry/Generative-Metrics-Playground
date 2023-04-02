@@ -4,11 +4,11 @@ import { tip as d3tip } from "d3-v6-tip";
 import { useResizeObserver } from "../../utils/useResizeObserver";
 import { partition } from "d3";
 
-const innerRadius = 270;
+const innerRadius = 220;
 const outerRadius = innerRadius + 15;
-const width = 440;
-const height = 440;
-const radius = width /10
+const width = 900;
+const height = 900;
+const radius = 44
 
 const chord = d3
   .chordDirected()
@@ -18,7 +18,7 @@ const chord = d3
 
 const ribbon = d3
   .ribbonArrow()
-  .radius(innerRadius - 0.5)
+  .radius(innerRadius - 3)
   .padAngle(1 / innerRadius);
 
 const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
@@ -42,7 +42,7 @@ const mousearc = d3
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const IndicatorChart = ({ chord_data, pie_data }) => {
+const IndicatorChart = ({ chord_data }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -77,11 +77,16 @@ const IndicatorChart = ({ chord_data, pie_data }) => {
 
     svg
       .attr("viewBox", [-width / 2, -height / 2, width, height])
+      // .append("circle") //draw a circle as background
+      //   .attr("r", innerRadius+30)
+      //   .attr("fill", "white")
       .style("width", "100%")
       .style("height", "auto")
       .attr("font-family", "sans-serif")
       .attr("font-size", 17);
-
+    
+    svg.selectAll('*').remove()
+      
     let chords = chord(chord_data.matrix);
 
     for (let i = 0; i < chords.length; i++) {
@@ -146,22 +151,30 @@ const IndicatorChart = ({ chord_data, pie_data }) => {
       // .attr("id", textId.id)
       .attr("id", (d, i) => `arc${i}`) // 添加弧的id
       .attr("fill", (d) => color(d.index))
-      .attr("stroke", "#fff")
+      .attr("fill-opacity", "100%")
+      .attr("stroke", "black")
       .attr("d", arc)
       .on("mouseover", onMouseOver_group)
-      .on("mouseout", onMouseOut);
-
+      .on("mouseout", onMouseOut)
+      ;
+    group.raise()
+    
     // Label
     group
       .append("text")
+      .attr("fill", "white")
       .each((d) => {
         d.angle = (d.startAngle + d.endAngle) / 2;
       })
       .append("textPath")
         .attr("xlink:href", (d, i) => `#arc${i}`) // 引用弧的id
-        .attr("startOffset", "0") // 文本起始位置
+        // .attr("startOffset", "10") // 文本起始位置
         .attr("text-anchor", 'left')
-        .text((d) => chord_data.names[d.index]);
+        .attr("dy", "10")
+        .text((d) => chord_data.names[d.index])
+      ;
+    group.raise()
+    
 
     // Draw chords
     svg
@@ -173,7 +186,7 @@ const IndicatorChart = ({ chord_data, pie_data }) => {
       .attr("class", "chord")
       .attr("fill", (d) => color(d.source.index))
       .attr("d", ribbon)
-      .style("mix-blend-mode", "multiply")
+      // .style("mix-blend-mode", "multiply")
       .on("mouseover", onMouseOver_chord)
       // .on('mouseover', tooltip.show)
       .on("mouseout", onMouseOut)
@@ -183,130 +196,10 @@ const IndicatorChart = ({ chord_data, pie_data }) => {
         (d) =>
           `${chord_data.names[d.source.index]} -> ${
             chord_data.names[d.target.index]
-          }: \n${d.content[d.source.index][d.target.index]}`
+          }: \n${chord_data.content[d.source.index][d.target.index]}`
       );
+    svg.raise()
   }, [chord_data, containerWidth, containerHeight]);
-
-
-  // useEffect(() => {
-  //   if (!containerWidth) return;
-
-  //   if ((!pie_data.sample) || (!pie_data.data) || (!pie_data.partition)) return;
-    
-  //   const height = containerHeight ? containerHeight : 0;
-  //   const width = containerWidth ? containerWidth : 1000;
-  //   const colorRange = ['#4f5698', '#0c8a82', '#50abb7', '#84952c', '#d6a408', '#d86521','#743579']
-  //   const color = d3.scaleOrdinal(colorRange.slice(0, pie_data.children.length + 1));
-
-  //   let root = partition(pie_data)
-
-  //   root.each(d => d.current = d);
-  
-  //   const svg = d3.create("svg");
-  //   // Make this into a view, so that the currently hovered sequence is available to the breadcrumb
-  //   const element = svg.node();
-  //   element.value = { sequence: [], percentage: 0.0 };
-    
-  //   const tooltip = d3tip()
-  //     .style('border', 'solid 2px black')
-  //     .style('background-color', 'white')
-  //     .style('border-radius', '10px')
-  //     .style("padding", "5px")
-  //     .style('float', 'left')
-  //     .style('font-family', 'monospace')
-  //     .html((event, d) => `
-  //       <div style='float: left'>
-  //         Name: ${d.data.name} <br/>
-  //         Value: ${d.value} 
-  //       </div>`);
-    
-  //   svg.call(tooltip);
-  
-  //   const label = svg
-  //     .append("text")
-  //     .attr("text-anchor", "middle")
-  //     .attr("fill", "#888")
-  //     .style("visibility", "hidden");
-  
-  //   label
-  //     .append("tspan")
-  //     .attr("class", "percentage")
-  //     .attr("x", 0)
-  //     .attr("y", 0)
-  //     .attr("dy", "-0.1em")
-  //     .attr("font-size", "3em")
-  //     .text("");
-  
-  //   label
-  //     .append("tspan")
-  //     .attr("x", 0)
-  //     .attr("y", 0)
-  //     .attr("dy", "1.5em")
-  //     .text("of indicators begin with this category");
-  
-  //   svg
-  //     .attr("viewBox", `${-width/2} ${-width/2} ${width} ${width}`)
-  //     .style("max-width", `${width}px`)
-  //     .style("font", "12px sans-serif");
-  
-  //   const path = svg
-  //     .append("g")
-  //     .selectAll("path")
-  //     .data(
-  //       root.descendants().filter(d => {
-  //         // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-  //         return d.depth && d.x1 - d.x0 > 0.001;
-  //       })
-  //     )
-  //     .join("path")
-  //      .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
-  //     .attr("d", arc_);
-  
-  
-  //   svg
-  //     .append("g")
-  //     .attr("fill", "none")
-  //     .attr("pointer-events", "all")
-  //     .on('mouseout', tooltip.hide)
-  //     .on("mouseleave", () => {
-  //       path.attr("fill-opacity", 1);
-  //       label.style("visibility", "hidden");
-  //       // Update the value of this view
-  //       element.value = { sequence: [], percentage: 0.0 };
-  //       element.dispatchEvent(new CustomEvent("input"));
-  //     })
-  //     .selectAll("path")
-  //     .data(
-  //       root.descendants().filter(d => {
-  //         // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-  //         return d.depth && d.x1 - d.x0 > 0.001;
-  //       })
-  //     )
-  //     .join("path")
-  //     .attr("d", mousearc)
-  //     .on('mouseover', tooltip.show)
-  //     .on("mouseenter", (event, d) => {
-  //       // Get the ancestors of the current segment, minus the root
-  //       const sequence = d
-  //         .ancestors()
-  //         .reverse()
-  //         .slice(1);
-  //       // Highlight the ancestors
-  //       path.attr("fill-opacity", node =>
-  //         sequence.indexOf(node) >= 0 ? 1.0 : 0.3
-  //       );
-  //       const percentage = ((100 * d.value) / root.value ).toPrecision(3);
-  //       // Center label
-  //       label
-  //         .style("visibility", null)
-  //         .select(".percentage")
-  //         .text(percentage + "%");
-  //       // Update the value of this view with the currently hovered sequence and percentage
-  //       element.value = { sequence, percentage };
-  //       element.dispatchEvent(new CustomEvent("input"));
-  //     });
-
-  // }), [pie_data, containerWidth, containerHeight]
 
 
   return (
@@ -314,9 +207,11 @@ const IndicatorChart = ({ chord_data, pie_data }) => {
       ref={containerRef}
       style={{
         position: "absolute",
+        left: "-50px",
+        top: "150px",
         height: "100%",
-        width: "100%",
-        background: "white",
+        width: "40%",
+        background: "none"
       }}
     >
       <svg ref={ref}>

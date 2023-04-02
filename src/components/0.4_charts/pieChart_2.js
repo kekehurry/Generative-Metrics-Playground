@@ -3,11 +3,11 @@ import * as d3 from "d3";
 import { tip as d3tip } from "d3-v6-tip";
 import { useResizeObserver } from "../../utils/useResizeObserver";
 
-const width = 900
-const height = 900
-const radius = width /16;
+const width = 1100
+const height = 1100
+const radius = width /13;
 
-const PieChart = ({ pieData }) => {
+const PieChart_2 = ({ pieData }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -28,9 +28,9 @@ const PieChart = ({ pieData }) => {
       
     // const colorRange = ['#4f5698', '#0c8a82', '#50abb7', '#84952c', '#d6a408', '#d86521','#743579'];
     const colorRange = ['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40','#9b47a2'];
-    const color = {'Residents':'#e27c40','Developer':'#7178b5','Workforce':'#9b47a2','Local Business Owners':'#a5ba37','Industry group':'#7ec1ca','Nonprofit Institution':'#f6bd0d','Government':'#0faca3'}
-    // const color = d3.scaleOrdinal(colorRange.slice(0, pieData.pie_data.children.length + 1));
+    const color = d3.scaleOrdinal(colorRange.slice(0, pieData.pie_data.children.length + 1));
     const format = d3.format(",d");
+      
     const svg = d3.select(ref.current)
               ;
       // // build SVG
@@ -40,12 +40,12 @@ const PieChart = ({ pieData }) => {
       //   .attr("width", "100%");
 
       svg
-        .attr("viewBox", [-width / 2, -height / 2, width, height])
+        .attr("viewBox", [-width/2, -height/2, width, height])
         // .style("width", "40%")
         // .style("height", "auto")
         .style("max-width", `${width}px`)
         .attr("font-family", "sans-serif")
-        .attr("font-size", '11px')
+        .attr("font-size", '15px')
         ;
     
 
@@ -89,6 +89,27 @@ const PieChart = ({ pieData }) => {
       
       svg.call(tooltip);
 
+      const label = svg
+          .raise()
+          .attr("text-anchor", "left")
+          .style("user-select", "none")
+        .selectAll("text")
+        .data(pieData.root.descendants().slice(1))
+        .join("text")
+          .each(d => { d.angle = (d.x0 + d.x1) / 2  })
+          .attr("fill-opacity", "100%")
+          .attr("fill", 'white')
+          // .attr("fill-size",'0.35em')
+          .attr("transform", d => `
+            rotate(${(d.angle * 180 / Math.PI - 90)})
+            translate(${d.y0*radius })
+            ${d.angle > Math.PI ? "rotate(180)" : ""}
+            `)
+          .attr("dy", "0.35em")
+          .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
+          .text(d => d.data.name)
+        ;
+      label.raise();
 
       // const label = svg
       //   .append("text")
@@ -126,7 +147,7 @@ const PieChart = ({ pieData }) => {
             })
         )
         .join("path")
-        .attr("fill", d => { while (d.depth > 1) d = d.parent; return color[d.data.name]; })
+        .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
         .attr("fill-opacity", "50%")
         .attr("d", arc);
 
@@ -175,28 +196,6 @@ const PieChart = ({ pieData }) => {
             element.value = { sequence, percentage };
             element.dispatchEvent(new CustomEvent("input"));
           });
-      
-      // Text
-      const label = svg
-          .attr("text-anchor", "left")
-          .style("user-select", "none")
-        .selectAll("text")
-        .data(pieData.root.descendants().slice(1))
-        .join("text")
-          .each(d => { d.angle = (d.x0 + d.x1) / 2  })
-          .attr("fill-opacity", "100%")
-          .attr("fill", 'white')
-          // .attr("fill-size",'0.35em')
-          .attr("transform", d => `
-            rotate(${(d.angle * 180 / Math.PI - 90)})
-            translate(${d.y0*radius })
-            ${d.angle > Math.PI ? "rotate(180)" : ""}
-            `)
-          .attr("dy", "0.35em")
-          .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
-          .text(d => d.data.name)
-        ;
-      label.raise();
 
   }, [pieData, containerWidth, containerHeight]);
   
@@ -205,9 +204,9 @@ const PieChart = ({ pieData }) => {
         ref={containerRef}
         style={{
           position: "absolute",
-          left: "480px",
-          top: "150px",
-          height: "100%",
+          left: "1200px",
+          top: "100px",
+          height: "80%",
           width: "40%",
           background: "none",
         }}
@@ -221,4 +220,4 @@ const PieChart = ({ pieData }) => {
     );
 };
 
-export default PieChart;
+export default PieChart_2;
