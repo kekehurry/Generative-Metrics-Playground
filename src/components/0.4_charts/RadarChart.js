@@ -11,12 +11,12 @@ const width = 900;
 const height = 900;
 const margin_ = 30;
 const radius = (height-(margin_*2)) / 4;
-const dotRadius = 4;
+const dotRadius = 3.5;
 const axisLabelFactor = 1.12;
 const wrapWidth = 60;
 const formatPercent = d3.format(',.0%')
 
-const maxValue = 10;
+const maxValue = 2;
 const axisCircles = 2;
 
 const device = d => ["Baseline", "Future"][d];
@@ -58,7 +58,7 @@ const RadarChart = ({ radar_data }) => {
         .curve(d3[curveSelect])
         .radius(d => rScale(d))
         .angle((d, i) => i * angleSlice);
-    const color = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
+    const color = d3.scaleOrdinal().range(["#7178B5","#0FACA3","#00A0B0"]);
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     // const color = d3.scaleOrdinal()
     //                 .domain(radar_data.names)
@@ -96,7 +96,7 @@ const RadarChart = ({ radar_data }) => {
             .style("fill", "#CDCDCD")
             .style("stroke", "#CDCDCD")
             .style("stroke-width", "0.1px")
-            .style("fill-opacity", 0.2);
+            .style("fill-opacity", 0.1);
     
     const axis = axisGrid.selectAll(".axis")
         .data(radar_data.axesDomain)
@@ -112,7 +112,7 @@ const RadarChart = ({ radar_data }) => {
     .attr("y2", (d, i) => rScale(maxValue*1.1) * Math.sin(angleSlice*i - Math.PI/2))
     .attr("class", "line")
     .style("stroke", "white")
-    .style("fill-opacity", "30%")
+    .style("fill-opacity", "100%")
     .style("stroke-width", "0.1px");
 
     axis.append("text")
@@ -145,7 +145,7 @@ const RadarChart = ({ radar_data }) => {
         .attr("fill", (d, i) => color(i))
         .attr("fill-opacity", 0.1)
         .attr("stroke", (d, i) => color(i))
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 1.5);
 
     plots.selectAll("circle")
         .data(d => d)
@@ -153,7 +153,7 @@ const RadarChart = ({ radar_data }) => {
         .attr("r", dotRadius)
         .attr("cx", (d,i) => rScale(d.value) * Math.cos(angleSlice*i - Math.PI/2))
         .attr("cy", (d,i) => rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2))
-        .style("fill-opacity", 0.8);
+        .style("fill-opacity", 0.7);
 
     
   }, [radar_data, containerWidth, containerHeight]);

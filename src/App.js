@@ -17,7 +17,7 @@ import {Slider_1, Slider_2, Slider_3, Slider_4} from "./components/Slider"
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 const PIE_DATA_PATH = "/data/pie_data.csv";
-const RADAR_DATA_PATH = '/data/radar.json';
+const RADAR_DATA_PATH = '/data/radar_data_2.json';
 
 const Button = styled.button`
     background-color: darkgray;
@@ -232,7 +232,7 @@ const App = () => {
 
       <div className="chart-container">
 
-      <Button  
+      {/* <Button  
         className="openModalBtn" 
         onClick={() => {
           setOpenModal(true);
@@ -241,11 +241,11 @@ const App = () => {
       >
         Generate
       </Button>
-      {openModal && <Modal closeModal={setOpenModal} />}
+      {openModal && <Modal closeModal={setOpenModal} />} */}
 
-      <Button onClick={handleClick} className="openModalBtn" style={{position: "fixed", top: "35%", left: "10%", transform: "translate(-50%, -50%)"}}>
+      <Button onClick={handleClick} className="openModalBtn" style={{position: "fixed", top: "34%", left: "15%", transform: "translate(-50%, -50%)"}}>
       {/* style={{ color: "black", fontSize: "20px",position: "relative", top: "60px", left:"750px"}} */}
-        See Performance
+        RANDOM GENERATE
       </Button>
 
 
