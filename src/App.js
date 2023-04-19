@@ -16,7 +16,7 @@ import {Slider_1, Slider_2, Slider_3, Slider_4} from "./components/Slider"
 
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
-const PIE_DATA_PATH = "/data/pie_data.csv";
+const PIE_DATA_PATH = "/data/pie_data_2.csv";
 const RADAR_DATA_PATH = '/data/radar_data_2.json';
 
 const Button = styled.button`
