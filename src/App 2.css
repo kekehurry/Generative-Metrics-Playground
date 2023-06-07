@@ -1,0 +1,271 @@
+.App {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+  color: white
+}
+
+h1 {
+  position: fixed;
+  right: 71%;
+  width: 70%;
+  transform: translateX(100%);
+  top: 20px;
+  text-align: right;
+  margin: 10px;
+  color: white;
+  font-size: 95px;
+}
+
+h2 {
+  position: fixed;
+  top: 250px;
+  width: 50%;
+  right: 51%;
+  margin: 10px;
+  transform: translateX(100%);
+  text-align: right;
+  font-size: 30px;
+  color: white;
+  font-family:'Courier New', Courier, monospace;
+}
+
+.App .chart-container {
+  position: absolute;
+  /* align-items: center; */
+  bottom: 0;
+  left:0;
+  right:0;
+  height: 68%;
+  width: 100%;
+  color: rgb(36, 10, 138);
+  /* transform: translate(-50%, -50%); */
+  z-index: 2;
+}
+
+.App .chart-container .indicator-chart {
+  position: relative;
+  bottom: 0;
+  /* left: 0; */
+  width: auto;
+  height: 100%;
+}
+
+.App .chart-container .pie-chart {
+  position: relative;
+  bottom: 0;
+  /* left: 50%; */
+  width:auto;
+  height: 100%;
+  /* transform: translateX(-50%); */
+}
+
+
+.App .chart-container .radar-chart {
+  position: relative;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: 100%;
+  z-index: 2;
+}
+
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.App .openModalBtn{
+  width: 150px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.845);
+  border-radius: 6px;
+  background-color: transparent;
+  backdrop-filter: blur(5px);
+  color:white;
+  cursor: pointer;
+  z-index: 110;
+  font-family:'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+.modalBackground {
+  width: 50vw;
+  height: 50vh;
+  background-color: rgba(200,200,200);
+  position: fixed;
+  display: fixed;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.modalContainer {
+  width: 50vw;
+  height: 50vh;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: rgba(0,0,0,0.35) 0px 5px 15px;
+  display: fixed;
+  justify-content: center;
+  /* flex-direction: column; */
+  padding: 25px;
+}
+
+.modalContainer .title {
+  display: inline-block;
+  text-align: center;
+  flex-direction: column;
+  padding: 25px;
+}
+
+
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* .modalContainer .body {} */
+
+.modalContainer .footer {
+  flex: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer .footer button {
+  width: 150px;
+  height: 45px;
+  margin: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: cornflowerblue;
+  color:white;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.App .slider-container {
+  position: absolute;
+  top: 10%;
+  left:6%;
+  /* left: 150px; */
+  /* transform: translateX(-50%); */
+  display: flex;
+  flex-direction: column;
+  height: 20%;
+  width: 23%;
+  padding: auto;
+  margin: 10px 0;
+  /* background-color: rgba(255, 255, 255, 0.206); */
+  backdrop-filter: blur(5px);
+  border-radius: 30px;
+  z-index: 2;
+}
+
+.slider-label {
+  text-align: left;
+  /* position: absolute; */
+  margin: 5px;
+  /* top:240px; */
+  /* left: 300px; */
+  font-size: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.horizontal-slider {
+  width: 100%;
+  max-width: 200px;
+  height: 100vh;
+  /* margin: 10px; */
+  position: absolute; 
+  left: 200px; 
+  bottom: 35px;
+}
+
+
+.example-thumb {
+  cursor: pointer;
+  position: absolute;
+  background: #fdfdfd;
+  border: 3px solid #fdfdfd;
+  border-radius: 20%;
+  display: block;
+  z-index: 500;
+  /* box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.961); */
+}
+
+.example-thumb:hover {
+  box-shadow: 0 0 0 6px #fdfdfda0;
+}
+
+/* .example-thumb.active {
+  background-color: #fdfdfd;
+} */
+
+.example-track {
+  position: relative;
+  background: #dddddd33;
+}
+
+.example-track.example-track-0 {
+  background: #fdfdfdc9;
+}
+
+.horizontal-slider .example-track {
+  top: 19px;
+  height: 4px;
+}
+
+.horizontal-slider .example-thumb {
+  top: 12px;
+  width: 10px;
+  outline: none;
+  height: 10px;
+  line-height: 38px;
+}
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
