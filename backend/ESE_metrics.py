@@ -155,6 +155,20 @@ class Social:
 # Test
 #--------------------------------------------#
 
+# output format：
+# -------------------------------------------#
+# category          indicator               baseline        value
+
+#  economic         employment              5              10
+#  economic         equity                  5              6
+#  social           safety_security         5              7
+#  social           access_to_service       5              3   
+#  environmental    pollution               5              5
+#  environmental    ecosystem               5              2
+# -------------------------------------------#
+
+
+
 def test():
     economic = Economic("economic.csv")
     print(economic.employment.unemployment_rate)
