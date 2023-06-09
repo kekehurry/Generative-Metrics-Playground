@@ -218,43 +218,7 @@ const ChordChart = ({ chord_data }) => {
       .style("fill", (d) => color_2(d.index)) // 设置填充颜色
       .style("fill-opacity", "30%")  // 设置透明度
 
-    // var transitionDuration = 1000; // 1000毫秒的过渡
-    // var newRadius = 50; // 新的半径
-      
-    // group.selectAll("circle")
-    //     .transition() // 开始过渡
-    //     .duration(transitionDuration) // 设置过渡时间
-    //     .attr("cx", function(d, i) { 
-    //         // 计算新的中心点坐标，这里使用了newRadius来设置新的半径
-    //         var angle = angleSlice * i;
-    //         return newRadius * Math.cos(angle - Math.PI/2); 
-    //     })
-    //     .attr("cy", function(d, i) { 
-    //         // 计算新的中心点坐标，这里使用了newRadius来设置新的半径
-    //         var angle = angleSlice * i;
-    //         return newRadius * Math.sin(angle - Math.PI/2); 
-    //     });
-    
-
-    // // Move circles to center
-    // var centerX = 0 ; // 替换为你的图的中心x坐标
-    // var centerY = 0 ; // 替换为你的图的中心y坐标
-
-    // group.selectAll("circle")
-    //     .transition()  // 开始一个过渡动画
-    //     .duration(20000)  // 动画的持续时间
-    //     .attrTween("cx", function(d, i) { 
-    //         var centroid = arc_out_out.centroid(d); 
-    //         var interpolator = d3.interpolate(centroid[0], centerX); 
-    //         return function(t) { return interpolator(t); }; 
-    //     })
-    //     .attrTween("cy", function(d, i) { 
-    //         var centroid = arc_out_out.centroid(d); 
-    //         var interpolator = d3.interpolate(centroid[1], centerY); 
-    //         return function(t) { return interpolator(t); }; 
-    //     });
-
-
+  
     // Draw arcs
     group
       .append("path")
