@@ -82,25 +82,13 @@
   right: 0;
   width: 30%;
   height: 50%;
-  /* background-color: #2E2E2E; */
-  background-color: #950606;
+  background-color: #13121a;
+  /* background-color: #604d95; */
   z-index: 10
 }
 
-.App .radar-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80%;
-  /* width: 100%; */
-  /* padding: auto; */
-  background-color: rgb(182, 158, 158);
-  /* transform: translate(-50%, -50%); */
-  z-index: 10;
-}
 
-
-.App  .right-down .radar-chart {
+.App  .radar-chart {
   position: relative;
   bottom: 0;
   /* justify-content: center; */

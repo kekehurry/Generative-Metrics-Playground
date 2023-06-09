@@ -4,10 +4,10 @@ import { tip as d3tip } from "d3-v6-tip";
 import { useResizeObserver } from "../../utils/useResizeObserver";
 import { partition } from "d3";
 
-const innerRadius = 150;
+const innerRadius = 170;
 const outerRadius = innerRadius + 8;
-const width = 900;
-const height = 900;
+// const width = 900;
+// const height = 900;
 const radius = 44
 
 const chord = d3
@@ -28,6 +28,12 @@ const arc_out = d3
   .arc()
   .innerRadius(outerRadius *1.7)
   .outerRadius(outerRadius *1.7 + 2)
+  .cornerRadius(10);
+
+const arc_out_out = d3
+  .arc()
+  .innerRadius(outerRadius *1.8)
+  .outerRadius(outerRadius *1.8 + 2)
   .cornerRadius(10);
 
 // Draw pie circle, not using
@@ -53,12 +59,12 @@ const ChordChart = ({ chord_data }) => {
   const ref = useRef();
   const containerRef = useRef();
 
-  const margin = {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  };
+  // const margin = {
+  //   top: 0,
+  //   left: 0,
+  //   bottom: 0,
+  //   right: 0,
+  // };
   const [containerWidth, containerHeight] = useResizeObserver(containerRef);
 
 
@@ -96,7 +102,7 @@ const ChordChart = ({ chord_data }) => {
       .style("width", "100%")
       .style("height", "auto")
       .attr("font-family", "sans-serif")
-      .attr("font-size", 13);
+      .attr("font-size", 16);
     
     svg.selectAll('*').remove()
       
@@ -105,11 +111,11 @@ const ChordChart = ({ chord_data }) => {
     for (let i = 0; i < chords.length; i++) {
       for (let j = 0; j < chord_data.data.length; j++) {
         if (
-          chord_data.names[chords[i].source.index] ==
+          chord_data.names[chords[i].source.index] ===
           chord_data.data[j].Stakeholders
         ) {
           if (
-            chord_data.names[chords[i].target.index] ==
+            chord_data.names[chords[i].target.index] ===
             chord_data.data[j].Target
           ) {
             chords[i].content = chord_data.data[j].content;
@@ -141,8 +147,8 @@ const ChordChart = ({ chord_data }) => {
       svg
         .selectAll(".chord")
         .style("opacity", 0.2)
-        .filter((d) => d.source.index == obj.source.index)
-        .filter((d) => d.target.index == obj.target.index)
+        .filter((d) => d.source.index === obj.source.index)
+        .filter((d) => d.target.index === obj.target.index)
         .style("opacity", 1);
 
       // console.log(obj);
@@ -154,9 +160,100 @@ const ChordChart = ({ chord_data }) => {
       svg.selectAll(".chord").style("opacity", 1);
     }
 
+    // 计算新的圆心位置
+    function computeNewPosition(centerX, centerY, oldX, oldY, distance) {
+      var dx = oldX - centerX;
+      var dy = oldY - centerY;
+      var angle = Math.atan2(dy, dx);
+      return [centerX + distance * Math.cos(angle), centerY + distance * Math.sin(angle)];
+    }
+
+    // 创建半径数组
+    // 未来更改为input的circle size
+    const radius = [20, 20, 30, 40, 100, 10, 80];
+
+    // 创建位移数组
+    // 未来更改为input的move distance
+    const distance = [10, 30, 30, 40, 10, 10, 80];
+
+    // 设置画面中心
+    const centerX = 0;  
+    const centerY = 0;
 
     // create Chart
-    let group = svg.selectAll("g").data(chords.groups).join("g");
+    let group = svg.selectAll("g")
+          .data(chords.groups.map((d, i) => ({...d, radius: radius[i], distance: distance[i]})))
+          .join("g");
+
+
+    // Draw outside standard arcs
+    group
+      .append("path")
+      // .attr("id", textId.id)
+      .attr("id", (d, i) => `arc${i}`) // 添加弧的id
+      .attr("fill", (d) => 'white')
+      .attr("fill-opacity", "10%")
+      // .attr("stroke", "black")
+      .attr("d", arc_out_out)
+      .on("mouseover", onMouseOver_group)
+      .on("mouseout", onMouseOut)
+      ;
+    // group.raise()
+
+
+    // Draw background circles
+    group
+      .append("circle")
+      .attr("cx", function(d) { 
+          var centroid = arc_out_out.centroid(d); 
+          var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius *1.8 -d.distance); 
+          return newPosition[0];
+      })
+      .attr("cy", function(d) { 
+          var centroid = arc_out_out.centroid(d); 
+          var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius *1.8 -d.distance); 
+          return newPosition[1]; 
+      })
+      .attr("r", d => d.radius)  // 设置半径
+      .style("fill", (d) => color_2(d.index)) // 设置填充颜色
+      .style("fill-opacity", "30%")  // 设置透明度
+
+    // var transitionDuration = 1000; // 1000毫秒的过渡
+    // var newRadius = 50; // 新的半径
+      
+    // group.selectAll("circle")
+    //     .transition() // 开始过渡
+    //     .duration(transitionDuration) // 设置过渡时间
+    //     .attr("cx", function(d, i) { 
+    //         // 计算新的中心点坐标，这里使用了newRadius来设置新的半径
+    //         var angle = angleSlice * i;
+    //         return newRadius * Math.cos(angle - Math.PI/2); 
+    //     })
+    //     .attr("cy", function(d, i) { 
+    //         // 计算新的中心点坐标，这里使用了newRadius来设置新的半径
+    //         var angle = angleSlice * i;
+    //         return newRadius * Math.sin(angle - Math.PI/2); 
+    //     });
+    
+
+    // // Move circles to center
+    // var centerX = 0 ; // 替换为你的图的中心x坐标
+    // var centerY = 0 ; // 替换为你的图的中心y坐标
+
+    // group.selectAll("circle")
+    //     .transition()  // 开始一个过渡动画
+    //     .duration(20000)  // 动画的持续时间
+    //     .attrTween("cx", function(d, i) { 
+    //         var centroid = arc_out_out.centroid(d); 
+    //         var interpolator = d3.interpolate(centroid[0], centerX); 
+    //         return function(t) { return interpolator(t); }; 
+    //     })
+    //     .attrTween("cy", function(d, i) { 
+    //         var centroid = arc_out_out.centroid(d); 
+    //         var interpolator = d3.interpolate(centroid[1], centerY); 
+    //         return function(t) { return interpolator(t); }; 
+    //     });
+
 
     // Draw arcs
     group
@@ -185,6 +282,7 @@ const ChordChart = ({ chord_data }) => {
       .on("mouseout", onMouseOut)
       ;
     group.raise()
+
     
     // Label
     group

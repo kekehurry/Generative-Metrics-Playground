@@ -106,7 +106,23 @@ function App() {
 
   }, [version]);
 
+  // load radar data
+  useEffect(() => {
+    fetch(RADAR_DATA_PATH)
+      .then((response) => response.json())
+      .then(data => {
+        let vers = data[version];
+        const axesLength =  vers[0].length;
+        const axesDomain = vers[0].map(d => d.axis)
 
+        console.log( data,vers, axesLength, axesDomain);
+        setRadarData({ data: data ,vers: vers, axesLength: axesLength, axesDomain:axesDomain});
+      })
+
+      .catch((error) => {
+        console.error("Error fetching the data:", error);
+      });
+  }, [version]);
 
 
   return (
@@ -130,7 +146,6 @@ function App() {
 
           <div className="chart-container">
             <ChordChart className='chord-chart' chord_data={chordData} />
-
           </div>
           
         </div>
