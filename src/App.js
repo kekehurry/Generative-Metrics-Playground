@@ -1,4 +1,5 @@
 import './App.css';
+import WelcomePage from './components/WelcomePage';
 import React, { useState, useEffect } from "react";
 import Expand from './components/Expand';
 
@@ -20,7 +21,14 @@ const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 const RADAR_DATA_PATH = '/data/radar_data_2.json';
 
+
 function App() {
+
+  const [showGraph, setShowGraph] = useState(false);
+
+  function enterSite() {
+    setShowGraph(true);
+  }
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -56,6 +64,7 @@ function App() {
   const handleChange4 = (value) => {
     setVersion(value);
   };
+
 
 
   // handle windows resize
@@ -124,66 +133,70 @@ function App() {
       });
   }, [version]);
 
+  if (!showGraph) {
+    return <WelcomePage enterSite={enterSite} />;
+  } else {
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <Expand />
-        </div>
-        <h3>Generative CityScope - Metrics</h3>
-      </header>
-      <div className="App-Content">
-        {sidebarOpen &&
-          <div className="sidebar">
-            <p>Sidebar content goes here</p>
+    return (
+      <div className="App">
+        <header className="App-header">
+          <div onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <Expand />
           </div>
-        }
+          <h3>Generative CityScope - Metrics</h3>
+        </header>
+        <div className="App-Content">
+          {sidebarOpen &&
+            <div className="sidebar">
+              <p>Sidebar content goes here</p>
+            </div>
+          }
 
-        <div className="left">
-          {/* <p>Graph</p> */}
-          {/* <p>version: {version}</p> */}
+          <div className="left">
+            {/* <p>Graph</p> */}
+            {/* <p>version: {version}</p> */}
 
-          <div className="chart-container">
-            <ChordChart className='chord-chart' chord_data={chordData} />
-          </div>
-          
-        </div>
-        
-        <div className="right">
-          {/* <p>dashboard</p> */}
-
-          <div className="slider-container">
-            {/* <p>INPUT</p> */}
-
-            <div className="slider-label">
-              Residential Space:</div>
-            <Slider_1  handleChange1={handleChange1} />
-
-            <div className="slider-label" > 
-              Office Space:</div>
-            <Slider_2  handleChange2={handleChange2}/>
-
-            <div className="slider-label" > 
-              Amenity Space:</div>
-            <Slider_3  handleChange3={handleChange3}/>
-
-            <div className="slider-label" > 
-              Civic Space:</div>
-            <Slider_4  handleChange4={handleChange4}/>
+            <div className="chart-container">
+              <ChordChart className='chord-chart' chord_data={chordData} />
+            </div>
+            
           </div>
           
+          <div className="right">
+            {/* <p>dashboard</p> */}
+
+            <div className="slider-container">
+              {/* <p>INPUT</p> */}
+
+              <div className="slider-label">
+                Residential Space:</div>
+              <Slider_1  handleChange1={handleChange1} />
+
+              <div className="slider-label" > 
+                Office Space:</div>
+              <Slider_2  handleChange2={handleChange2}/>
+
+              <div className="slider-label" > 
+                Amenity Space:</div>
+              <Slider_3  handleChange3={handleChange3}/>
+
+              <div className="slider-label" > 
+                Civic Space:</div>
+              <Slider_4  handleChange4={handleChange4}/>
+            </div>
+            
+          </div>
+
+          <div className="right-down">
+            {/* <p>radarchart</p> */}
+            <RadarChart className='radar-chart' radar_data={radarData} />
+          </div>
+
+
         </div>
-
-        <div className="right-down">
-          {/* <p>radarchart</p> */}
-          <RadarChart className='radar-chart' radar_data={radarData} />
-        </div>
-
-
       </div>
-    </div>
-  );
+    );
+        }
 }
 
 export default App;
