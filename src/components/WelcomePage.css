@@ -14,7 +14,7 @@
   
 .enterButton {
 position: relative;
-top: 30%;
+top: 35%;
 width: 120px;
 height: 40px;
 background-color: #000;
@@ -77,4 +77,44 @@ scale: 0.7;
     width: 100%;
     height: 100%;
     z-index: -100;
+}
+
+
+.Circle {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: linear-gradient(to bottom right, #e81cff, #40c9ff);
+  /* backdrop-filter: blur(10px); */
+  z-index: 11; /* to place the circle below the texts and particles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 4rem;
+}
+
+.Circle_ {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: linear-gradient(to bottom right, #e81cff, #40c9ff);
+  filter: blur(20px);
+  z-index: 10; /* to place the circle below the texts and particles */
+}
+
+
+.sketchContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -100;
 }

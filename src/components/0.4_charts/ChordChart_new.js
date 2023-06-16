@@ -4,7 +4,7 @@ import { tip as d3tip } from "d3-v6-tip";
 import { useResizeObserver } from "../../utils/useResizeObserver";
 import { partition } from "d3";
 
-const innerRadius = 170;
+const innerRadius = 160;
 const outerRadius = innerRadius + 8;
 // const width = 900;
 // const height = 900;
@@ -264,61 +264,66 @@ const ChordChart = ({ chord_data }) => {
       ;
     group.raise()
     
+// ---------------------渐变--------------------- //
+    // // 在 SVG 容器中添加一个 defs 元素，用于定义渐变
+    // let defs = svg.append("defs");
 
-    // 在 SVG 容器中添加一个 defs 元素，用于定义渐变
-    let defs = svg.append("defs");
-
-    // 添加径向渐变
-    let gradient = defs.append("radialGradient")
-      .attr("id", "gradient") // 设置渐变的 id，之后将用这个 id 来引用这个渐变
-      .attr("cx", "50%")      // 渐变的中心在 chord 的中间
-      .attr("cy", "50%")
-      .attr("r", "50%")       // 渐变的半径
-      .attr("fx", "50%")      // 渐变的焦点在 chord 的中间
-      .attr("fy", "50%"); 
+    // // 添加径向渐变
+    // let gradient = defs.append("radialGradient")
+    //   .attr("id", "gradient") // 设置渐变的 id，之后将用这个 id 来引用这个渐变
+    //   .attr("cx", "50%")      // 渐变的中心在 chord 的中间
+    //   .attr("cy", "50%")
+    //   .attr("r", "50%")       // 渐变的半径
+    //   .attr("fx", "50%")      // 渐变的焦点在 chord 的中间
+    //   .attr("fy", "50%"); 
     
-    // 在径向渐变中添加两个停止颜色
-    gradient.append("stop")
-      .attr("offset", "40%")  // 在 40% 的位置，设置第一个停止颜色
-      .attr("stop-color", "rgba(255, 255, 255, 0.1)");  // 半透明的白色
-    gradient.append("stop")
-      .attr("offset", "60%")  // 在 60% 的位置，设置第二个停止颜色
-      .attr("stop-color", "rgba(255, 255, 255, 1)");  // 不透明的白色
+    // // 在径向渐变中添加两个停止颜色
+    // gradient.append("stop")
+    //   .attr("offset", "40%")  // 在 40% 的位置，设置第一个停止颜色
+    //   .attr("stop-color", "rgba(255, 255, 255, 0.1)");  // 半透明的白色
+    // gradient.append("stop")
+    //   .attr("offset", "60%")  // 在 60% 的位置，设置第二个停止颜色
+    //   .attr("stop-color", "rgba(255, 255, 255, 1)");  // 不透明的白色
 
     // Draw chords
     svg
       .append("g")
-      // .attr("fill-opacity", 0.7)
+      .attr("fill-opacity", 0.7)
       .selectAll("path")
       .data(chords)
       .join("path")
       .attr("class", "chord")
+      .attr("fill", (d) => color(d.source.index))
+
+      //---------------------渐变--------------------- //
       // .attr("fill", "url(#gradient)") // 引用上面定义的渐变
       // .attr("fill", (d) => color(d.source.index))
-      // 为每个 chord 创建一个独立的渐变
-      .each(function(d) {
-        let sourceColor = d3.rgb(color(d.source.index)); // 使用 D3 的颜色函数获取 RGB 颜色
+      // // 为每个 chord 创建一个独立的渐变
+      // .each(function(d) {
+      //   let sourceColor = d3.rgb(color(d.source.index)); // 使用 D3 的颜色函数获取 RGB 颜色
 
-        let gradient = defs.append("linearGradient") // 创建线性渐变
-            .attr("id", "gradient-" + d.source.index); // 为每个渐变设置唯一的 ID
+      //   let gradient = defs.append("linearGradient") // 创建线性渐变
+      //       .attr("id", "gradient-" + d.source.index); // 为每个渐变设置唯一的 ID
 
-        gradient.append("stop") // 设置渐变的起始颜色（不透明）
-            .attr("offset", "0%")
-            .attr("stop-color", sourceColor ); // 转换为 RGBA 颜色，alpha 通道为 80（半透明）
+      //   gradient.append("stop") // 设置渐变的起始颜色（不透明）
+      //       .attr("offset", "0%")
+      //       .attr("stop-color", sourceColor ); // 转换为 RGBA 颜色，alpha 通道为 80（半透明）
         
-        gradient.append("stop") // 中间处为透明
-            .attr("offset", "50%")
-            .attr("stop-color", sourceColor + "80"); 
+      //   gradient.append("stop") // 中间处为透明
+      //       .attr("offset", "50%")
+      //       .attr("stop-color", sourceColor + "80"); 
     
 
-        gradient.append("stop") // 设置渐变的终止颜色（不透明）
-            .attr("offset", "100%")
-            .attr("stop-color", sourceColor); // 原始颜色（不透明）
+      //   gradient.append("stop") // 设置渐变的终止颜色（不透明）
+      //       .attr("offset", "100%")
+      //       .attr("stop-color", sourceColor); // 原始颜色（不透明）
 
-        // 应用渐变到当前的 chord
-        d3.select(this)
-            .style("fill", "url(#gradient-" + d.source.index + ")");
-      })
+      //   // 应用渐变到当前的 chord
+      //   d3.select(this)
+      //       .style("fill", "url(#gradient-" + d.source.index + ")");
+      // })
+      //---------------------渐变--------------------- //
+      
       .attr("d", ribbon)
       // .style("mix-blend-mode", "multiply")
       .on("mouseover", onMouseOver_chord)
@@ -342,9 +347,9 @@ const ChordChart = ({ chord_data }) => {
       ref={containerRef}
       style={{
         position: "relative",
-        // right: "0",
+        left: "10%",
         // top: "150px",
-        height: "100%",
+        height: "90%",
         width: "100%",
         background: "none"
       }}
@@ -352,6 +357,18 @@ const ChordChart = ({ chord_data }) => {
       <svg ref={ref}>
         <g />
       </svg>
+      {/* <div style={{ 
+        position: "absolute", 
+        top: "50%", 
+        left: "50%",
+        width: "50%",
+        height: "50%",
+        background:"radial-gradient(circle at center, transparent, black 100%)",
+        // background: "white",
+        borderRadius: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex:200
+      }} /> */}
     </div>
   );
 };

@@ -54,7 +54,7 @@ class Particle {
 
         // add shining effect
         if (this.p.random(1) < 0.01) {
-            this.p.stroke(255, 255, 255, 200);
+            this.p.stroke(255, 255, 255, 100);
             this.p.strokeWeight(1);
         } else {
             this.p.stroke(this.color);
@@ -77,9 +77,10 @@ export default function Sketch() {
             let i = 0;
 
 // --------------------- text ---------------------
-            let communityAlpha = 80;
-            let futureAlpha = 255;
-            let futureTimer = 0;
+            let futureAlpha = 0;
+            let textPhase = 'showing';
+            let textPhaseCounter = 0;
+            let futureTimer = 60;
             let futurePosition;
             let text_list = ['safe','peace','activity','innovation','sustainable','accessible','diversity','convenient']
             let currentText = '';
@@ -132,65 +133,54 @@ export default function Sketch() {
                     particles[i].show();
                 }
 
-                p.push();
-                p.noStroke();
+                // p.push();
+                // p.noStroke();
+                // let gradient = p.drawingContext.createLinearGradient(p.width/2, p.height/2 -200, p.width/2, p.height/2+200);
+                // gradient.addColorStop(0, 'rgb(232, 28, 255)');
+                // gradient.addColorStop(1, 'rgb(64, 201, 255)');
+                // p.drawingContext.fillStyle = gradient;
+                // // p.fill(166, 181, 205)
+                // p.ellipse(p.width / 2, p.height / 2, 400, 400);
+                // p.pop();
 
-                // create a radial gradient and use it to fill the canvas
-                const gradient = radialGradient(p.width / 2 - 30, p.height / 2 - 30, 0, //start point
-                                                p.width / 2 + 50, p.height / 2 + 50, 130,  // end point
-                                                // p.color(255, 255, 255, 0),  // start color
-                                                // p.color(255, 255, 255, 255)); // end color 243, 234, 226
-                                                p.color(232,123,116),  // start color
-                                                p.color(255)); // end color 
-                // p.fill(gradient);
+
+                // // create a radial gradient and use it to fill the canvas
+                // const gradient = radialGradient(p.width / 2 - 30, p.height / 2 - 30, 0, //start point
+                //                                 p.width / 2 + 50, p.height / 2 + 50, 130,  // end point
+                //                                 // p.color(255, 255, 255, 0),  // start color
+                //                                 // p.color(255, 255, 255, 255)); // end color 243, 234, 226
+                //                                 p.color(232,123,116),  // start color
+                //                                 p.color(255)); // end color 
+                // // p.fill(gradient);
                 
-                i = i + 0.5;
-                if (i < 400) {
-                    p.fill(166, 181, 205)
-                    p.ellipse(p.width / 2, p.height / 2, i, i);
-                } else {
-                    p.fill(166, 181, 205)
-                    p.ellipse(p.width / 2, p.height / 2, 400, 400);
-                }
-                p.pop();
+                // i = i + 0.5;
+                // if (i < 400) {
+                //     p.fill(166, 181, 205)
+                //     p.ellipse(p.width / 2, p.height / 2, i, i);
+                // } else {
+                //     p.fill(166, 181, 205)
+                //     p.ellipse(p.width / 2, p.height / 2, 400, 400);
+                // }
+                // p.pop();
 
-// --------------------- text ---------------------
-                // 在中间逐渐显示 "community"
-                p.push();
-                p.fill(161, 128, 68, communityAlpha); // 这里的 alpha 可以改变，用来控制文本的透明度
-                p.textSize(40);
-                p.textAlign(p.CENTER, p.CENTER);
-                p.text('Community', p.width / 2, p.height / 2);
-                communityAlpha += 1;
-                if (communityAlpha > 255) {
-                    communityAlpha = 255;
-                }
-                p.pop();
+                // --------------------- text ---------------------
+                // showing text
+                // p.push();
+                // p.noStroke();
+                // p.fill(255, 255, 255, futureAlpha); // 这里的 alpha 可以改变，用来控制文本的透明度
+                // p.textSize(25);
+                // p.textAlign(p.CENTER, p.CENTER);
+                // futurePosition = p.createVector(p.random(p.width), p.random(p.height)); // 随机生成位置
+                // currentText = text_list[Math.floor(Math.random() * text_list.length)];
+                // p.text(currentText, futurePosition.x, futurePosition.y); // 在随机位置显示文本
+                // futureAlpha += 0.1;
+                // if (futureAlpha > 255) {
+                //     futureAlpha = 255;
+                // }
+                // p.pop();
 
 
-                // 在随机位置逐渐显示然后消失的 "future"
-                if (futureTimer === 0) {
-                    futurePosition = p.createVector(p.random(p.width), p.random(p.height));  // 选择一个随机位置
-                    futureTimer = 30;  // 显示 "future" 1秒后开始逐渐消失
-                    futureAlpha = 255;  // 重置 alpha
-                    currentText = text_list[Math.floor(Math.random() * text_list.length)];
-                }
-                p.push();
-                p.fill(161, 128, 68, futureAlpha);
-                p.textSize(30);
-                p.textAlign(p.CENTER, p.CENTER);
-                p.text(currentText, futurePosition.x, futurePosition.y);
-                if (futureTimer > 0) {
-                    futureTimer--;  // 如果 timer 不为零，则减小它
-                } else {
-                    futureAlpha -= 10;  // 如果 timer 为零，开始减小 alpha 使文本逐渐消失
-                    if (futureAlpha < 0) {
-                        futureAlpha = 0;  // 保证 alpha 不会小于零
-                        futureTimer = 0;  // 重置 timer，以便在下一帧开始显示新的 text
-                    }
-                }
-                p.pop();
-// --------------------- text ---------------------
+                // --------------------- text ---------------------
 
 
             };

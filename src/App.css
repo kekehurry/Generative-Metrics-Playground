@@ -6,7 +6,7 @@
 }
 
 .App-header {
-  background-color: #222222;
+  background-color: #191932;
   flex: 0 0 60px;
   width: 100%;
   display: flex;
@@ -16,8 +16,10 @@
   color: white;
 }
 
+
 .App-Content {
   background-color: #343434;
+  /* background-color: #d7d7e4; */
   height: calc(100vh - 60px);
   display: flex;
   flex-direction: row;
@@ -26,9 +28,10 @@
   position: relative;
 }
 
+
 .left {
   flex: 3;
-  /* background-color: #262626; */
+  /* background-color: #e8dada; */
   background-color: #13121a;
   display: flex;
   flex-direction: column;
@@ -41,13 +44,13 @@
 
 .App .chart-container {
   position: relative;
-  top: 5%;
+  top: 0%;
   left:0%;
   /* align-items: center; */
   display: flex;
   flex-direction: column;
-  height: 90%;
-  width: 100%;
+  height: 100%;
+  width: 90%;
   padding: auto;
   /* background-color: rgb(243, 228, 228); */
   /* transform: translate(-50%, -50%); */
@@ -65,24 +68,48 @@
   z-index: 1;
 }
 
+/* .App .chart-container .chord-mask {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 35%;
+  height: 46%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, transparent, black 90%);
+  z-index: 2;
+  transform: translate(-50%, -50%);
+}  */
+
 
 
 .App .right {
-  flex: 1;
-  background-color: #2E2E2E;
-  /* background-color: #950606; */
-  /* height: 100%;
-  padding: 1rem; */
+  /* flex: 1; */
+  /* background-color: #13121a; */
+  background-color: #950606;
+  /* height: 100%; */
+  width: 35%;
+  /* padding: 1rem;   */
   position: relative
 }
 
 .right-down {
   position: absolute;
-  bottom: 0;
+  bottom: 10%;
   right: 0;
-  width: 30%;
-  height: 50%;
+  width: 40%;
+  height: 60%;
   background-color: #13121a;
+  /* background-color: #604d95; */
+  z-index: 10
+}
+
+.down {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  background-color: #191932;
   /* background-color: #604d95; */
   z-index: 10
 }
@@ -97,7 +124,7 @@
   /* left: 0; */
   width: auto;
   height: 100%;
-  background-color: rgb(184, 102, 102) !important;
+  /* background-color: rgb(184, 102, 102); */
   z-index: 100;
 }
 
@@ -119,17 +146,19 @@
 
 .App .slider-container {
   position: relative;
-  top: 0%;
-  left:0%;
+  top: 25%;
+  left:18%;
   /* left: 150px; */
   /* transform: translateX(-50%); */
   display: flex;
-  flex-direction: column;
-  height: 30%;
-  width: 100%;
+  justify-content: space-between;
+  /* align-items: center; */
+  flex-direction: row;
+  height: 50%;
+  width: 80%;
   padding: auto;
-  /* margin: 10px 0; */
-  background-color: rgba(255, 255, 255, 0.206);
+  /* margin: 0  10px ; */
+  /* background-color: rgb(243, 234, 234); */
   /* backdrop-filter: blur(5px); */
   /* border-radius: 30px; */
   z-index: 2;
@@ -138,39 +167,46 @@
 .slider-label {
   text-align: left;
   /* position: absolute; */
-  margin: 5px;
-  /* top:240px; */
-  /* left: 300px; */
+  /* margin: 5px; */
+  top:10%;
+  left: 0%;
+  width: 20%;
+  height: 20px;
   font-size: 15px;
-  font-family: 'Courier New', Courier, monospace;
+  /* font-family: 'Courier New', Courier, monospace; */
+  font-family: 'Roboto', sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
+  /* background-color: #b40909; */
 }
 
 .horizontal-slider {
   width: 100%;
-  max-width: 150px;
+  max-width: 300px;
   height: 20px;
-  /* margin: 10px; */
+  /* margin: 5px; */
   position: relative; 
-  left: 5%; 
-  bottom: 5%;
+  left: 0%; 
+  top: -30%;
+  /* bottom: 15%; */
+  /* border-radius: 50px; */
+  /* background-color: #b40909; */
 }
 
 
 .example-thumb {
   cursor: pointer;
   position: absolute;
-  background: #fdfdfd;
-  border: 3px solid #fdfdfd;
-  border-radius: 20%;
+  background: #B2B0B0;
+  border: 2px solid #fdfdfd;
+  border-radius: 50%;
   display: block;
   z-index: 500;
   /* box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.961); */
 }
 
 .example-thumb:hover {
-  box-shadow: 0 0 0 6px #fdfdfda0;
+  box-shadow: 0 0 0 4px #fdfdfda0;
 }
 
 /* .example-thumb.active {
@@ -188,11 +224,12 @@
 
 .horizontal-slider .example-track {
   top: 19px;
-  height: 4px;
+  height: 5px;
+  border-radius: 4px;
 }
 
 .horizontal-slider .example-thumb {
-  top: 12px;
+  top: 15px;
   width: 10px;
   outline: none;
   height: 10px;

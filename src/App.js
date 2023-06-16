@@ -19,7 +19,7 @@ import {Slider_1, Slider_2, Slider_3, Slider_4} from "./components/Slider"
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
-const RADAR_DATA_PATH = '/data/radar_data_2.json';
+const RADAR_DATA_PATH = '/data/radar_data_3.json';
 
 
 function App() {
@@ -123,9 +123,11 @@ function App() {
         let vers = data[version];
         const axesLength =  vers[0].length;
         const axesDomain = vers[0].map(d => d.axis)
+        const axesCategory = vers[0].map(d => d.category) // Add this line
+
 
         console.log( data,vers, axesLength, axesDomain);
-        setRadarData({ data: data ,vers: vers, axesLength: axesLength, axesDomain:axesDomain});
+        setRadarData({ data: data ,vers: vers, axesLength: axesLength, axesDomain:axesDomain, axesCategory:axesCategory});
       })
 
       .catch((error) => {
@@ -133,9 +135,11 @@ function App() {
       });
   }, [version]);
 
-  if (!showGraph) {
-    return <WelcomePage enterSite={enterSite} />;
-  } else {
+  // --------------------------------------------welcomepage--------------------------------------------
+  // if (!showGraph) {
+  //   return <WelcomePage enterSite={enterSite} />;
+  // } else {
+  // --------------------------------------------welcomepage--------------------------------------------
 
     return (
       <div className="App">
@@ -158,32 +162,16 @@ function App() {
 
             <div className="chart-container">
               <ChordChart className='chord-chart' chord_data={chordData} />
+              {/* <div className='chord-mask' /> */}
             </div>
             
           </div>
           
           <div className="right">
-            {/* <p>dashboard</p> */}
+            <p>Stakeholder</p>
+            <p>Score</p>
+            <p>Indicators</p>
 
-            <div className="slider-container">
-              {/* <p>INPUT</p> */}
-
-              <div className="slider-label">
-                Residential Space:</div>
-              <Slider_1  handleChange1={handleChange1} />
-
-              <div className="slider-label" > 
-                Office Space:</div>
-              <Slider_2  handleChange2={handleChange2}/>
-
-              <div className="slider-label" > 
-                Amenity Space:</div>
-              <Slider_3  handleChange3={handleChange3}/>
-
-              <div className="slider-label" > 
-                Civic Space:</div>
-              <Slider_4  handleChange4={handleChange4}/>
-            </div>
             
           </div>
 
@@ -192,11 +180,43 @@ function App() {
             <RadarChart className='radar-chart' radar_data={radarData} />
           </div>
 
+          <div className="down">
+            {/* <p>slider</p> */}
+
+            <div className="slider-container">
+              {/* <p>INPUT</p> */}
+
+              <div className="slider-label">
+                Residential Space:
+                <Slider_1  handleChange1={handleChange1} />
+              </div>
+              
+              <div className="slider-label" > 
+                Office Space:
+                <Slider_2  handleChange2={handleChange2}/>
+              </div>
+              
+
+              <div className="slider-label" > 
+                Amenity Space:
+                <Slider_3  handleChange3={handleChange3}/>
+              </div>
+              
+
+              <div className="slider-label" > 
+                Civic Space:
+                <Slider_4  handleChange4={handleChange4}/>
+              </div>
+              
+            </div>
+          
+          </div>
+
 
         </div>
       </div>
     );
-        }
+        // }
 }
 
 export default App;

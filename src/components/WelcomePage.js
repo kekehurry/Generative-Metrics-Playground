@@ -4,7 +4,7 @@ import './WelcomePage.css';
 import Sketch from './Sketch.js';
 
 function WelcomePage({ enterSite }) {
-    // const sketchRef = useRef();
+    const sketchRef = useRef();
 
     // useEffect(() => {
     //     new p5(Sketch, sketchRef.current);
@@ -16,10 +16,14 @@ function WelcomePage({ enterSite }) {
 
     return (
         <div className="welcomepage">
-            <Sketch />
-        <button className="enterButton" onClick={enterSite}>Enter</button>
+            <div className="Circle">Community</div>
+            <div className="Circle_"/>
+            <div className="sketchContainer">
+                <Sketch />
+            </div>
+            <button className="enterButton" onClick={enterSite}>Enter</button>
         </div>
     );
-    }
+}
 
 export default WelcomePage;
