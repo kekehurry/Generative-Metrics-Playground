@@ -2,15 +2,18 @@ import pandas as pd
 import numpy as np
 from model_tool import *
 import random
+from input_data import input_values
 
 VOLPE_area = 30593
 max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
 max_floor_area = 99427
-floor_area = VOLPE_area * random.uniform(0, 3.25)
-office_space = floor_area * 0.3 # a
-amenity_space = floor_area * 0.2 # b
-civic_space = floor_area * 0.1 # c
-resident_space = floor_area * 0.4 # d
+
+floor_area = VOLPE_area * input_values[0]
+
+office_space = floor_area * input_values[1] # a
+amenity_space = floor_area * input_values[2] # b
+civic_space = floor_area * input_values[3] # c
+resident_space = floor_area * input_values[4] # d
 
 # Economic nested classes
 
@@ -59,7 +62,7 @@ class Employment:
     def get_employment_score(self, normalize_local_job_creation, normalize_unemployment_rate):
         score = 0.5 * normalize_local_job_creation + 0.5 * normalize_unemployment_rate
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 
 class Equity:
@@ -92,7 +95,7 @@ class Equity:
     def get_equity_score(self, normalize_affordability, normalize_cost_of_housing):
         score = 0.5 * normalize_affordability + 0.5 * normalize_cost_of_housing
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class Income:
     def __init__(self):
@@ -112,7 +115,7 @@ class Income:
     def get_income_score(self, normalize_mdi):
         score = normalize_mdi
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class Innovation:
     def __init__(self, office_space):
@@ -151,7 +154,7 @@ class Innovation:
     def get_innovation_score(self, normalize_creative, normalize_research):
         score = 1 * normalize_creative + 0 * normalize_research
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class AttractivenessCompetitiveness:
     def __init__(self):
@@ -219,7 +222,7 @@ class AttractivenessCompetitiveness:
     def get_AC_score(self, normalize_congestion, normalize_public, normalize_population, normalize_tourism, normalize_visitor, normalize_travel_time):
         score = 0.2 * normalize_congestion + 0.2 * normalize_public + 0.2 * normalize_population + 0.2 * normalize_tourism + 0.1 * normalize_visitor + 0.1 * normalize_travel_time
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class BuildUpArea:
     def __init__(self, floor_area):
@@ -240,7 +243,7 @@ class BuildUpArea:
     def get_build_up_score(self, normalize_built_area):
         score = normalize_built_area
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class Displacement:
     def __init__(self, floor_area, amenity_space, resident_space):
@@ -288,7 +291,7 @@ class Displacement:
     def get_displacement_score(self, normalize_business, normalize_resident):
         score = 0.5 * normalize_business + 0.5 * normalize_resident
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 class ProfitConstruction:
     def __init__(self, floor_area, resident_space, amenity_space, office_space):
@@ -301,7 +304,7 @@ class ProfitConstruction:
         self.future_profit_score = self.get_profit_score(self.get_future_profit())
 
     def get_current_profit(self):
-        value = 0
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_profit(self):
@@ -312,7 +315,7 @@ class ProfitConstruction:
 
     def get_profit_score(self, normalize_profit):
         score = normalize_profit
-        return score
+        return round(score, 2)
 
 class Economic:
     def __init__(self):
@@ -364,7 +367,7 @@ class Pollution:
     def get_pollution_score(self, normalize_air_quality, normalize_noise_pollution):
         score = 0.5 * normalize_air_quality + 0.5 * normalize_noise_pollution
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 
 class Ecosystem:
@@ -389,7 +392,7 @@ class Ecosystem:
 
     def get_ecosystem_score(self, normalize_green_space):
         score = normalize_green_space
-        return score
+        return round(score, 2)
 
 class PublicService:
     def __init__(self, civic_space, floor_area):
@@ -413,7 +416,7 @@ class PublicService:
 
     def get_public_service_score(self, normalize_public_service):
         score = normalize_public_service
-        return score
+        return round(score, 2)
 
 class Energy:
     def __init__(self):
@@ -442,7 +445,7 @@ class Energy:
     def get_energy_score(self, normalize_emission_mobility, normalize_emission_building):
         score = 0.5 * normalize_emission_mobility + 0.5 * normalize_emission_building
         score = round(score, 2)
-        return score
+        return round(score, 2)
 
 
 class Land:
@@ -460,7 +463,7 @@ class Land:
 
     def get_land_score(self, normalize_land):
         score = normalize_land
-        return score
+        return round(score, 2)
 
 
 class Environmental:
@@ -495,7 +498,7 @@ class Health:
 
     def get_health_score(self, normalize_health):
         score = normalize_health
-        return score
+        return round(score, 2)
 
 
 class SafetySecurity:
@@ -521,7 +524,7 @@ class SafetySecurity:
 
     def get_safety_security_score(self, normalize_traffic_accidents, normalize_crime_rate):
         score = 0.5 * normalize_traffic_accidents + 0.5 * normalize_crime_rate
-        return score
+        return round(score, 2)
 
 class AccessToService:
     def __init__(self):
@@ -533,36 +536,36 @@ class AccessToService:
         return value
 
     def get_future_access_to_transport(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_access_to_sharing(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_access_to_sharing(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_access_to_public_amenities(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_access_to_public_amenities(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_access_to_commercial_amenities(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_access_to_commercial_amenities(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_access_to_service_score(self, normalize_access_to_transport, normalize_access_to_sharing, normalize_access_to_public_amenities, normalize_access_to_commercial_amenities):
         score = 0.25 * normalize_access_to_transport + 0.25 * normalize_access_to_sharing + 0.25 * normalize_access_to_public_amenities + 0.25 * normalize_access_to_commercial_amenities
-        return score
+        return round(score, 2)
 
 class Education:
     def __init__(self):
@@ -570,16 +573,16 @@ class Education:
         self.future_education_score = self.get_education_score(self.get_future_educational())
 
     def get_current_educational(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_educational(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_education_score(self, normalize_educational):
         score = normalize_educational
-        return score
+        return round(score, 2)
 
 class Housing:
     def __init__(self):
@@ -587,48 +590,48 @@ class Housing:
         self.future_housing_score = self.get_housing_score(self.get_future_diversity_of_housing(), self.get_future_preservation_of_cultural_heritage(), self.get_future_ground_floor_usage(), self.get_future_public_outdoor_recreation_space(), self.get_future_green_space())
 
     def get_current_diversity_of_housing(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_diversity_of_housing(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_preservation_of_cultural_heritage(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_preservation_of_cultural_heritage(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_ground_floor_usage(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_ground_floor_usage(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_public_outdoor_recreation_space(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_public_outdoor_recreation_space(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_green_space(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_green_space(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_housing_score(self, normalize_diversity_of_housing, normalize_preservation_of_cultural_heritage, normalize_ground_floor_usage, normalize_public_outdoor_recreation_space, normalize_green_space):
         score = 0.2 * normalize_diversity_of_housing + 0.2 * normalize_preservation_of_cultural_heritage + 0.2 * normalize_ground_floor_usage + 0.2 * normalize_public_outdoor_recreation_space + 0.2 * normalize_green_space
-        return score
+        return round(score, 2)
 
 class SocialExposure:
     def __init__(self):
@@ -636,16 +639,16 @@ class SocialExposure:
         self.future_social_exposure_score = self.get_social_exposure_score(self.get_future_exposure())
 
     def get_current_exposure(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_exposure(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_social_exposure_score(self, normalize_exposure):
         score = normalize_exposure
-        return score
+        return round(score, 2)
 
 class Density:
     def __init__(self):
@@ -653,24 +656,24 @@ class Density:
         self.future_density_score = self.get_density_score(self.get_future_population_density(), self.get_future_building_density())
 
     def get_current_population_density(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_population_density(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_current_building_density(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_building_density(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_density_score(self, normalize_population_density, normalize_building_density):
         score = 0.5 * normalize_population_density + 0.5 * normalize_building_density
-        return score
+        return round(score, 2)
 
 class JobHousing:
     def __init__(self):
@@ -678,16 +681,16 @@ class JobHousing:
         self.future_job_housing_score = self.get_job_housing_score(self.get_future_job_housing_ratio())
 
     def get_current_job_housing_ratio(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_future_job_housing_ratio(self):
-        value = 0.5
+        value = round(random.uniform(0, 1), 2)
         return value
 
     def get_job_housing_score(self, normalize_job_housing_ratio):
         score = normalize_job_housing_ratio
-        return score
+        return round(score, 2)
 
 class Social:
     def __init__(self):
@@ -764,7 +767,7 @@ def test():
     # Create a dataframe for storing the information
     df = pd.DataFrame(data)
     # save dataframe to csv file
-    # df.to_csv('radar_data.csv', index=False)
+    df.to_csv('output/radar_data.csv', index=False)
 
 
     # print(environmental.pollution.air_quality)

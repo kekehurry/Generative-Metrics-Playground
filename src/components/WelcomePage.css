@@ -96,6 +96,8 @@ scale: 0.7;
   justify-content: center;
   color: black;
   font-size: 4rem;
+  flex-direction: column;
+  /* text-align: center */
 }
 
 .Circle_ {

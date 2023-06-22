@@ -9,6 +9,15 @@ from NPI_model import *
 import pandas as pd
 import numpy as np
 import random
+from input_data import input_values
+
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+# -----------------------------------------------------
+# input_values = [random.uniform(0, 3.25),0.3, 0.2, 0.1, 0.4]
+# -----------------------------------------------------
 
 class Resident():
     def __init__(self):
@@ -40,9 +49,9 @@ class Resident():
         #     "target": 'Developer',
         #     "value": round(random.uniform(0, 1), 2)
         # }
-        self.access_score = get_before_after(0, 0.5* self.access_to_service1['value']+ 0.5* self.access_to_service2['value'])
-        self.civic_score =  get_before_after(0, self.civic_space['value'])
-        self.safety_security_score = get_before_after(0, self.safety_security['value'])
+        self.access_score = get_before_after(0.77, 0.5* self.access_to_service1['value']+ 0.5* self.access_to_service2['value'])
+        self.civic_score =  get_before_after(0.76, self.civic_space['value'])
+        self.safety_security_score = get_before_after(1, self.safety_security['value'])
         # self.tax_cost_score = get_before_after(0, self.tax_cost['value'])
         self.resident_score = self.get_resident_score() *100
 
@@ -70,9 +79,9 @@ class Workforce():
             "value": get_access_police_2()
         }
 
-        self.access_score = get_before_after(0, self.access_to_service['value'])
+        self.access_score = get_before_after(0.05, self.access_to_service['value'])
         self.opportunity_score = get_before_after(0, 0.5 * self.opportunity1['value'] + 0.5 * self.opportunity2['value'])
-        self.safety_security_score = get_before_after(0, self.safety_security['value'])
+        self.safety_security_score = get_before_after(1, self.safety_security['value'])
         self.workforce_score = self.get_workforce_score() *100
 
     def get_workforce_score(self):
@@ -102,8 +111,8 @@ class LocalBusinessOwner():
         #     "target": 'Developer',
         #     "value": round(random.uniform(0, 1), 2)
         # }
-        self.finance_score = get_before_after(0, 0.5 * self.finance1['value'] + 0.5 * self.finance2['value'])
-        self.safety_security_score = get_before_after(0, self.safety_security['value'])
+        self.finance_score = get_before_after(0.3, 0.5 * self.finance1['value'] + 0.5 * self.finance2['value'])
+        self.safety_security_score = get_before_after(1, self.safety_security['value'])
         # self.tax_cost_score = get_before_after(0, 1)
         self.local_business_owner_score = self.get_local_business_owner_score() *100
 
@@ -156,7 +165,7 @@ class Government():
         # }
 
         self.finance_score = get_before_after(0, 0.2 * self.tax_revenue1['value'] + 0.2 * self.tax_revenue2['value'] + 0.2 * self.tax_revenue3['value'] + 0.1 * self.tax_revenue4['value'] + 0.1 * self.tax_revenue5['value'] - 0.2 *self.manage_cost['value'])
-        self.safety_security_score = get_before_after(0, 0.5 * self.safety_security1['value'] + 0.5 * self.safety_security2['value'])
+        self.safety_security_score = get_before_after(1, 0.5 * self.safety_security1['value'] + 0.5 * self.safety_security2['value'])
         self.government_score = self.get_government_score() *100
 
     def get_government_score(self):
@@ -211,8 +220,8 @@ class NonProfitInstitution():
             "value": get_access_IG()
         }
 
-        self.access_score = get_before_after(0,  self.access_to_service['value'] )
-        self.safety_security_score = get_before_after(0, self.safety_security['value'])
+        self.access_score = get_before_after(0.55,  self.access_to_service['value'] )
+        self.safety_security_score = get_before_after(1, self.safety_security['value'])
         self.innovation_score = get_before_after(0, self.innovation['value'])
         self.non_profit_score = self.get_non_profit_score() *100
 
@@ -220,7 +229,29 @@ class NonProfitInstitution():
         score = 0.33 * self.access_score['after'] + 0.33 * self.safety_security_score['after'] + 0.34 * self.innovation_score['after']
         return score
 
+class IndustryGroup():
+    def __init__(self):
+        self.access_to_service = {
+            "target": 'Local Business Owner',
+            "value": get_access_LBO()
+        }
+        self.safety_security = {
+            "target": 'Government',
+            "value": get_access_police_4()
+        }
+        self.innovation = {
+            "target": 'Non-Profit Institution',
+            "value": get_access_NPI()
+        }
 
+        self.access_score = get_before_after(0.55,  self.access_to_service['value'] )
+        self.safety_security_score = get_before_after(1, self.safety_security['value'])
+        self.innovation_score = get_before_after(0, self.innovation['value'])
+        self.industry_score = self.get_industry_score() *100
+
+    def get_industry_score(self):
+        score = 0.33 * self.access_score['after'] + 0.33 * self.safety_security_score['after'] + 0.34 * self.innovation_score['after']
+        return score
 #--------------------------------------------#
 # Test
 #--------------------------------------------#
@@ -245,17 +276,18 @@ def test():
     government = Government()
     developer = Developer()
     non_profit_institution = NonProfitInstitution()
+    print(input_values)
     # --------------------------------------------#
     # Data for bubble: score
     # --------------------------------------------#
     # Creat a list of stakeholders
     score = [
-        {"stakeholder": "resident", "score": int(resident.resident_score)},
-        {"stakeholder": "workforce", "score": int(workforce.workforce_score)},
-        {"stakeholder": "local_business_owner", "score": int(local_business_owner.local_business_owner_score)},
-        {"stakeholder": "government", "score": int(government.government_score)},
-        {"stakeholder": "developer", "score": int(developer.developer_score)},
-        {"stakeholder": "non_profit_institution", "score": int(non_profit_institution.non_profit_score)}
+        {"stakeholder": "resident","score": (int(resident.resident_score) - 84)},
+        {"stakeholder": "workforce", "score": (int(workforce.workforce_score) -35)},
+        {"stakeholder": "local_business_owner", "score": (int(local_business_owner.local_business_owner_score) -65)},
+        {"stakeholder": "government", "score": (int(government.government_score) -50)},
+        {"stakeholder": "developer", "score": (int(developer.developer_score) -0)},
+        {"stakeholder": "non_profit_institution", "score": (int(non_profit_institution.non_profit_score) -51)}
     ]
 
     # Creat a dataframe of stakeholders
@@ -302,6 +334,7 @@ def test():
         {"stakeholder": "Nonprofit Institution", "indicator": "Innovation", "target": non_profit_institution.innovation["target"], "value": non_profit_institution.innovation["value"]}
     ]
     indicator_df = pd.DataFrame(indicator_list)
+    indicator_df['value'] = indicator_df['value'].round(2)
     print(indicator_df)
     indicator_df.to_csv("output/indicator.csv", index=False)
 
@@ -331,6 +364,7 @@ def test():
 
     ]
     index_score_df = pd.DataFrame(index_score)
+    index_score_df['score'] = index_score_df['score'].round(2)
     print(index_score_df)
     index_score_df.to_csv('output/index_score.csv', index=False)
 

@@ -3,15 +3,17 @@ from ESE_metrics import *
 import pandas as pd
 import numpy as np
 import random
-
+from stakeholders import input_values
+# -----------------------------------------------------
 VOLPE_area = 30593
 max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
 max_floor_area = 99427
-floor_area = VOLPE_area * random.uniform(0, 3.25)
-office_space = floor_area * 0.3 # a
-amenity_space = floor_area * 0.2 # b
-civic_space = floor_area * 0.1 # c
-resident_space = floor_area * 0.4 # d
+floor_area = VOLPE_area * input_values[0]
+
+office_space = floor_area * input_values[1] # a
+amenity_space = floor_area * input_values[2] # b
+civic_space = floor_area * input_values[3] # c
+resident_space = floor_area * input_values[4] # d
 
 LB_data = cal_stakeholder()
 work_num = get_work_num()

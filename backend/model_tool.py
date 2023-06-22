@@ -8,6 +8,10 @@ import os
 import json
 import codecs
 
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 try:
     apply = apply
 except NameError:

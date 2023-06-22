@@ -16,7 +16,11 @@ function WelcomePage({ enterSite }) {
 
     return (
         <div className="welcomepage">
-            <div className="Circle">Community</div>
+            <div className="Circle">
+                Define <br/>
+                Your <br/>
+                Community
+            </div>
             <div className="Circle_"/>
             <div className="sketchContainer">
                 <Sketch />
