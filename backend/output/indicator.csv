@@ -1,0 +1,27 @@
+stakeholder,indicator,target,value
+Resident,Access to service,Local Business Owner,0.5323538508464574
+Resident,Access to service,Non-Profit Institution,0.9591342747787193
+Resident,Civic space,Government,0.7317795315777227
+Resident,Safety & security,Government,0.959134274778718
+Workforce,Access to service,Local Business Owner,0.06859201764487499
+Workforce,Opportunity,Local Business Owner,0.023156960788749566
+Workforce,Opportunity,Industry Group,0.034735441183119664
+Workforce,Safety & security,Government,0.9648427507947042
+Local business owner,Finance,Resident,0.5188164594256214
+Local business owner,Finance,Workforce,0.07860434328387292
+Local business owner,Safety & security,Government,0.9597625332459313
+Government,Tax revenue,Local Business Owner,0.15582527793919498
+Government,Tax revenue,Developer,0.9212435055371068
+Government,Tax revenue,Industry Group,0.18424870110742136
+Government,Tax revenue,Resident,0.3684974022148421
+Government,Tax revenue,Workforce,0.27637305166112525
+Government,Management Cost,Developer,0.09212435055371056
+Government,Safety & security,Resident,0.6155397224563814
+Government,Safety & security,Workforce,0.7211185998759232
+Developer,Profit,Local Business Owner,0.02637171444613429
+Developer,Profit,Resident,0.052743428892266665
+Developer,Profit,Industry Group,0.039557571669193124
+Developer,Tax,Government,0.131858572230671
+Nonprofit Institution,Access to service,Local Business Owner,0.43699894679890927
+Nonprofit Institution,Safety & security,Government,0.6735762209116106
+Nonprofit Institution,Innovation,Industry Group,0.1558252779391923

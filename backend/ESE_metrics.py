@@ -1,155 +1,711 @@
 import pandas as pd
+import numpy as np
+from model_tool import *
+import random
+
+VOLPE_area = 30593
+max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
+max_floor_area = 99427
+floor_area = VOLPE_area * random.uniform(0, 3.25)
+office_space = floor_area * 0.3 # a
+amenity_space = floor_area * 0.2 # b
+civic_space = floor_area * 0.1 # c
+resident_space = floor_area * 0.4 # d
 
 # Economic nested classes
 
 class Employment:
-    def __init__(self, data):
-        self.unemployment_rate = data['unemployment_rate']
-        self.local_job_creation = data['local_job_creation']
+    def __init__(self, office_space, amenity_space, civic_space):
+        self.office_space = office_space
+        self.amenity_space = amenity_space
+        self.civic_space = civic_space
+
+        self.current_employment_score = self.get_employment_score(self.get_current_unemployment_rate(), self.get_current_job_creation())
+        self.future_employment_score = self.get_employment_score(self.get_future_unemployment_rate(), self.get_future_job_creation())
+
+    def get_current_unemployment_rate(self):
+        current_rate = (4.91 + 4.91 + 5.7 +5.7) / 4  # data from census
+        value = norm(current_rate, 5.7, 4.91)
+        return 1-value
+
+    def get_future_unemployment_rate(self): # should be improved
+        random_number = round(random.uniform(4.91, 5.7), 2)  # now the future unemployment rate is randomly generated
+
+        value = norm(random_number, 5.7, 4.91)
+        return 1-value
+
+    def get_local_job_creation(self):
+        office_job = self.office_space /200
+        amenity_job = self.amenity_space /50
+        civic_job = self.civic_space /50
+        local_job_creation = office_job + amenity_job + civic_job
+
+        return local_job_creation
+
+    def get_current_job_creation(self):
+        VOLPE_area = 30593
+        max_FAR = 3.25 # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
+        max_value = VOLPE_area * max_FAR / 50
+        norm_value = norm(0, max_value , 0)
+        return norm_value
+
+    def get_future_job_creation(self):
+        VOLPE_area = 30593
+        max_FAR = 3.25 # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
+        max_value = VOLPE_area * max_FAR / 50
+        norm_value = norm(self.get_local_job_creation(), max_value , 0)
+        return norm_value
+
+    def get_employment_score(self, normalize_local_job_creation, normalize_unemployment_rate):
+        score = 0.5 * normalize_local_job_creation + 0.5 * normalize_unemployment_rate
+        score = round(score, 2)
+        return score
+
 
 class Equity:
-    def __init__(self, data):
-        self.affordability_of_housing = data['affordability_of_housing']
-        self.cost_of_housing = data['cost_of_housing']
+    def __init__(self, resident_space):
+        self.resident_space = resident_space
+
+        self.current_equity_score = self.get_equity_score(self.get_current_affordability(), self.get_current_cost_of_housing())
+        self.future_equity_score = self.get_equity_score(self.get_future_affordability(), self.get_future_cost_of_housing())
+
+    def get_current_affordability(self):
+        value = 0.1
+        return value
+        # return value
+
+    def get_future_affordability(self):
+        # 25 % of the new housing will be below market rate, with 20% inclusionary housing and 5% middle income housing (https://courbanize.com/projects/kendall-sq-urban-renewal/information)
+        value = (0.1 * VOLPE_area + 0.25 * self.resident_space)/VOLPE_area
+        return value
+
+    def get_current_cost_of_housing(self):
+        score = (148 + 171 + 135 + 137) / 4  # data from https://www.city-data.com/neighborhood/Kendall-Square-Cambridge-MA.html
+        value = norm(score, 171, 135)
+        return value
+
+    def get_future_cost_of_housing(self): # should be improved
+        score = round(random.uniform(135* (1- self.resident_space/max_floor_area), 135), 2)  # now it is randomly generated
+        value = norm(score, 171, 0)
+        return value
+
+    def get_equity_score(self, normalize_affordability, normalize_cost_of_housing):
+        score = 0.5 * normalize_affordability + 0.5 * normalize_cost_of_housing
+        score = round(score, 2)
+        return score
 
 class Income:
-    def __init__(self, data):
-        self.median_disposable_income = data['median_disposable_income']
+    def __init__(self):
+        self.current_income_score = self.get_income_score(self.get_current_mdi())
+        self.future_income_score = self.get_income_score(self.get_future_mdi())
+    #     median household income
+
+    def get_current_mdi(self):
+        score = (79917 + 162708 + 140682 + 65804)/4  # data from https://www.city-data.com/neighborhood/Kendall-Square-Cambridge-MA.html
+        value = norm(score, 162708, 65804)
+        return value
+
+    def get_future_mdi(self):
+        value = self.get_current_mdi() * 1.1
+        return value
+
+    def get_income_score(self, normalize_mdi):
+        score = normalize_mdi
+        score = round(score, 2)
+        return score
 
 class Innovation:
-    def __init__(self, data):
-        self.creative_industry = data['creative_industry']
-        self.research_intensity = data['research_intensity']
+    def __init__(self, office_space):
+        self.office_space = office_space
+
+        self.current_innovation_score = self.get_innovation_score(self.get_current_creative(),
+                                                          self.get_current_research())
+        self.future_innovation_score = self.get_innovation_score(self.get_future_creative(),
+                                                         self.get_future_research())
+
+    def get_current_creative(self):
+        LB_data = cal_stakeholder()
+        work_num = get_work_num()
+        create_num = LB_data[LB_data['Category'] == 'Office/R&D'].pop_num.sum()
+        value = create_num / work_num
+        norm_value = norm(value, 1, 0)
+        return norm_value
+        # return value
+
+    def get_future_creative(self):
+        LB_data = cal_stakeholder()
+        work_num = get_work_num() + self.office_space / 200
+        create_num = LB_data[LB_data['Category'] == 'Office/R&D'].pop_num.sum() + self.office_space * 20 / 200 # 20% Office/R&D
+        value = create_num / work_num
+        norm_value = norm(value, 1, 0)
+        return norm_value
+
+    def get_current_research(self):
+        value = 0
+        return value
+
+    def get_future_research(self):
+        value = 0
+        return value
+
+    def get_innovation_score(self, normalize_creative, normalize_research):
+        score = 1 * normalize_creative + 0 * normalize_research
+        score = round(score, 2)
+        return score
 
 class AttractivenessCompetitiveness:
-    def __init__(self, data):
-        self.congestion = data['congestion']
-        self.public_transport_use = data['public_transport_use']
-        self.population_dependency_ratio = data['population_dependency_ratio']
-        self.tourism_intensity = data['tourism_intensity']
-        self.visitor_access = data['visitor_access']
-        self.decreased_travel_time = data['decreased_travel_time']
+    def __init__(self):
+        self.current_AC_score = self.get_AC_score(self.get_current_congestion(),
+                                                          self.get_current_public(),
+                                                          self.get_current_population(),
+                                                            self.get_current_tourism(),
+                                                            self.get_current_visitor(),
+                                                            self.get_current_travel_time())
+        self.future_AC_score = self.get_AC_score(self.get_future_congestion(),
+                                                            self.get_future_public(),
+                                                            self.get_future_population(),
+                                                            self.get_future_tourism(),
+                                                            self.get_future_visitor(),
+                                                            self.get_future_travel_time())
+
+    def get_current_congestion(self):
+        value = 0
+        return value
+
+    def get_future_congestion(self):
+        value = 0
+        return value
+
+    def get_current_public(self):
+        value = 0
+        return value
+
+    def get_future_public(self):
+        value = 0
+        return value
+
+    def get_current_population(self):
+        value = 0
+        return value
+
+    def get_future_population(self):
+        value = 0
+        return value
+
+    def get_current_tourism(self):
+        value = 0
+        return value
+
+    def get_future_tourism(self):
+        value = 0
+        return value
+
+    def get_current_visitor(self):
+        value = 0
+        return value
+
+    def get_future_visitor(self):
+        value = 0
+        return value
+
+    def get_current_travel_time(self):
+        value = 0
+        return value
+
+    def get_future_travel_time(self):
+        value = 0
+        return value
+
+    def get_AC_score(self, normalize_congestion, normalize_public, normalize_population, normalize_tourism, normalize_visitor, normalize_travel_time):
+        score = 0.2 * normalize_congestion + 0.2 * normalize_public + 0.2 * normalize_population + 0.2 * normalize_tourism + 0.1 * normalize_visitor + 0.1 * normalize_travel_time
+        score = round(score, 2)
+        return score
 
 class BuildUpArea:
-    def __init__(self, data):
-        self.new_developed_build_up_area = data['new_developed_build_up_area']
+    def __init__(self, floor_area):
+        self.floor_area = floor_area
+
+        self.current_build_up_score = self.get_build_up_score(self.get_current_built_area())
+        self.future_build_up_score = self.get_build_up_score(self.get_future_built_area())
+
+    def get_current_built_area(self):
+        value = 0
+        return value
+
+    def get_future_built_area(self):
+        area = self.floor_area
+        value = norm(area, max_floor_area, 0)
+        return value
+
+    def get_build_up_score(self, normalize_built_area):
+        score = normalize_built_area
+        score = round(score, 2)
+        return score
 
 class Displacement:
-    def __init__(self, data):
-        self.business_displace_competition = data['business_displace_competition']
-        self.residents_displacement = data['residents_displacement']
-        self.service_population_supporting = data['service_population_supporting']
+    def __init__(self, floor_area, amenity_space, resident_space):
+        self.amenity_space = amenity_space
+        self.resident_space = resident_space
+        self.floor_area = floor_area
+
+        self.current_displacement_score = self.get_displacement_score(self.get_current_business(),self.get_current_resident())
+        self.future_displacement_score = self.get_displacement_score(self.get_future_business(),self.get_future_resident())
+
+    def get_current_business(self):
+        LB_data = cal_stakeholder()
+        business = LB_data[LB_data['Category'] == 'LBO'].floor_area.sum()
+        all = LB_data.floor_area.sum()
+        ratio = business / all
+        value = norm(ratio, 1, 0)
+        return value
+
+    def get_future_business(self):
+        LB_data = cal_stakeholder()
+        business = LB_data[LB_data['Category'] == 'LBO'].floor_area.sum() + self.amenity_space
+        all = LB_data.floor_area.sum() + self.floor_area
+        ratio = business / all
+        max = (LB_data[LB_data['Category'] == 'LBO'].floor_area.sum() +self.floor_area) / all
+        value = norm(ratio, max, 0)
+        return value
+
+    def get_current_resident(self):
+        LB_data = cal_stakeholder()
+        resident = LB_data[LB_data['Category'] == 'RS'].floor_area.sum()
+        all = LB_data.floor_area.sum()
+        ratio = resident / all
+        value = norm(ratio, 1, 0)
+        return value
+
+    def get_future_resident(self):
+        LB_data = cal_stakeholder()
+        resident = LB_data[LB_data['Category'] == 'RS'].floor_area.sum() + self.resident_space
+        all = LB_data.floor_area.sum() + self.floor_area
+        ratio = resident / all
+        max = (LB_data[LB_data['Category'] == 'RS'].floor_area.sum() + self.floor_area) / all
+        value = norm(ratio, max, 0)
+        return value
+
+    def get_displacement_score(self, normalize_business, normalize_resident):
+        score = 0.5 * normalize_business + 0.5 * normalize_resident
+        score = round(score, 2)
+        return score
+
+class ProfitConstruction:
+    def __init__(self, floor_area, resident_space, amenity_space, office_space):
+        self.resident_space = resident_space
+        self.amenity_space = amenity_space
+        self.office_space = office_space
+        self.floor_area = floor_area
+
+        self.current_profit_score = self.get_profit_score(self.get_current_profit())
+        self.future_profit_score = self.get_profit_score(self.get_future_profit())
+
+    def get_current_profit(self):
+        value = 0
+        return value
+
+    def get_future_profit(self):
+        value = self.resident_space * 0.4 + self.amenity_space * 0.5 + self.office_space * 0.8
+        max = self.floor_area * 0.8
+        value = norm(value, max, 0)
+        return value
+
+    def get_profit_score(self, normalize_profit):
+        score = normalize_profit
+        return score
 
 class Economic:
-    def __init__(self, file_path):
-        data = pd.read_csv(file_path)
-        self.employment = Employment(data)
-        self.equity = Equity(data)
-        self.income = Income(data)
-        self.innovation = Innovation(data)
-        self.attractiveness_competitiveness = AttractivenessCompetitiveness(data)
-        self.build_up_area = BuildUpArea(data)
-        self.displacement = Displacement(data)
-        self._preprocess(data)
+    def __init__(self):
+        self.employment = Employment(office_space, amenity_space, civic_space)
+        self.equity = Equity(resident_space)
+        self.income = Income()
+        self.innovation = Innovation(office_space)
+        self.attractive_competitive = AttractivenessCompetitiveness()
+        self.build_up_area = BuildUpArea(floor_area)
+        self.displacement = Displacement(floor_area, amenity_space, resident_space)
+        self.profit_construction = ProfitConstruction(floor_area, resident_space, amenity_space, office_space)
+        # self._preprocess(data)
 
-    def _preprocess(self, data):
-        data.fillna(0, inplace=True)
-
-    def get_statistics(self):
-        return self.data.describe()
+    # def _preprocess(self, data):
+    #     data.fillna(0, inplace=True)
+    #
+    # def get_statistics(self):
+    #     return self.data.describe()
 
 # Environmental nested classes
 
 class Pollution:
-    def __init__(self, data):
-        self.air_quality = data['air_quality']
-        self.noise_pollution = data['noise_pollution']
+    def __init__(self,floor_area):
+        self.floor_area = floor_area
+
+        self.current_pollution_score = self.get_pollution_score(self.get_current_air_quality(), self.get_current_noise_pollution())
+        self.future_pollution_score = self.get_pollution_score(self.get_future_air_quality(), self.get_future_noise_pollution())
+
+    def get_current_air_quality(self):
+        value = 29.73 # AQI get from https://www.city-data.com/neighborhood/Kendall-Square-Cambridge-MA.html
+        value = norm(value, 100, 0)
+        return value
+
+    def get_future_air_quality(self):
+        value = 29.73
+        value = norm(value, 100, 0)
+        return value
+
+    def get_current_noise_pollution(self):
+        value = (12.14 + 14.58 + 12.14 + 10.75)/4
+        value = norm(value, 14.58, 10.75)
+        return value
+
+    def get_future_noise_pollution(self):
+        value = (12.14 + 14.58 + 12.14 + 10.75)/4 + (floor_area/VOLPE_area)
+        value = norm(value, 14.58, 10.75)
+        return value
+
+    def get_pollution_score(self, normalize_air_quality, normalize_noise_pollution):
+        score = 0.5 * normalize_air_quality + 0.5 * normalize_noise_pollution
+        score = round(score, 2)
+        return score
+
 
 class Ecosystem:
-    def __init__(self, data):
-        self.share_of_green_and_water_space = data['share_of_green_and_water_space']
+    def __init__(self, civic_space, floor_area):
+        self.civic_space = civic_space
+        self.floor_area = floor_area
+
+        self.current_ecosystem_score = self.get_ecosystem_score(self.get_current_green_space())
+        self.future_ecosystem_score = self.get_ecosystem_score(self.get_future_green_space())
+
+    def get_current_green_space(self):
+        LB_data = cal_stakeholder()
+        green_space = LB_data[LB_data['Category'] == 'Public Open Space'].floor_area.sum()
+        value = green_space / LB_data.floor_area.sum() * 10
+        return value
+
+    def get_future_green_space(self):
+        LB_data = cal_stakeholder()
+        green_space = LB_data[LB_data['Category'] == 'Public Open Space'].floor_area.sum() + self.civic_space/2
+        value = green_space / (LB_data.floor_area.sum() + self.floor_area) * 10
+        return value
+
+    def get_ecosystem_score(self, normalize_green_space):
+        score = normalize_green_space
+        return score
 
 class PublicService:
-    def __init__(self, data):
-        self.quantity_of_public_green_space = data['quantity_of_public_green_space']
-        self.delivery_and_proximity_to_amenities = data['delivery_and_proximity_to_amenities']
+    def __init__(self, civic_space, floor_area):
+        self.civic_space = civic_space
+        self.floor_area = floor_area
+
+        self.current_public_service_score = self.get_public_service_score(self.get_current_public_service())
+        self.future_public_service_score = self.get_public_service_score(self.get_future_public_service())
+
+    def get_current_public_service(self):
+        LB_data = cal_stakeholder()
+        public_service = LB_data[LB_data['Category'] == 'Utility'].floor_area.sum() + LB_data[LB_data['Category'] == 'Government Operations'].floor_area.sum()
+        value = public_service / LB_data.floor_area.sum() * 10
+        return value
+
+    def get_future_public_service(self):
+        LB_data = cal_stakeholder()
+        public_service = LB_data[LB_data['Category'] == 'Utility'].floor_area.sum() + LB_data[LB_data['Category'] == 'Government Operations'].floor_area.sum() + self.civic_space
+        value = public_service / (LB_data.floor_area.sum() + self.floor_area) * 10
+        return value
+
+    def get_public_service_score(self, normalize_public_service):
+        score = normalize_public_service
+        return score
 
 class Energy:
-    def __init__(self, data):
-        self.co2_emissions_mobility = data['co2_emissions_mobility']
-        self.co2_emissions_building = data['co2_emissions_building']
+    def __init__(self):
+        self.current_energy_score = self.get_energy_score(self.get_current_emission_mobility(), self.get_current_emission_building())
+        self.future_energy_score = self.get_energy_score(self.get_future_emission_mobility(), self.get_future_emission_building())
+
+    def get_current_emission_mobility(self):
+        value = 0.5
+        return value
+
+    def get_future_emission_mobility(self):
+        value = 0.5
+        return value
+
+    def get_current_emission_building(self):
+        value = 1
+        return value
+
+    def get_future_emission_building(self):
+        LB_data = cal_stakeholder()
+        num_building = len(LB_data[LB_data['floor_area'] != 0 ]) + 1
+        value = num_building/ (num_building - 1)
+        value = norm(value, 1, 0)
+        return value
+
+    def get_energy_score(self, normalize_emission_mobility, normalize_emission_building):
+        score = 0.5 * normalize_emission_mobility + 0.5 * normalize_emission_building
+        score = round(score, 2)
+        return score
+
 
 class Land:
-    def __init__(self, data):
-        self.brownfield_use = data['brownfield_use']
-        self.urban_heat_island = data['urban_heat_island']
+    def __init__(self):
+        self.current_land_score = self.get_land_score(self.get_current_land())
+        self.future_land_score = self.get_land_score(self.get_future_land())
+
+    def get_current_land(self):
+        value = 0.5
+        return value
+
+    def get_future_land(self):
+        value = 0.5
+        return value
+
+    def get_land_score(self, normalize_land):
+        score = normalize_land
+        return score
+
 
 class Environmental:
-    def __init__(self, file_path):
-        data = pd.read_csv(file_path)
-        self.pollution = Pollution(data)
-        self.ecosystem = Ecosystem(data)
-        self.public_service = PublicService(data)
-        self.energy = Energy(data)
-        self.land = Land(data)
-        self._preprocess(data)
+    def __init__(self):
+        self.pollution = Pollution(floor_area)
+        self.ecosystem = Ecosystem(civic_space, floor_area)
+        self.public_service = PublicService(civic_space, floor_area)
+        self.energy = Energy()
+        self.land = Land()
+        # self._preprocess(data)
 
-    def _preprocess(self, data):
-        data.fillna(0, inplace=True)
-
-    def get_statistics(self):
-        return self.data.describe()
+    # def _preprocess(self, data):
+    #     data.fillna(0, inplace=True)
+    #
+    # def get_statistics(self):
+    #     return self.data.describe()
 
 # Social nested classes
 
+class Health:
+    def __init__(self):
+        self.current_health_score = self.get_health_score(self.get_current_health())
+        self.future_health_score = self.get_health_score(self.get_future_health())
+
+    def get_current_health(self):
+        value = 0.5
+        return value
+
+    def get_future_health(self):
+        value = 0.5
+        return value
+
+    def get_health_score(self, normalize_health):
+        score = normalize_health
+        return score
+
+
 class SafetySecurity:
-    def __init__(self, data):
-        self.traffic_accidents = data['traffic_accidents']
-        self.crime_rate = data['crime_rate']
+    def __init__(self):
+        self.current_safety_security_score = self.get_safety_security_score(self.get_current_traffic_accidents(), self.get_current_crime_rate())
+        self.future_safety_security_score = self.get_safety_security_score(self.get_future_traffic_accidents(), self.get_future_crime_rate())
+
+    def get_current_traffic_accidents(self):
+        value = 0.5
+        return value
+
+    def get_future_traffic_accidents(self):
+        value = 0.5
+        return value
+
+    def get_current_crime_rate(self):
+        value = 0.5
+        return value
+
+    def get_future_crime_rate(self):
+        value = 0.5
+        return value
+
+    def get_safety_security_score(self, normalize_traffic_accidents, normalize_crime_rate):
+        score = 0.5 * normalize_traffic_accidents + 0.5 * normalize_crime_rate
+        return score
 
 class AccessToService:
-    def __init__(self, data):
-        self.access_to_public_transport = data['access_to_public_transport']
-        self.access_to_vehicle_sharing_solutions_for_city_travel = data['access_to_vehicle_sharing_solutions_for_city_travel']
-        self.access_to_public_amenities = data['access_to_public_amenities']
-        self.access_to_commercial_amenities = data['access_to_commercial_amenities']
+    def __init__(self):
+        self.current_access_to_service_score = self.get_access_to_service_score(self.get_current_access_to_transport(), self.get_current_access_to_sharing(), self.get_current_access_to_public_amenities(), self.get_current_access_to_commercial_amenities())
+        self.future_access_to_service_score = self.get_access_to_service_score(self.get_future_access_to_transport(), self.get_future_access_to_sharing(), self.get_future_access_to_public_amenities(), self.get_future_access_to_commercial_amenities())
+
+    def get_current_access_to_transport(self):
+        value = 0.5
+        return value
+
+    def get_future_access_to_transport(self):
+        value = 0.5
+        return value
+
+    def get_current_access_to_sharing(self):
+        value = 0.5
+        return value
+
+    def get_future_access_to_sharing(self):
+        value = 0.5
+        return value
+
+    def get_current_access_to_public_amenities(self):
+        value = 0.5
+        return value
+
+    def get_future_access_to_public_amenities(self):
+        value = 0.5
+        return value
+
+    def get_current_access_to_commercial_amenities(self):
+        value = 0.5
+        return value
+
+    def get_future_access_to_commercial_amenities(self):
+        value = 0.5
+        return value
+
+    def get_access_to_service_score(self, normalize_access_to_transport, normalize_access_to_sharing, normalize_access_to_public_amenities, normalize_access_to_commercial_amenities):
+        score = 0.25 * normalize_access_to_transport + 0.25 * normalize_access_to_sharing + 0.25 * normalize_access_to_public_amenities + 0.25 * normalize_access_to_commercial_amenities
+        return score
 
 class Education:
-    def __init__(self, data):
-        self.access_to_educational_resources = data['access_to_educational_resources']
+    def __init__(self):
+        self.current_education_score = self.get_education_score(self.get_current_educational())
+        self.future_education_score = self.get_education_score(self.get_future_educational())
+
+    def get_current_educational(self):
+        value = 0.5
+        return value
+
+    def get_future_educational(self):
+        value = 0.5
+        return value
+
+    def get_education_score(self, normalize_educational):
+        score = normalize_educational
+        return score
 
 class Housing:
-    def __init__(self, data):
-        self.diversity_of_housing = data['diversity_of_housing']
-        self.preservation_of_cultural_heritage = data['preservation_of_cultural_heritage']
-        self.ground_floor_usage = data['ground_floor_usage']
-        self.public_outdoor_recreation_space = data['public_outdoor_recreation_space']
-        self.green_space = data['green_space']
+    def __init__(self):
+        self.current_housing_score = self.get_housing_score(self.get_current_diversity_of_housing(), self.get_current_preservation_of_cultural_heritage(), self.get_current_ground_floor_usage(), self.get_current_public_outdoor_recreation_space(), self.get_current_green_space())
+        self.future_housing_score = self.get_housing_score(self.get_future_diversity_of_housing(), self.get_future_preservation_of_cultural_heritage(), self.get_future_ground_floor_usage(), self.get_future_public_outdoor_recreation_space(), self.get_future_green_space())
 
-class SocialExposureDensity:
-    def __init__(self, data):
-        self.population_density = data['population_density']
+    def get_current_diversity_of_housing(self):
+        value = 0.5
+        return value
+
+    def get_future_diversity_of_housing(self):
+        value = 0.5
+        return value
+
+    def get_current_preservation_of_cultural_heritage(self):
+        value = 0.5
+        return value
+
+    def get_future_preservation_of_cultural_heritage(self):
+        value = 0.5
+        return value
+
+    def get_current_ground_floor_usage(self):
+        value = 0.5
+        return value
+
+    def get_future_ground_floor_usage(self):
+        value = 0.5
+        return value
+
+    def get_current_public_outdoor_recreation_space(self):
+        value = 0.5
+        return value
+
+    def get_future_public_outdoor_recreation_space(self):
+        value = 0.5
+        return value
+
+    def get_current_green_space(self):
+        value = 0.5
+        return value
+
+    def get_future_green_space(self):
+        value = 0.5
+        return value
+
+    def get_housing_score(self, normalize_diversity_of_housing, normalize_preservation_of_cultural_heritage, normalize_ground_floor_usage, normalize_public_outdoor_recreation_space, normalize_green_space):
+        score = 0.2 * normalize_diversity_of_housing + 0.2 * normalize_preservation_of_cultural_heritage + 0.2 * normalize_ground_floor_usage + 0.2 * normalize_public_outdoor_recreation_space + 0.2 * normalize_green_space
+        return score
+
+class SocialExposure:
+    def __init__(self):
+        self.current_social_exposure_score = self.get_social_exposure_score(self.get_current_exposure())
+        self.future_social_exposure_score = self.get_social_exposure_score(self.get_future_exposure())
+
+    def get_current_exposure(self):
+        value = 0.5
+        return value
+
+    def get_future_exposure(self):
+        value = 0.5
+        return value
+
+    def get_social_exposure_score(self, normalize_exposure):
+        score = normalize_exposure
+        return score
+
+class Density:
+    def __init__(self):
+        self.current_density_score = self.get_density_score(self.get_current_population_density(), self.get_current_building_density())
+        self.future_density_score = self.get_density_score(self.get_future_population_density(), self.get_future_building_density())
+
+    def get_current_population_density(self):
+        value = 0.5
+        return value
+
+    def get_future_population_density(self):
+        value = 0.5
+        return value
+
+    def get_current_building_density(self):
+        value = 0.5
+        return value
+
+    def get_future_building_density(self):
+        value = 0.5
+        return value
+
+    def get_density_score(self, normalize_population_density, normalize_building_density):
+        score = 0.5 * normalize_population_density + 0.5 * normalize_building_density
+        return score
 
 class JobHousing:
-    def __init__(self, data):
-        self.job_housing_ratio = data['job_housing_ratio']
+    def __init__(self):
+        self.current_job_housing_score = self.get_job_housing_score(self.get_current_job_housing_ratio())
+        self.future_job_housing_score = self.get_job_housing_score(self.get_future_job_housing_ratio())
+
+    def get_current_job_housing_ratio(self):
+        value = 0.5
+        return value
+
+    def get_future_job_housing_ratio(self):
+        value = 0.5
+        return value
+
+    def get_job_housing_score(self, normalize_job_housing_ratio):
+        score = normalize_job_housing_ratio
+        return score
 
 class Social:
-    def __init__(self, file_path):
-        data = pd.read_csv(file_path)
-        self.safety_security = SafetySecurity(data)
-        self.access_to_service = AccessToService(data)
-        self.education = Education(data)
-        self.housing = Housing(data)
-        self.social_exposure_density = SocialExposureDensity(data)
-        self.job_housing = JobHousing(data)
-        self._preprocess(data)
-
-    def _preprocess(self, data):
-        data.fillna(0, inplace=True)
-
-    def get_statistics(self):
-        return self.data.describe()
+    def __init__(self):
+        self.health = Health()
+        self.safety_security = SafetySecurity()
+        self.access_to_service = AccessToService()
+        self.education = Education()
+        self.housing = Housing()
+        self.social_exposure = SocialExposure()
+        self.density = Density()
+        self.job_housing = JobHousing()
+        # self._preprocess(data)
+    #
+    # def _preprocess(self, data):
+    #     data.fillna(0, inplace=True)
+    #
+    # def get_statistics(self):
+    #     return self.data.describe()
 
 #--------------------------------------------#
 # Test
@@ -158,11 +714,11 @@ class Social:
 # output format：
 # -------------------------------------------#
 # category          indicator               baseline        value
-
+#
 #  economic         employment              5              10
 #  economic         equity                  5              6
 #  social           safety_security         5              7
-#  social           access_to_service       5              3   
+#  social           access_to_service       5              3
 #  environmental    pollution               5              5
 #  environmental    ecosystem               5              2
 # -------------------------------------------#
@@ -170,17 +726,53 @@ class Social:
 
 
 def test():
-    economic = Economic("economic.csv")
-    print(economic.employment.unemployment_rate)
-    print(economic.get_statistics())
+    economic = Economic()
+    environmental = Environmental()
+    social = Social()
 
-    environmental = Environmental("environmental.csv")
-    print(environmental.pollution.air_quality)
-    print(environmental.get_statistics())
+    # Create a list of dictionaries for storing the information
+    data = [
+        {"category": "Economic", "indicator": "Employment", "baseline": economic.employment.current_employment_score,
+         "value": economic.employment.future_employment_score},
+        {"category": "Economic", "indicator": "Equity", "baseline": economic.equity.current_equity_score, "value": economic.equity.future_equity_score},
+        {"category": "Economic", "indicator": "Income", "baseline": economic.income.current_income_score, "value": economic.income.future_income_score},
+        {"category": "Economic", "indicator": "Innovation", "baseline": economic.innovation.current_innovation_score, "value": economic.innovation.future_innovation_score},
+        {"category": "Economic", "indicator": "Attractiv & Competitive", "baseline": economic.attractive_competitive.current_AC_score, "value": economic.attractive_competitive.future_AC_score},
+        {"category": "Economic", "indicator": "Build up area", "baseline": economic.build_up_area.current_build_up_score, "value": economic.build_up_area.future_build_up_score},
+        {"category": "Economic", "indicator": "Displacement", "baseline": economic.displacement.current_displacement_score, "value": economic.displacement.future_displacement_score},
+        {"category": "Economic", "indicator": "ProfitConstruction", "baseline": economic.profit_construction.current_profit_score, "value": economic.profit_construction.future_profit_score},
+        {"category": "Environmental", "indicator": "Pollution", "baseline": environmental.pollution.current_pollution_score, "value": environmental.pollution.future_pollution_score},
+        {"category": "Environmental", "indicator": "Ecosystem", "baseline": environmental.ecosystem.current_ecosystem_score, "value": environmental.ecosystem.future_ecosystem_score},
+        {"category": "Environmental", "indicator": "Public Service", "baseline": environmental.public_service.current_public_service_score, "value": environmental.public_service.future_public_service_score},
+        {"category": "Environmental", "indicator": "Energy", "baseline": environmental.energy.current_energy_score, "value": environmental.energy.future_energy_score},
+        {"category": "Environmental", "indicator": "Land", "baseline": environmental.land.current_land_score, "value": environmental.land.future_land_score},
+        {"category": "Social", "indicator": "Health", "baseline": social.health.current_health_score, "value": social.health.future_health_score},
+        {"category": "Social", "indicator": "Safety & Security", "baseline": social.safety_security.current_safety_security_score, "value": social.safety_security.future_safety_security_score},
+        {"category": "Social", "indicator": "Access to Service", "baseline": social.access_to_service.current_access_to_service_score, "value": social.access_to_service.future_access_to_service_score},
+        {"category": "Social", "indicator": "Education", "baseline": social.education.current_education_score, "value": social.education.future_education_score},
+        {"category": "Social", "indicator": "Housing", "baseline": social.housing.current_housing_score, "value": social.housing.future_housing_score},
+        {"category": "Social", "indicator": "Social Exposure", "baseline": social.social_exposure.current_social_exposure_score, "value": social.social_exposure.future_social_exposure_score},
+        {"category": "Social", "indicator": "Density", "baseline": social.density.current_density_score, "value": social.density.future_density_score},
+        {"category": "Social", "indicator": "Job Housing", "baseline": social.job_housing.current_job_housing_score, "value": social.job_housing.future_job_housing_score}
+    ]
 
-    social = Social("social.csv")
-    print(social.safety_security.traffic_accidents)
-    print(social.get_statistics())
+    # Print the information in the desired format
+    print(f"{'category':<15} {'indicator':<20} {'baseline'} {'value'}")
+    for row in data:
+        print(f"{row['category']:<15} {row['indicator']:<20} {row['baseline']} {row['value']}")
+
+    # Create a dataframe for storing the information
+    df = pd.DataFrame(data)
+    # save dataframe to csv file
+    # df.to_csv('radar_data.csv', index=False)
+
+
+    # print(environmental.pollution.air_quality)
+    # print(environmental.get_statistics())
+    #
+    # social = Social("social.csv")
+    # print(social.safety_security.traffic_accidents)
+    # print(social.get_statistics())
 
 if __name__ == '__main__':
     test()
