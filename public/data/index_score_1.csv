@@ -1,0 +1,16 @@
+stakeholder,indicator,baseline,score
+Resident,Access to service,0.77,0.61
+Resident,Civic space,0.76,0.59
+Resident,Safety & security,1.0,0.76
+Workforce,Access to service,0.05,0.12
+Workforce,Opportunity,0.0,0.14
+Workforce,Safety & security,1.0,0.83
+Local business owner,Finance,0.3,0.3
+Local business owner,Safety & security,1.0,0.88
+Government,Finance,0.0,0.19
+Government,Safety & security,1.0,0.79
+Developer,Profit,0.0,0.17
+Developer,Tax,0.0,0.57
+Nonprofit Institution,Access to service,0.55,0.47
+Nonprofit Institution,Safety & security,1.0,0.76
+Nonprofit Institution,Innovation,0.0,0.11
