@@ -3,80 +3,94 @@
 /* ------------------------------------------------------------------------------------ */
 
 .welcomepage {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background-color: #13121a;
-    display: flex;
-    align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
-  }
-  
+  position: fixed;
+  width: 100%;
+  /* height: 100%; */
+  height: 100vh;
+  background-color: #13121a;
+  /* display: flex; */
+  /* align-items: center; */
+  /* 垂直居中 */
+  /* justify-content: center; */
+  /* 水平居中 */
+  overflow: auto;
+}
+
+.page {
+  height: 100vh;
+  display: flex;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+  /* border: 5px solid #13121a;
+  box-sizing: border-box; */
+}
+
 .enterButton {
-position: relative;
-top: 35%;
-width: 120px;
-height: 40px;
-background-color: #000;
-display: flex;
-align-items: center;
-color: white;
-flex-direction: column;
-justify-content: center;
-border: none;
-padding: 12px;
-gap: 12px;
-border-radius: 8px;
-cursor: pointer;
-/* z-index: 10; */
+  position: relative;
+  top: 35%;
+  width: 120px;
+  height: 40px;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  color: white;
+  flex-direction: column;
+  justify-content: center;
+  border: none;
+  padding: 12px;
+  gap: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  /* z-index: 10; */
 }
 
 .enterButton::before {
-content: '';
-position: absolute;
-inset: 0;
-left: -4px;
-top: -1px;
-margin: auto;
-width: 128px;
-height: 48px;
-border-radius: 10px;
-background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100% );
-z-index: -10;
-pointer-events: none;
-transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -4px;
+  top: -1px;
+  margin: auto;
+  width: 128px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
+  z-index: -10;
+  pointer-events: none;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .enterButton::after {
-content: "";
-z-index: -1;
-position: absolute;
-inset: 0;
-background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100% );
-transform: translate3d(0, 0, 0) scale(0.95);
-filter: blur(20px);
+  content: "";
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100%);
+  transform: translate3d(0, 0, 0) scale(0.95);
+  filter: blur(20px);
 }
 
 .enterButton:hover::after {
-filter: blur(30px);
+  filter: blur(30px);
 }
 
 .enterButton:hover::before {
-transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
 
 .enterButton:active::before {
-scale: 0.7;
-/* z-index: 10; */
+  scale: 0.7;
+  /* z-index: 10; */
 }
 
 .welcomepage canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -100;
 }
 
 
@@ -90,14 +104,13 @@ scale: 0.7;
   border-radius: 50%;
   background: linear-gradient(to bottom right, #e81cff, #40c9ff);
   /* backdrop-filter: blur(10px); */
-  z-index: 11; /* to place the circle below the texts and particles */
+  z-index: 11;
+  /* to place the circle below the texts and particles */
   display: flex;
   align-items: center;
   justify-content: center;
   color: black;
   font-size: 4rem;
-  flex-direction: column;
-  /* text-align: center */
 }
 
 .Circle_ {
@@ -110,7 +123,8 @@ scale: 0.7;
   border-radius: 50%;
   background: linear-gradient(to bottom right, #e81cff, #40c9ff);
   filter: blur(20px);
-  z-index: 10; /* to place the circle below the texts and particles */
+  z-index: 10;
+  /* to place the circle below the texts and particles */
 }
 
 

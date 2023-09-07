@@ -45,7 +45,7 @@
 .App .chart-container {
   position: relative;
   top: 0%;
-  left:0%;
+  left: 0%;
   /* align-items: center; */
   display: flex;
   flex-direction: column;
@@ -85,7 +85,7 @@
 .App .right {
   /* flex: 1; */
   /* background-color: #13121a; */
-  background-color: #950606;
+  background-color: #13121a;
   /* height: 100%; */
   width: 35%;
   /* padding: 1rem;   */
@@ -115,7 +115,7 @@
 }
 
 
-.App  .radar-chart {
+.App .radar-chart {
   position: relative;
   bottom: 0;
   /* justify-content: center; */
@@ -147,7 +147,7 @@
 .App .slider-container {
   position: relative;
   top: 25%;
-  left:18%;
+  left: 18%;
   /* left: 150px; */
   /* transform: translateX(-50%); */
   display: flex;
@@ -168,7 +168,7 @@
   text-align: left;
   /* position: absolute; */
   /* margin: 5px; */
-  top:10%;
+  top: 10%;
   left: 0%;
   width: 20%;
   height: 20px;
@@ -185,8 +185,8 @@
   max-width: 300px;
   height: 20px;
   /* margin: 5px; */
-  position: relative; 
-  left: 0%; 
+  position: relative;
+  left: 0%;
   top: -30%;
   /* bottom: 15%; */
   /* border-radius: 50px; */
@@ -235,4 +235,3 @@
   height: 10px;
   line-height: 38px;
 }
-

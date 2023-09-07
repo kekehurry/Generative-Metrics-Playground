@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { tip as d3tip } from "d3-v6-tip";
 import { useResizeObserver } from "../../utils/useResizeObserver";
 import { partition } from "d3";
+import { useCallback } from 'react';
 
 const innerRadius = 160;
 const outerRadius = innerRadius + 8;
@@ -26,14 +27,14 @@ const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius).cornerRad
 // Draw outside circle
 const arc_out = d3
   .arc()
-  .innerRadius(outerRadius *1.7)
-  .outerRadius(outerRadius *1.7 + 2)
+  .innerRadius(outerRadius * 1.7)
+  .outerRadius(outerRadius * 1.7 + 2)
   .cornerRadius(10);
 
 const arc_out_out = d3
   .arc()
-  .innerRadius(outerRadius *1.8)
-  .outerRadius(outerRadius *1.8 + 2)
+  .innerRadius(outerRadius * 1.8)
+  .outerRadius(outerRadius * 1.8 + 2)
   .cornerRadius(10);
 
 // Draw pie circle, not using
@@ -51,11 +52,11 @@ const mousearc = d3
   .arc()
   .startAngle(d => d.x0)
   .endAngle(d => d.x1)
-  .innerRadius(d => d.y0 * radius )
+  .innerRadius(d => d.y0 * radius)
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const ChordChart = ({ chord_data }) => {
+const ChordChart = ({ chord_data, onStakeholderClick }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -66,26 +67,27 @@ const ChordChart = ({ chord_data }) => {
   //   right: 0,
   // };
   const [containerWidth, containerHeight] = useResizeObserver(containerRef);
+  const handleStakeholderClick = useCallback(onStakeholderClick, []);
 
 
-  
+
   // to add other functions...
 
   useEffect(() => {
     if (!containerWidth) return;
 
     if ((!chord_data.names) || (!chord_data.matrix) || (!chord_data.data)) return;
-    
+
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     const color = d3.scaleOrdinal()
-                    .domain(chord_data.names)
-                    .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40','#9b47a2']);
+      .domain(chord_data.names)
+      .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
     const color_2 = d3.scaleOrdinal()
-                    .domain(chord_data.names)
-                    .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40','#9b47a2']);
+      .domain(chord_data.names)
+      .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
 
     // build SVG
@@ -103,9 +105,9 @@ const ChordChart = ({ chord_data }) => {
       .style("height", "auto")
       .attr("font-family", "sans-serif")
       .attr("font-size", 16);
-    
+
     svg.selectAll('*').remove()
-      
+
     let chords = chord(chord_data.matrix);
 
     for (let i = 0; i < chords.length; i++) {
@@ -177,13 +179,13 @@ const ChordChart = ({ chord_data }) => {
     const distance = [10, 30, 30, 40, 10, 10, 80];
 
     // 设置画面中心
-    const centerX = 0;  
+    const centerX = 0;
     const centerY = 0;
 
     // create Chart
     let group = svg.selectAll("g")
-          .data(chords.groups.map((d, i) => ({...d, radius: radius[i], distance: distance[i]})))
-          .join("g");
+      .data(chords.groups.map((d, i) => ({ ...d, radius: radius[i], distance: distance[i] })))
+      .join("g");
 
 
     // Draw outside standard arcs
@@ -204,21 +206,101 @@ const ChordChart = ({ chord_data }) => {
     // Draw background circles
     group
       .append("circle")
-      .attr("cx", function(d) { 
-          var centroid = arc_out_out.centroid(d); 
-          var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius *1.8 -d.distance); 
-          return newPosition[0];
+      .attr("cx", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        console.log("*****************************************")
+        console.log(d)
+        console.log(centroid)
+        console.log(newPosition)
+        console.log("*****************************************")
+        return newPosition[0];
       })
-      .attr("cy", function(d) { 
-          var centroid = arc_out_out.centroid(d); 
-          var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius *1.8 -d.distance); 
-          return newPosition[1]; 
+      .attr("cy", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        return newPosition[1];
       })
       .attr("r", d => d.radius)  // 设置半径
       .style("fill", (d) => color_2(d.index)) // 设置填充颜色
       .style("fill-opacity", "30%")  // 设置透明度
 
-  
+    group
+      .append("line")
+      .attr("x1", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
+        return newPosition[0];
+      })
+      .attr("y1", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
+        return newPosition[1];
+      })
+      .attr("x2", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[0];
+      })
+      .attr("y2", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[1];
+      })
+      .style("stroke", (d) => color_2(d.index)) // 设置填充颜色
+      .style("stroke-width", 2);
+
+    group
+      .append("circle")
+      .attr("cx", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[0];
+      })
+      .attr("cy", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[1];
+      })
+      .attr("r", 9)  // Set the radius for the outer circle
+      .style("fill", "white") // Set the fill color to white
+      .style("fill-opacity", "100%")  // Set the opacity to 100%
+
+    group
+      .append("circle")
+      .attr("cx", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[0];
+      })
+      .attr("cy", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
+        return newPosition[1];
+      })
+      .attr("r", 8)  // 设置半径
+      .style("fill", (d) => color_2(d.index)) // 设置填充颜色
+      .style("fill-opacity", "100%")  // 设置透明度
+
+    group
+      .append("circle")
+      .attr("cx", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
+        return newPosition[0];
+      })
+      .attr("cy", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
+        return newPosition[1];
+      })
+      .attr("r", 4)  // 设置半径
+      .style("fill", "white") // 设置填充颜色
+      .style("fill-opacity", "100%")  // 设置透明度
+
+
+
+
     // Draw arcs
     group
       .append("path")
@@ -247,7 +329,7 @@ const ChordChart = ({ chord_data }) => {
       ;
     group.raise()
 
-    
+
     // Label
     group
       .append("text")
@@ -256,15 +338,17 @@ const ChordChart = ({ chord_data }) => {
         d.angle = (d.startAngle + d.endAngle) / 2;
       })
       .append("textPath")
-        .attr("xlink:href", (d, i) => `#arc${i}`) // 引用弧的id
-        .attr("startOffset", "10") // 文本起始位置
-        .attr("text-anchor", 'left')
-        .attr("dy", "10")
-        .text((d) => chord_data.names[d.index])
-      ;
+      .attr("xlink:href", (d, i) => `#arc${i}`) // 引用弧的id
+      .attr("startOffset", "10") // 文本起始位置
+      .attr("text-anchor", 'left')
+      .attr("dy", "10")
+      .text((d) => chord_data.names[d.index])
+      .on('click', (event, d) => {
+        handleStakeholderClick(chord_data.names[d.index]);
+      });
     group.raise()
-    
-// ---------------------渐变--------------------- //
+
+    // ---------------------渐变--------------------- //
     // // 在 SVG 容器中添加一个 defs 元素，用于定义渐变
     // let defs = svg.append("defs");
 
@@ -276,7 +360,7 @@ const ChordChart = ({ chord_data }) => {
     //   .attr("r", "50%")       // 渐变的半径
     //   .attr("fx", "50%")      // 渐变的焦点在 chord 的中间
     //   .attr("fy", "50%"); 
-    
+
     // // 在径向渐变中添加两个停止颜色
     // gradient.append("stop")
     //   .attr("offset", "40%")  // 在 40% 的位置，设置第一个停止颜色
@@ -308,11 +392,11 @@ const ChordChart = ({ chord_data }) => {
       //   gradient.append("stop") // 设置渐变的起始颜色（不透明）
       //       .attr("offset", "0%")
       //       .attr("stop-color", sourceColor ); // 转换为 RGBA 颜色，alpha 通道为 80（半透明）
-        
+
       //   gradient.append("stop") // 中间处为透明
       //       .attr("offset", "50%")
       //       .attr("stop-color", sourceColor + "80"); 
-    
+
 
       //   gradient.append("stop") // 设置渐变的终止颜色（不透明）
       //       .attr("offset", "100%")
@@ -323,7 +407,7 @@ const ChordChart = ({ chord_data }) => {
       //       .style("fill", "url(#gradient-" + d.source.index + ")");
       // })
       //---------------------渐变--------------------- //
-      
+
       .attr("d", ribbon)
       // .style("mix-blend-mode", "multiply")
       .on("mouseover", onMouseOver_chord)
@@ -333,8 +417,7 @@ const ChordChart = ({ chord_data }) => {
       .append("title")
       .text(
         (d) =>
-          `${chord_data.names[d.source.index]} -> ${
-            chord_data.names[d.target.index]
+          `${chord_data.names[d.source.index]} -> ${chord_data.names[d.target.index]
           }: \n${chord_data.content[d.source.index][d.target.index]} ${d.source.index === d.target.index ? "" : `\n${chord_data.names[d.target.index]} -> ${chord_data.names[d.source.index]}: \n${chord_data.content[d.target.index][d.source.index]}`}
           `
       );
