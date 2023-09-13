@@ -255,7 +255,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .style("stroke", (d) => color_2(d.index)) // 设置填充颜色
       .style("stroke-width", 2);
     
-    // Draw indicator value circles
+    // Draw indicator value circles (big)
     group
       .append("circle")
       .attr("cx", function (d) {
@@ -272,7 +272,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .style("fill", "white") // Set the fill color to white
       .style("fill-opacity", "100%")  // Set the opacity to 100%
     
-    // Draw indicator value circles
+    // Draw indicator value circles color (big)
     group
       .append("circle")
       .attr("cx", function (d) {
@@ -289,6 +289,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .style("fill", (d) => color_2(d.index)) // 设置填充颜色
       .style("fill-opacity", "100%")  // 设置透明度
 
+    // Draw indicator value circles (small)
     group
       .append("circle")
       .attr("cx", function (d) {

@@ -282,18 +282,18 @@ def test():
     # --------------------------------------------#
     # Creat a list of stakeholders
     score = [
-        {"stakeholder": "resident","score": (int(resident.resident_score) - 84)},
-        {"stakeholder": "workforce", "score": (int(workforce.workforce_score) -35)},
-        {"stakeholder": "local_business_owner", "score": (int(local_business_owner.local_business_owner_score) -65)},
-        {"stakeholder": "government", "score": (int(government.government_score) -50)},
-        {"stakeholder": "developer", "score": (int(developer.developer_score) -0)},
-        {"stakeholder": "non_profit_institution", "score": (int(non_profit_institution.non_profit_score) -51)}
+        {"stakeholder": "resident","score": (int(resident.resident_score) - 84), "radius": 40, 'distance': 20},
+        {"stakeholder": "workforce", "score": (int(workforce.workforce_score) -35), "radius": 60, 'distance': 30},
+        {"stakeholder": "local_business_owner", "score": (int(local_business_owner.local_business_owner_score) -65), "radius": 80, 'distance': 40},
+        {"stakeholder": "government", "score": (int(government.government_score) -50), "radius": 100, 'distance': 50},
+        {"stakeholder": "developer", "score": (int(developer.developer_score) -0), "radius": 120, 'distance': 60},
+        {"stakeholder": "non_profit_institution", "score": (int(non_profit_institution.non_profit_score) -51), "radius": 140, 'distance': 70},
     ]
 
     # Creat a dataframe of stakeholders
     score_df = pd.DataFrame(score)
     print(score_df)
-    score_df.to_csv("output/score.csv", index=False)
+    score_df.to_csv("output/bubble_data.csv", index=False)
 
     #
     # --------------------------------------------#

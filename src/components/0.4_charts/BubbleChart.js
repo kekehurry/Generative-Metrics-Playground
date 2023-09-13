@@ -56,7 +56,7 @@ const mousearc = d3
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
+const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -76,17 +76,17 @@ const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
   useEffect(() => {
     if (!containerWidth) return;
 
-    if ((!bubble_data.names) || (!bubble_data.matrix) || (!bubble_data.data)) return;
+    if ((!chord_data.names) || (!chord_data.matrix) || (!chord_data.data)) return;
 
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     const color = d3.scaleOrdinal()
-      .domain(bubble_data.names)
+      .domain(chord_data.names)
       .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
     const color_2 = d3.scaleOrdinal()
-      .domain(bubble_data.names)
+      .domain(chord_data.names)
       .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
 
@@ -108,19 +108,19 @@ const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
 
     svg.selectAll('*').remove()
 
-    let chords = chord(bubble_data.matrix);
+    let chords = chord(chord_data.matrix);
 
     for (let i = 0; i < chords.length; i++) {
-      for (let j = 0; j < bubble_data.data.length; j++) {
+      for (let j = 0; j < chord_data.data.length; j++) {
         if (
-          bubble_data.names[chords[i].source.index] ===
-          bubble_data.data[j].Stakeholders
+          chord_data.names[chords[i].source.index] ===
+          chord_data.data[j].Stakeholders
         ) {
           if (
-            bubble_data.names[chords[i].target.index] ===
-            bubble_data.data[j].Target
+            chord_data.names[chords[i].target.index] ===
+            chord_data.data[j].Target
           ) {
-            chords[i].content = bubble_data.data[j].content;
+            chords[i].content = chord_data.data[j].content;
           }
         }
       }
@@ -293,7 +293,7 @@ const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
 
     // Label name text
     group.each(function(d, i) {
-      var lines = splitText(bubble_data.names[d.index], 15);  // 假设最大长度为20字符
+      var lines = splitText(chord_data.names[d.index], 15);  // 假设最大长度为20字符
   
       var text = d3.select(this)
           .append("text")
@@ -461,7 +461,7 @@ const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
       //     `
       // );
     svg.raise()
-  }, [bubble_data, containerWidth, containerHeight]);
+  }, [chord_data, bubble_data, containerWidth, containerHeight]);
 
 
   return (

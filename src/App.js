@@ -21,7 +21,7 @@ import RadarChart from "./components/0.4_charts/RadarChart";
 import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
-const BUBBLE_DATA_PATH = "/data/chord_data_2.csv";
+const BUBBLE_DATA_PATH = "/data/bubble_data.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 const RADAR_DATA_PATH = '/data/radar_data_3.json';
 
@@ -313,7 +313,7 @@ function App() {
               {selectedButton === 'label1' ?
                 <ChordChart className='chord-chart' chord_data={chordData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore}/>
                 :
-                <BubbleChart className='chord-chart' bubble_data={bubbleData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore} />
+                <BubbleChart className='chord-chart' chord_data={chordData} bubble_data={bubbleData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore} />
                 // <div><p>Another component</p></div>
               }
             </div>
