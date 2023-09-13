@@ -17,10 +17,10 @@ const chord = d3
   .sortSubgroups(d3.descending)
   .sortChords(d3.descending);
 
-const ribbon = d3
-  .ribbon()
-  .radius(innerRadius - 5)
-  .padAngle(1 / innerRadius);
+// const ribbon = d3
+//   .ribbon()
+//   .radius(innerRadius - 5)
+//   .padAngle(1 / innerRadius);
 
 // Draw pie circle
 const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius).cornerRadius(10);
@@ -56,7 +56,7 @@ const mousearc = d3
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
+const BubbleChart = ({ bubble_data, onStakeholderClick, onScoreClick }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -76,17 +76,17 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
   useEffect(() => {
     if (!containerWidth) return;
 
-    if ((!chord_data.names) || (!chord_data.matrix) || (!chord_data.data)) return;
+    if ((!bubble_data.names) || (!bubble_data.matrix) || (!bubble_data.data)) return;
 
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     const color = d3.scaleOrdinal()
-      .domain(chord_data.names)
+      .domain(bubble_data.names)
       .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
     const color_2 = d3.scaleOrdinal()
-      .domain(chord_data.names)
+      .domain(bubble_data.names)
       .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
 
@@ -104,23 +104,23 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .style("width", "100%")
       .style("height", "auto")
       .attr("font-family", "sans-serif")
-      .attr("font-size", 17);
+      .attr("font-size", 16);
 
     svg.selectAll('*').remove()
 
-    let chords = chord(chord_data.matrix);
+    let chords = chord(bubble_data.matrix);
 
     for (let i = 0; i < chords.length; i++) {
-      for (let j = 0; j < chord_data.data.length; j++) {
+      for (let j = 0; j < bubble_data.data.length; j++) {
         if (
-          chord_data.names[chords[i].source.index] ===
-          chord_data.data[j].Stakeholders
+          bubble_data.names[chords[i].source.index] ===
+          bubble_data.data[j].Stakeholders
         ) {
           if (
-            chord_data.names[chords[i].target.index] ===
-            chord_data.data[j].Target
+            bubble_data.names[chords[i].target.index] ===
+            bubble_data.data[j].Target
           ) {
-            chords[i].content = chord_data.data[j].content;
+            chords[i].content = bubble_data.data[j].content;
           }
         }
       }
@@ -170,21 +170,42 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       return [centerX + distance * Math.cos(angle), centerY + distance * Math.sin(angle)];
     }
 
+    // 分割text
+    function splitText(str, maxLength) {
+      var words = str.split(' ');
+      var lines = [];
+      var currentLine = words[0];
+  
+      for (var i = 1; i < words.length; i++) {
+          if (currentLine.length + words[i].length + 1 <= maxLength) {
+              currentLine += ' ' + words[i];
+          } else {
+              lines.push(currentLine);
+              currentLine = words[i];
+          }
+      }
+      lines.push(currentLine);
+      return lines;
+  }
+
     // 创建半径数组
     // 未来更改为input的circle size
-    const radius = [20, 20, 30, 40, 100, 10, 80];
+    const radius = [40, 60, 80, 90, 100, 50, 80];
 
     // 创建位移数组
     // 未来更改为input的move distance
-    const distance = [10, 30, 30, 40, 10, 10, 80];
+    const distance = [20, 30, 30, 40, 100, 10, 80];
+
+    // 创建总分
+    // 未来更改为input的score
+    const score = [10, 30, 30, 40, 100, 10, 80];
 
     // 设置画面中心
     const centerX = 0;
     const centerY = 0;
 
-    // 创建总分
-    // 未来更改为input的score
-    const score = [10, 30, 30, 40, 100, 10, 80];
+    // Tax max width
+    // const maxWidth = 100;
 
     // create Chart
     let group = svg.selectAll("g")
@@ -206,127 +227,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       ;
     // group.raise()
 
-
-    // Draw background circles
-    // group
-    //   .append("circle")
-    //   .attr("cx", function (d) {
-    //     var centroid = arc_out_out.centroid(d);
-    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-    //     console.log("*****************************************")
-    //     console.log(d)
-    //     console.log(centroid)
-    //     console.log(newPosition)
-    //     console.log("*****************************************")
-    //     return newPosition[0];
-    //   })
-    //   .attr("cy", function (d) {
-    //     var centroid = arc_out_out.centroid(d);
-    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-    //     return newPosition[1];
-    //   })
-    //   .attr("r", d => d.radius)  // 设置半径
-    //   .style("fill", (d) => color_2(d.index)) // 设置填充颜色
-    //   .style("fill-opacity", "30%")  // 设置透明度
-
-    // Draw indicator value lines
-    group
-      .append("line")
-      .attr("x1", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[0];
-      })
-      .attr("y1", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[1];
-      })
-      .attr("x2", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("y2", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .style("stroke", (d) => color_2(d.index)) // 设置填充颜色
-      .style("stroke-width", 2);
-    
-    // Draw indicator value circles
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .attr("r", 9)  // Set the radius for the outer circle
-      .style("fill", "white") // Set the fill color to white
-      .style("fill-opacity", "100%")  // Set the opacity to 100%
-    
-    // Draw indicator value circles
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .attr("r", 8)  // 设置半径
-      .style("fill", (d) => color_2(d.index)) // 设置填充颜色
-      .style("fill-opacity", "100%")  // 设置透明度
-
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[1];
-      })
-      .attr("r", 4)  // 设置半径
-      .style("fill", "white") // 设置填充颜色
-      .style("fill-opacity", "100%")  // 设置透明度
-
-
-
-
-    // Draw arcs
-    group
-      .append("path")
-      // .attr("id", textId.id)
-      .attr("id", (d, i) => `arc${i}`) // 添加弧的id
-      .attr("fill", (d) => color(d.index))
-      .attr("fill-opacity", "100%")
-      .attr("stroke", "black")
-      .attr("d", arc)
-      .on("mouseover", onMouseOver_group)
-      .on("mouseout", onMouseOut)
-      .on('click', (event, d) => {
-        handleStakeholderClick(chord_data.names[d.index]);
-        handleScoreClick(d.score);
-      });
-      ;
-    group.raise()
-
-    // Draw outside arcs
+      // Draw outside arcs
     group
       .append("path")
       // .attr("id", textId.id)
@@ -341,24 +242,150 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
     group.raise()
 
 
-    // Label
+    // Draw background circles
+    group
+      .append("circle")
+      .attr("cx", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        console.log("*****************************************")
+        console.log(d)
+        console.log(centroid)
+        console.log(newPosition)
+        console.log("*****************************************")
+        return newPosition[0];
+      })
+      .attr("cy", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        return newPosition[1];
+      })
+      .attr("r", d => d.radius)  // 设置半径
+      .style("fill", (d) => color_2(d.index)) // 设置填充颜色
+      .style("fill-opacity", "50%")  // 设置透明度
+      .on('click', (event, d) => {
+        handleStakeholderClick(bubble_data.names[d.index]);
+        handleScoreClick(d.score);
+      })
+      .on("mouseover", onMouseOver_group)
+      .on("mouseout", onMouseOut);
+    group.raise()
+    
+    // Label name text
+    // group
+    //   .append("text")
+    //   .attr("fill", "white")
+    //   .attr("x", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+    //     return newPosition[0];
+    //   })
+    //   .attr("y", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+    //     return newPosition[1] + 5;
+    //   })
+    //   .attr("text-anchor", "middle")  // 让文本在指定的坐标中居中
+    //   .attr("font-size", "15px")  // 设置字体大小
+    //   .style("fill-opacity", "80%")  // 设置透明度
+    //   .text((d) => bubble_data.names[d.index]);
+    // group.raise()
+
+    // Label name text
+    group.each(function(d, i) {
+      var lines = splitText(bubble_data.names[d.index], 15);  // 假设最大长度为20字符
+  
+      var text = d3.select(this)
+          .append("text")
+          .attr("fill", "white")
+          .attr("x", function (d) {
+              var centroid = arc_out_out.centroid(d);
+              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+              return newPosition[0];
+          })
+          .attr("y", function (d) {
+              var centroid = arc_out_out.centroid(d);
+              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+              return newPosition[1];
+          })
+          .attr("text-anchor", "middle")  // 让文本在指定的坐标中居中
+          .attr("font-size", "20px")
+          .attr("font-family", "inter")
+          .attr("font-weight", "bold")
+          .attr("font-style", "italic")
+          .style("fill-opacity", "70%");
+  
+      // 添加多行文本
+      lines.forEach(function(line, index) {
+          text.append("tspan")
+              .attr("x", function () {
+                  return text.attr("x");
+              })
+              .attr("y", function () {
+                  return (text.attr("y") - 20) + (index * 18); // 18为每行的高度，可根据需要进行调整
+              })
+              .text(line);
+      });
+  });
+
+    // Label Score Value
     group
       .append("text")
       .attr("fill", "white")
-      .each((d) => {
-        d.angle = (d.startAngle + d.endAngle) / 2;
+      .attr("x", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        return newPosition[0];
       })
-      .append("textPath")
-      .attr("xlink:href", (d, i) => `#arc${i}`) // 引用弧的id
-      .attr("startOffset", "10") // 文本起始位置
-      .attr("text-anchor", 'left')
-      .attr("dy", "10")
-      .text((d) => chord_data.names[d.index])
-      .on('click', (event, d) => {
-        handleStakeholderClick(chord_data.names[d.index]);
-        handleScoreClick(d.score);
-      });
+      .attr("y", function (d) {
+        var centroid = arc_out_out.centroid(d);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        return newPosition[1] + 30;
+      })
+      .attr("text-anchor", "start")  // 让文本在指定的坐标中居中
+      .attr("font-family", "inter")
+      .attr("font-weight", "bold")
+      .attr("font-size", "25px")  // 设置字体大小
+      .attr("font-style", "italic")
+      .style("fill-opacity", "70%")  // 设置透明度
+      .text((d) => d.score);
     group.raise()
+
+
+    // Draw arcs
+    // group
+    //   .append("path")
+    //   // .attr("id", textId.id)
+    //   .attr("id", (d, i) => `arc${i}`) // 添加弧的id
+    //   .attr("fill", (d) => color(d.index))
+    //   .attr("fill-opacity", "100%")
+    //   .attr("stroke", "black")
+    //   .attr("d", arc)
+    //   .on("mouseover", onMouseOver_group)
+    //   .on("mouseout", onMouseOut)
+    //   ;
+    // group.raise()
+
+
+
+
+    // // Label
+    // group
+    //   .append("text")
+    //   .attr("fill", "white")
+    //   .each((d) => {
+    //     d.angle = (d.startAngle + d.endAngle) / 2;
+    //   })
+    //   .append("textPath")
+    //   .attr("xlink:href", (d, i) => `#arc${i}`) // 引用弧的id
+    //   .attr("startOffset", "10") // 文本起始位置
+    //   .attr("text-anchor", 'left')
+    //   .attr("dy", "10")
+    //   .text((d) => bubble_data.names[d.index])
+    //   .on('click', (event, d) => {
+    //     handleStakeholderClick(bubble_data.names[d.index]);
+    //   });
+    // group.raise()
 
     // ---------------------渐变--------------------- //
     // // 在 SVG 容器中添加一个 defs 元素，用于定义渐变
@@ -382,14 +409,14 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
     //   .attr("stop-color", "rgba(255, 255, 255, 1)");  // 不透明的白色
 
     // Draw chords
-    svg
-      .append("g")
-      .attr("fill-opacity", 0.7)
-      .selectAll("path")
-      .data(chords)
-      .join("path")
-      .attr("class", "chord")
-      .attr("fill", (d) => color(d.source.index))
+    // svg
+    //   .append("g")
+    //   .attr("fill-opacity", 0.7)
+    //   .selectAll("path")
+    //   .data(chords)
+    //   .join("path")
+    //   .attr("class", "chord")
+    //   .attr("fill", (d) => color(d.source.index))
 
       //---------------------渐变--------------------- //
       // .attr("fill", "url(#gradient)") // 引用上面定义的渐变
@@ -420,21 +447,21 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       // })
       //---------------------渐变--------------------- //
 
-      .attr("d", ribbon)
-      // .style("mix-blend-mode", "multiply")
-      .on("mouseover", onMouseOver_chord)
-      // .on('mouseover', tooltip.show)
-      .on("mouseout", onMouseOut)
-      // .on('mouseout', tooltip.hide)
-      .append("title")
-      .text(
-        (d) =>
-          `${chord_data.names[d.source.index]} -> ${chord_data.names[d.target.index]
-          }: \n${chord_data.content[d.source.index][d.target.index]} ${d.source.index === d.target.index ? "" : `\n${chord_data.names[d.target.index]} -> ${chord_data.names[d.source.index]}: \n${chord_data.content[d.target.index][d.source.index]}`}
-          `
-      );
+      // .attr("d", ribbon)
+      // // .style("mix-blend-mode", "multiply")
+      // .on("mouseover", onMouseOver_chord)
+      // // .on('mouseover', tooltip.show)
+      // .on("mouseout", onMouseOut)
+      // // .on('mouseout', tooltip.hide)
+      // .append("title")
+      // .text(
+      //   (d) =>
+      //     `${bubble_data.names[d.source.index]} -> ${bubble_data.names[d.target.index]
+      //     }: \n${bubble_data.content[d.source.index][d.target.index]} ${d.source.index === d.target.index ? "" : `\n${bubble_data.names[d.target.index]} -> ${bubble_data.names[d.source.index]}: \n${bubble_data.content[d.target.index][d.source.index]}`}
+      //     `
+      // );
     svg.raise()
-  }, [chord_data, containerWidth, containerHeight]);
+  }, [bubble_data, containerWidth, containerHeight]);
 
 
   return (
@@ -470,4 +497,4 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
 
 
 
-export default ChordChart;
+export default BubbleChart;

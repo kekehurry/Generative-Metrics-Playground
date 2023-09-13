@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './WelcomePage.css';
 import { Link, Element } from 'react-scroll';
 import Sketch from './Sketch.js';
+import Page1Image from './image/test1.png';
+import Page2Image from './image/test2.png';
 
 function WelcomePage({ enterSite }) {
     const sketchRef = useRef();
@@ -27,14 +29,16 @@ function WelcomePage({ enterSite }) {
     return (
         <div className="welcomepage">
             <Element name="page1" className="page">
-                <h1>Page 1</h1>
+                {/* <h1>Welcome to Our Community</h1> */}
+                <img src={Page1Image} alt="page1" className='pageImage'/>
                 {/* <p>Some text content... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec pharetra magna. Vivamus sit amet libero in dolor laoreet dignissim eu eu urna. Proin feugiat, enim sit amet volutpat tempus, elit quam condimentum metus, sit amet hendrerit turpis quam nec risus.</p> */}
                 <Link to="page2" spy={true} smooth={true}></Link>
             </Element>
 
             <Element name="page2" className="page" ref={page2Ref}>
-                <h1>Page 2</h1>
-                {showText && <p>Some more text content... Sed sit amet dui non sapien venenatis finibus in eget lectus. Sed tristique massa eu lectus facilisis, eu consectetur elit cursus. Aenean in malesuada elit, sed facilisis ligula. Integer nec magna sed libero sagittis aliquet.</p>}
+                {/* <h1>Page 2</h1> */}
+                <img src={Page2Image} alt="page2" className='pageImage'/>
+                {/* {showText && <p>Some more text content... Sed sit amet dui non sapien venenatis finibus in eget lectus. Sed tristique massa eu lectus facilisis, eu consectetur elit cursus. Aenean in malesuada elit, sed facilisis ligula. Integer nec magna sed libero sagittis aliquet.</p>} */}
                 <Link to="page3" spy={true} smooth={true}></Link>
             </Element>
 

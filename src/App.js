@@ -12,6 +12,7 @@ import * as d3 from "d3";
 import ResPage from "./components/0.3_resolution/ResPage";
 // import PieChart from "./components/0.4_charts/pieChart";
 import ChordChart from "./components/0.4_charts/ChordChart_new";
+import BubbleChart from "./components/0.4_charts/BubbleChart";
 import RadarChart from "./components/0.4_charts/RadarChart";
 // import WelcomePage from './components/0.1_welcome/WelcomePage';
 
@@ -20,6 +21,7 @@ import RadarChart from "./components/0.4_charts/RadarChart";
 import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
 
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
+const BUBBLE_DATA_PATH = "/data/chord_data_2.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 const RADAR_DATA_PATH = '/data/radar_data_3.json';
 
@@ -29,6 +31,7 @@ function App() {
 
   const [showGraph, setShowGraph] = useState(false);
   const [selectedStakeholder, setSelectedStakeholder] = useState(null);
+  const [selectedScore, setSelectedScore] = useState(0);
 
   function enterSite() {
     setShowGraph(true);
@@ -44,6 +47,7 @@ function App() {
   const [version, setVersion] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [chordData, setChordData] = useState({});
+  const [bubbleData, setBubbleData] = useState({});
   // const [pieData, setPieData] = useState({});
   const [radarData, setRadarData] = useState({});
   // const [openModal, setOpenModal] = useState(false);
@@ -175,6 +179,36 @@ function App() {
 
   }, [version]);
 
+  // load bubble data
+  useEffect(() => {
+    fetch(BUBBLE_DATA_PATH)
+      .then((response) => response.text())
+      .then((csvData) => {
+        let data = d3.csvParse(csvData);
+        delete data.columns;
+        let names = Array.from(
+          new Set(data.flatMap((d) => [d.Stakeholders, d.Target]))
+        );
+        let ver = `value_${version}`;
+        let index = new Map(names.map((name, i) => [name, i]));
+        let matrix = Array.from(index, () => new Array(names.length).fill(0));
+        for (const { Stakeholders, Target, [ver]: value } of data)
+          matrix[index.get(Stakeholders)][index.get(Target)] += Number(value);
+
+        let content_matrix = Array.from(index, () => new Array(names.length).fill(0));
+        for (const { Stakeholders, Target, content } of data)
+          content_matrix[index.get(Stakeholders)][index.get(Target)] = content;
+
+        console.log(names, matrix, content_matrix, data);
+        setBubbleData({ names: names, matrix: matrix, content: content_matrix, data: data });
+      })
+
+      .catch((error) => {
+        console.error("Error fetching the data:", error);
+      });
+
+  }, [version]);
+
   // load radar data
   useEffect(() => {
     fetch(RADAR_DATA_PATH)
@@ -277,17 +311,18 @@ function App() {
           </div> */}
             <div className="chart-container">
               {selectedButton === 'label1' ?
-                <ChordChart className='chord-chart' chord_data={chordData} onStakeholderClick={setSelectedStakeholder} />
+                <ChordChart className='chord-chart' chord_data={chordData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore}/>
                 :
-                <div><p>Another component</p></div>
+                <BubbleChart className='chord-chart' bubble_data={bubbleData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore} />
+                // <div><p>Another component</p></div>
               }
             </div>
 
           </div>
 
-          <div className="right" style={{ fontSize: '14px', width: '600px', height: '242px', boxSizing: 'border-box', color: 'white' }}>
-            <p style={{ fontSize: '22px', textAlign: 'left' }}>Stakeholders: {selectedStakeholder}</p>
-            <p style={{ fontSize: '28px', textAlign: 'left', fontWeight: 'bold' }}>Score: 76</p>
+          <div className="right" style={{ fontSize: '14px', width: '600px', height: '30%', boxSizing: 'border-box', color: 'white', padding: '0 20px 0 0' }}>
+            <p style={{ fontFamily: 'inter', fontWeight: 'bold',fontSize: '22px', textAlign: 'left' }}>{selectedStakeholder ? `${selectedStakeholder}` : "Stakeholder"}</p>
+            <p style={{ fontFamily: 'sans-serif', fontSize: '28px', textAlign: 'left', fontWeight: 'bold', fontStyle:'italic' }}>{selectedScore ? `${selectedScore}` : "Score"} </p>
             {splitTestData.map((chunk, chunkIndex) => (
               <div style={{ display: 'flex', justifyContent: 'space-between' }} key={chunkIndex}>
                 {chunk.map((item, idx) => (

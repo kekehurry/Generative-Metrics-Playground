@@ -61,6 +61,7 @@ const RadarChart = ({ radar_data }) => {
         .radius(d => rScale(d))
         .angle((d, i) => i * angleSlice);
     const color = d3.scaleOrdinal().range(["#5FD5EC","#2276FC","#EE6F7C"]);
+    const color_2 = d3.scaleOrdinal().range(["#F7C034","#5FD5EC","#F7C034"]);
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     // const color = d3.scaleOrdinal()
     //                 .domain(radar_data.names)
@@ -149,15 +150,15 @@ const RadarChart = ({ radar_data }) => {
     .data(radar_data.vers)
     .join('g')
         .attr("data-name", (d, i) => device(i))
-        .attr("fill", (d, i) => color(i))
-        .attr("stroke", "white")
+        .attr("fill", (d, i) => color_2(i+1))
+        .attr("stroke", 'white')
         .style("stroke-width", "1px");
 
     plots.append('path')
         .attr("d", d => radarLine(d.map(v => v.value)))
-        .attr("fill", (d, i) => color(i))
+        .attr("fill", (d, i) => color_2(i+1))
         .attr("fill-opacity", 0.24)
-        .attr("stroke", (d, i) => color(i))
+        .attr("stroke", (d, i) => color_2(i+1))
         .attr("stroke-width", 1.5);
 
     plots.selectAll("circle")
@@ -241,7 +242,9 @@ const RadarChart = ({ radar_data }) => {
           .attr('xlink:href', pathId) // The id of the path along which the text should be drawn
           .text(d[0]) // Use the category name as the text
           .attr('startOffset', '0%') // This can be adjusted to position the text along the path
-          .style('fill', (d, i) => color(d))
+          // .style('fill', (d, i) => color(d))
+          .style('fill', 'white')
+          .style('font-family', 'inter')
           .style('font-size', '15px'); 
       });
     }
