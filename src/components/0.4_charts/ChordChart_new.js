@@ -162,33 +162,56 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       svg.selectAll(".chord").style("opacity", 1);
     }
 
-    // 计算新的圆心位置
-    function computeNewPosition(centerX, centerY, oldX, oldY, distance) {
-      var dx = oldX - centerX;
-      var dy = oldY - centerY;
-      var angle = Math.atan2(dy, dx);
-      return [centerX + distance * Math.cos(angle), centerY + distance * Math.sin(angle)];
-    }
-
-    // 创建半径数组
-    // 未来更改为input的circle size
-    const radius = [20, 20, 30, 40, 100, 10, 80];
-
-    // 创建位移数组
-    // 未来更改为input的move distance
-    const distance = [10, 30, 30, 40, 10, 10, 80];
+    // 创建总分
+    // 未来更改为input的score
+    const score = [10, 30, 30, 40, 100, 10, 80];
 
     // 设置画面中心
     const centerX = 0;
     const centerY = 0;
 
-    // 创建总分
-    // 未来更改为input的score
-    const score = [10, 30, 30, 40, 100, 10, 80];
+
+    const bgColor = [
+      {stakeholder: "Developer", bgcolor: "#7178B5"},
+      {stakeholder: "Government", bgcolor: "#0FACA3"},
+      {stakeholder: "Industry group", bgcolor: "#7ec1ca"},
+      {stakeholder: "Local Business Owners", bgcolor: "#a5ba37"},
+      {stakeholder: "Nonprofit Institution", bgcolor: "#f6bd0d"},
+      {stakeholder: "Residents", bgcolor: "#e27c40"},
+      {stakeholder: "Workforce", bgcolor: "#9b47a2"}
+    ];
+  
+    const testData = [
+      { stakeholder: "Developer", indicator: "Taxes", baseline: 25, score: 60 },
+      { stakeholder: "Developer", indicator: "Social cohesion",baseline: 50, score: 55 },
+      { stakeholder: "Developer", indicator: "Management cost", baseline: 22, score: 77 },
+      { stakeholder: "Developer", indicator: "Pollution",baseline: 84, score: 23 },
+      { stakeholder: "Developer", indicator: "Equity", baseline: 20, score: 36 },
+      { stakeholder: "Developer", indicator: "Safety & Security", baseline: 40, score: 35 },
+      { stakeholder: "Developer", indicator: "Voting rate", baseline: 50, score: 33 },
+      { stakeholder: "Government",indicator: "Taxes",baseline: 25, score: 60 },
+      { stakeholder: "Government",indicator: "Social cohesion",baseline: 40, score: 55 },
+      { stakeholder: "Government",indicator: "Management cost", baseline: 25, score: 77 },
+      { stakeholder: "Industry group",indicator: "Taxes",baseline: 25,score: 60 },
+      { stakeholder: "Industry group",indicator: "Social cohesion", baseline: 20,score: 55 },
+      { stakeholder: "Industry group",indicator: "Management cost", baseline: 25, score: 77 },
+      { stakeholder: "Local Business Owners",indicator: "Taxes", baseline: 25,score: 60 },
+      { stakeholder: "Local Business Owners",indicator: "Social cohesion", baseline: 25,score: 55 },
+      { stakeholder: "Local Business Owners",indicator: "Management cost", baseline: 25, score: 77 },
+      { stakeholder: "Nonprofit Institution",indicator: "Taxes", baseline: 25,score: 60 },
+      { stakeholder: "Nonprofit Institution",indicator: "Social cohesion", baseline: 25,score: 55 },
+      { stakeholder: "Nonprofit Institution",indicator: "Management cost", baseline: 25, score: 77 },
+      { stakeholder: "Residents",indicator: "Taxes", baseline: 25,score: 60 },
+      { stakeholder: "Residents",indicator: "Social cohesion", baseline: 25,score: 55 },
+      { stakeholder: "Residents",indicator: "Management cost", baseline: 25, score: 77 },
+      { stakeholder: "Workforce",indicator: "Taxes", baseline: 25,score: 60 },
+      { stakeholder: "Workforce",indicator: "Social cohesion", baseline: 25,score: 55 },
+      { stakeholder: "Workforce",indicator: "Management cost", baseline: 25, score: 77 }
+    ];
 
     // create Chart
     let group = svg.selectAll("g")
-      .data(chords.groups.map((d, i) => ({ ...d, radius: radius[i], distance: distance[i], score: score[i] })))
+      .data(chords.groups.map((d, i) => ({ ...d,score: score[i] })))
       .join("g");
 
 
@@ -205,109 +228,6 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .on("mouseout", onMouseOut)
       ;
     // group.raise()
-
-
-    // Draw background circles
-    // group
-    //   .append("circle")
-    //   .attr("cx", function (d) {
-    //     var centroid = arc_out_out.centroid(d);
-    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-    //     console.log("*****************************************")
-    //     console.log(d)
-    //     console.log(centroid)
-    //     console.log(newPosition)
-    //     console.log("*****************************************")
-    //     return newPosition[0];
-    //   })
-    //   .attr("cy", function (d) {
-    //     var centroid = arc_out_out.centroid(d);
-    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-    //     return newPosition[1];
-    //   })
-    //   .attr("r", d => d.radius)  // 设置半径
-    //   .style("fill", (d) => color_2(d.index)) // 设置填充颜色
-    //   .style("fill-opacity", "30%")  // 设置透明度
-
-    // Draw indicator value lines
-    group
-      .append("line")
-      .attr("x1", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[0];
-      })
-      .attr("y1", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[1];
-      })
-      .attr("x2", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("y2", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .style("stroke", (d) => color_2(d.index)) // 设置填充颜色
-      .style("stroke-width", 2);
-    
-    // Draw indicator value circles (big)
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .attr("r", 9)  // Set the radius for the outer circle
-      .style("fill", "white") // Set the fill color to white
-      .style("fill-opacity", "100%")  // Set the opacity to 100%
-    
-    // Draw indicator value circles color (big)
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 20);
-        return newPosition[1];
-      })
-      .attr("r", 8)  // 设置半径
-      .style("fill", (d) => color_2(d.index)) // 设置填充颜色
-      .style("fill-opacity", "100%")  // 设置透明度
-
-    // Draw indicator value circles (small)
-    group
-      .append("circle")
-      .attr("cx", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[0];
-      })
-      .attr("cy", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance - 45);
-        return newPosition[1];
-      })
-      .attr("r", 4)  // 设置半径
-      .style("fill", "white") // 设置填充颜色
-      .style("fill-opacity", "100%")  // 设置透明度
-
-
-
 
     // Draw arcs
     group
@@ -361,26 +281,134 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       });
     group.raise()
 
-    // ---------------------渐变--------------------- //
-    // // 在 SVG 容器中添加一个 defs 元素，用于定义渐变
-    // let defs = svg.append("defs");
+    // --------------------- 以下为中圈indicator value的绘制 ---------------------
 
-    // // 添加径向渐变
-    // let gradient = defs.append("radialGradient")
-    //   .attr("id", "gradient") // 设置渐变的 id，之后将用这个 id 来引用这个渐变
-    //   .attr("cx", "50%")      // 渐变的中心在 chord 的中间
-    //   .attr("cy", "50%")
-    //   .attr("r", "50%")       // 渐变的半径
-    //   .attr("fx", "50%")      // 渐变的焦点在 chord 的中间
-    //   .attr("fy", "50%"); 
+    // 为每个圆弧计算辅助线的数据
+    const computeLinesForArc = function(d) {
+      const stakeholderItems = testData.filter(item => item.stakeholder === chord_data.names[d.index]); // 根据你的数据结构，可能需要调整
+      const numItems = stakeholderItems.length;
+      const angleStep = (d.endAngle - d.startAngle) / (numItems + 1);
+      const linesData = [];
 
-    // // 在径向渐变中添加两个停止颜色
-    // gradient.append("stop")
-    //   .attr("offset", "40%")  // 在 40% 的位置，设置第一个停止颜色
-    //   .attr("stop-color", "rgba(255, 255, 255, 0.1)");  // 半透明的白色
-    // gradient.append("stop")
-    //   .attr("offset", "60%")  // 在 60% 的位置，设置第二个停止颜色
-    //   .attr("stop-color", "rgba(255, 255, 255, 1)");  // 不透明的白色
+      for (let i = 1; i <= numItems; i++) {
+          const angle = d.startAngle + angleStep * i - Math.PI / 2;
+          linesData.push({
+              x1: centerX + Math.cos(angle) * 180,
+              y1: centerY + Math.sin(angle) * 180,
+              x2: centerX + Math.cos(angle) * 280,
+              y2: centerY + Math.sin(angle) * 280
+          });
+      }
+
+      return linesData;
+    }
+
+    // 为每个圆弧绘制辅助线
+    group.each(function(d, i) {
+      const arcGroup = d3.select(this);
+      const linesData = computeLinesForArc(d);
+
+      arcGroup.selectAll()
+          .data(linesData)
+          .enter()
+          .append("line")
+          .attr("class", "helper-line")
+          .attr("x1", d => d.x1)
+          .attr("y1", d => d.y1)
+          .attr("x2", d => d.x2)
+          .attr("y2", d => d.y2)
+          // 设置线的样式
+          .style("stroke", "grey") // 设置线条颜色
+          .style("stroke-width", 0.5)
+          .style("stroke-opacity", "100%")  // 设置透明度
+          .style("stroke-dasharray", "4,2"); // 设置虚线
+
+      // 如果你希望线被放到底层，你可以这样做：
+      // arcGroup.lower();
+    });
+
+    function computeCirclePosition(lineData, score) {
+      const dx = lineData.x2 - lineData.x1;
+      const dy = lineData.y2 - lineData.y1;
+  
+      // 计算单位方向向量
+      const len = Math.sqrt(dx * dx + dy * dy);
+      const ux = dx / len;
+      const uy = dy / len;
+  
+      // 使用单位方向向量和score值计算新的位置
+      const newX = lineData.x1 + ux * score;
+      const newY = lineData.y1 + uy * score;
+  
+      return [newX, newY];
+  }
+
+    group.selectAll('line.helper-line')
+      .each(function(d, i) {
+        const correspondingData = testData[i];
+
+        // 获取大圆和小圆的位置
+        const bigCirclePos = computeCirclePosition(d3.select(this).data()[0], correspondingData.score);
+        const smallCirclePos = computeCirclePosition(d3.select(this).data()[0], correspondingData.baseline);
+
+        // 绘制大圆
+        d3.select(this.parentNode)
+            .append("circle")
+            .attr("cx", bigCirclePos[0])
+            .attr("cy", bigCirclePos[1])
+            .attr("r", 8)
+            .style("fill", "white")
+            .style("fill-opacity", "100%");
+
+        // 绘制大圆的颜色
+        d3.select(this.parentNode)
+            .append("circle")
+            .attr("cx", bigCirclePos[0])
+            .attr("cy", bigCirclePos[1])
+            .attr("r", 6)
+            .style("fill", (d) => color_2(d.index))
+            .style("fill-opacity", "100%")
+            .on('click', (event, d) => {
+              handleStakeholderClick(chord_data.names[d.index])
+              handleScoreClick(d.score)
+            });
+
+        // 绘制小圆
+        d3.select(this.parentNode)
+            .append("circle")
+            .attr("cx", smallCirclePos[0])
+            .attr("cy", smallCirclePos[1])
+            .attr("r", 5)
+            .style("fill", 'grey')
+            .style("fill-opacity", "100%");
+
+        // 绘制小圆的颜色
+        d3.select(this.parentNode)
+            .append("circle")
+            .attr("cx", smallCirclePos[0])
+            .attr("cy", smallCirclePos[1])
+            .attr("r", 3)
+            .style("fill", "white")
+            .style("fill-opacity", "100%")
+            .on('click', (event, d) => {
+              handleStakeholderClick(chord_data.names[d.index])
+              handleScoreClick(d.score)
+            });
+
+        // 绘制连接大圆和小圆的线段
+        d3.select(this.parentNode)
+            .append('line')
+            .attr("x1", bigCirclePos[0])
+            .attr("y1", bigCirclePos[1])
+            .attr("x2", smallCirclePos[0])
+            .attr("y2", smallCirclePos[1])
+            .style("stroke", (d) => color_2(d.index))
+            .style("stroke-width", 2)
+            .lower();
+      });
+
+
+
 
     // Draw chords
     svg
@@ -391,36 +419,6 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       .join("path")
       .attr("class", "chord")
       .attr("fill", (d) => color(d.source.index))
-
-      //---------------------渐变--------------------- //
-      // .attr("fill", "url(#gradient)") // 引用上面定义的渐变
-      // .attr("fill", (d) => color(d.source.index))
-      // // 为每个 chord 创建一个独立的渐变
-      // .each(function(d) {
-      //   let sourceColor = d3.rgb(color(d.source.index)); // 使用 D3 的颜色函数获取 RGB 颜色
-
-      //   let gradient = defs.append("linearGradient") // 创建线性渐变
-      //       .attr("id", "gradient-" + d.source.index); // 为每个渐变设置唯一的 ID
-
-      //   gradient.append("stop") // 设置渐变的起始颜色（不透明）
-      //       .attr("offset", "0%")
-      //       .attr("stop-color", sourceColor ); // 转换为 RGBA 颜色，alpha 通道为 80（半透明）
-
-      //   gradient.append("stop") // 中间处为透明
-      //       .attr("offset", "50%")
-      //       .attr("stop-color", sourceColor + "80"); 
-
-
-      //   gradient.append("stop") // 设置渐变的终止颜色（不透明）
-      //       .attr("offset", "100%")
-      //       .attr("stop-color", sourceColor); // 原始颜色（不透明）
-
-      //   // 应用渐变到当前的 chord
-      //   d3.select(this)
-      //       .style("fill", "url(#gradient-" + d.source.index + ")");
-      // })
-      //---------------------渐变--------------------- //
-
       .attr("d", ribbon)
       // .style("mix-blend-mode", "multiply")
       .on("mouseover", onMouseOver_chord)

@@ -85,18 +85,55 @@ function App() {
   //   );
   // };
 
-  const testData = [
-    { name: "Taxes", bgcolor: "#7178B5", completed: 60 },
-    { name: "Social cohesion", bgcolor: "#7178B5", completed: 55 },
-    { name: "Management cost", bgcolor: "#7178B5", completed: 77 },
-    { name: "Pollution", bgcolor: "#7178B5", completed: 23 },
-    { name: "Equity", bgcolor: "#7178B5", completed: 36 },
-    { name: "Safety & Security", bgcolor: "#7178B5", completed: 35 },
-    { name: "Voting rate", bgcolor: "#7178B5", completed: 33 },
+  const bgColor = [
+    {stakeholder: "Developer", bgcolor: "#7178B5"},
+    {stakeholder: "Government", bgcolor: "#0FACA3"},
+    {stakeholder: "Industry group", bgcolor: "#7ec1ca"},
+    {stakeholder: "Local Business Owners", bgcolor: "#a5ba37"},
+    {stakeholder: "Nonprofit Institution", bgcolor: "#f6bd0d"},
+    {stakeholder: "Residents", bgcolor: "#e27c40"},
+    {stakeholder: "Workforce", bgcolor: "#9b47a2"}
   ];
 
+  const allTestData = [
+    { stakeholder: "Developer", indicator: "Taxes", baseline: 25, score: 60 },
+    { stakeholder: "Developer", indicator: "Social cohesion",baseline: 50, score: 55 },
+    { stakeholder: "Developer", indicator: "Management cost", baseline: 22, score: 77 },
+    { stakeholder: "Developer", indicator: "Pollution",baseline: 84, score: 23 },
+    { stakeholder: "Developer", indicator: "Equity", baseline: 20, score: 36 },
+    { stakeholder: "Developer", indicator: "Safety & Security", baseline: 40, score: 35 },
+    { stakeholder: "Developer", indicator: "Voting rate", baseline: 50, score: 33 },
+    { stakeholder: "Government",indicator: "Taxes",baseline: 25, score: 60 },
+    { stakeholder: "Government",indicator: "Social cohesion",baseline: 40, score: 55 },
+    { stakeholder: "Government",indicator: "Management cost", baseline: 25, score: 77 },
+    { stakeholder: "Industry group",indicator: "Taxes",baseline: 25,score: 60 },
+    { stakeholder: "Industry group",indicator: "Social cohesion", baseline: 20,score: 55 },
+    { stakeholder: "Industry group",indicator: "Management cost", baseline: 25, score: 77 },
+    { stakeholder: "Local Business Owners",indicator: "Taxes", baseline: 25,score: 60 },
+    { stakeholder: "Local Business Owners",indicator: "Social cohesion", baseline: 25,score: 55 },
+    { stakeholder: "Local Business Owners",indicator: "Management cost", baseline: 25, score: 77 },
+    { stakeholder: "Nonprofit Institution",indicator: "Taxes", baseline: 25,score: 60 },
+    { stakeholder: "Nonprofit Institution",indicator: "Social cohesion", baseline: 25,score: 55 },
+    { stakeholder: "Nonprofit Institution",indicator: "Management cost", baseline: 25, score: 77 },
+    { stakeholder: "Residents",indicator: "Taxes", baseline: 25,score: 60 },
+    { stakeholder: "Residents",indicator: "Social cohesion", baseline: 25,score: 55 },
+    { stakeholder: "Residents",indicator: "Management cost", baseline: 25, score: 77 },
+    { stakeholder: "Workforce",indicator: "Taxes", baseline: 25,score: 60 },
+    { stakeholder: "Workforce",indicator: "Social cohesion", baseline: 25,score: 55 },
+    { stakeholder: "Workforce",indicator: "Management cost", baseline: 25, score: 77 }
+  ];
+
+  const selectedData = allTestData.filter(data => data.stakeholder === selectedStakeholder);
+
+  const getBgColor = (stakeholderName) => {
+    const stakeholderObj = bgColor.find(s => s.stakeholder === stakeholderName);
+    return stakeholderObj ? stakeholderObj.bgcolor : '#e0e0de';  // Default color in case stakeholder not found
+  }
+
   const ProgressBar = (props) => {
-    const { bgcolor, completed, name } = props;
+    const { score, indicator, stakeholder, baseline } = props;
+
+    const bgcolor = getBgColor(stakeholder);
 
     const containerStyles = {
       height: 10,
@@ -108,7 +145,7 @@ function App() {
 
     const fillerStyles = {
       height: '100%',
-      width: `${completed}%`,
+      width: `${score}%`,
       backgroundColor: bgcolor,
       borderRadius: 'inherit',
     }
@@ -123,7 +160,7 @@ function App() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={labelStyles}>{name}</span>
+        <span style={labelStyles}>{indicator}</span>
         <div style={containerStyles}>
           <div style={fillerStyles} />
         </div>
@@ -234,11 +271,11 @@ function App() {
     return <WelcomePage enterSite={enterSite} />;
   } else {
     // --------------------------------------------welcomepage--------------------------------------------
-
+    
     const splitTestData = [];
     const chunkSize = 2;
-    for (let i = 0; i < testData.length; i += chunkSize) {
-      splitTestData.push(testData.slice(i, i + chunkSize));
+    for (let i = 0; i < selectedData.length; i += chunkSize) {
+      splitTestData.push(selectedData.slice(i, i + chunkSize));
     }
 
     return (
@@ -325,9 +362,13 @@ function App() {
             <p style={{ fontFamily: 'sans-serif', fontSize: '28px', textAlign: 'left', fontWeight: 'bold', fontStyle:'italic' }}>{selectedScore ? `${selectedScore}` : "Score"} </p>
             {splitTestData.map((chunk, chunkIndex) => (
               <div style={{ display: 'flex', justifyContent: 'space-between' }} key={chunkIndex}>
-                {chunk.map((item, idx) => (
+                {chunk.map((data, idx) => (
                   <div style={{ width: '45%' }} key={idx}>
-                    <ProgressBar name={item.name} bgcolor={item.bgcolor} completed={item.completed} />
+                    <ProgressBar
+                      indicator={data.indicator}
+                      score={data.score}
+                      stakeholder={data.stakeholder}
+                    />
                   </div>
                 ))}
               </div>
