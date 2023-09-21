@@ -56,7 +56,7 @@ const mousearc = d3
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
+const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreClick }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -180,34 +180,6 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       {stakeholder: "Residents", bgcolor: "#e27c40"},
       {stakeholder: "Workforce", bgcolor: "#9b47a2"}
     ];
-  
-    const testData = [
-      { stakeholder: "Developer", indicator: "Taxes", baseline: 25, score: 60 },
-      { stakeholder: "Developer", indicator: "Social cohesion",baseline: 50, score: 55 },
-      { stakeholder: "Developer", indicator: "Management cost", baseline: 22, score: 77 },
-      { stakeholder: "Developer", indicator: "Pollution",baseline: 84, score: 23 },
-      { stakeholder: "Developer", indicator: "Equity", baseline: 20, score: 36 },
-      { stakeholder: "Developer", indicator: "Safety & Security", baseline: 40, score: 35 },
-      { stakeholder: "Developer", indicator: "Voting rate", baseline: 50, score: 33 },
-      { stakeholder: "Government",indicator: "Taxes",baseline: 25, score: 60 },
-      { stakeholder: "Government",indicator: "Social cohesion",baseline: 40, score: 55 },
-      { stakeholder: "Government",indicator: "Management cost", baseline: 25, score: 77 },
-      { stakeholder: "Industry group",indicator: "Taxes",baseline: 25,score: 60 },
-      { stakeholder: "Industry group",indicator: "Social cohesion", baseline: 20,score: 55 },
-      { stakeholder: "Industry group",indicator: "Management cost", baseline: 25, score: 77 },
-      { stakeholder: "Local Business Owners",indicator: "Taxes", baseline: 25,score: 60 },
-      { stakeholder: "Local Business Owners",indicator: "Social cohesion", baseline: 25,score: 55 },
-      { stakeholder: "Local Business Owners",indicator: "Management cost", baseline: 25, score: 77 },
-      { stakeholder: "Nonprofit Institution",indicator: "Taxes", baseline: 25,score: 60 },
-      { stakeholder: "Nonprofit Institution",indicator: "Social cohesion", baseline: 25,score: 55 },
-      { stakeholder: "Nonprofit Institution",indicator: "Management cost", baseline: 25, score: 77 },
-      { stakeholder: "Residents",indicator: "Taxes", baseline: 25,score: 60 },
-      { stakeholder: "Residents",indicator: "Social cohesion", baseline: 25,score: 55 },
-      { stakeholder: "Residents",indicator: "Management cost", baseline: 25, score: 77 },
-      { stakeholder: "Workforce",indicator: "Taxes", baseline: 25,score: 60 },
-      { stakeholder: "Workforce",indicator: "Social cohesion", baseline: 25,score: 55 },
-      { stakeholder: "Workforce",indicator: "Management cost", baseline: 25, score: 77 }
-    ];
 
     // create Chart
     let group = svg.selectAll("g")
@@ -285,7 +257,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
 
     // 为每个圆弧计算辅助线的数据
     const computeLinesForArc = function(d) {
-      const stakeholderItems = testData.filter(item => item.stakeholder === chord_data.names[d.index]); // 根据你的数据结构，可能需要调整
+      const stakeholderItems = indicator_data.filter(item => item.stakeholder === chord_data.names[d.index]); // 根据数据结构，可能需要调整
       const numItems = stakeholderItems.length;
       const angleStep = (d.endAngle - d.startAngle) / (numItems + 1);
       const linesData = [];
@@ -345,7 +317,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
 
     group.selectAll('line.helper-line')
       .each(function(d, i) {
-        const correspondingData = testData[i];
+        const correspondingData = indicator_data[i];
 
         // 获取大圆和小圆的位置
         const bigCirclePos = computeCirclePosition(d3.select(this).data()[0], correspondingData.score);
@@ -356,7 +328,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
             .append("circle")
             .attr("cx", bigCirclePos[0])
             .attr("cy", bigCirclePos[1])
-            .attr("r", 8)
+            .attr("r", 6.5)
             .style("fill", "white")
             .style("fill-opacity", "100%");
 
@@ -365,7 +337,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
             .append("circle")
             .attr("cx", bigCirclePos[0])
             .attr("cy", bigCirclePos[1])
-            .attr("r", 6)
+            .attr("r", 5)
             .style("fill", (d) => color_2(d.index))
             .style("fill-opacity", "100%")
             .on('click', (event, d) => {
@@ -378,7 +350,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
             .append("circle")
             .attr("cx", smallCirclePos[0])
             .attr("cy", smallCirclePos[1])
-            .attr("r", 5)
+            .attr("r", 4.5)
             .style("fill", 'grey')
             .style("fill-opacity", "100%");
 
@@ -408,8 +380,6 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       });
 
 
-
-
     // Draw chords
     svg
       .append("g")
@@ -433,7 +403,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
           `
       );
     svg.raise()
-  }, [chord_data, containerWidth, containerHeight]);
+  }, [chord_data, indicator_data, containerWidth, containerHeight]);
 
 
   return (
@@ -441,7 +411,7 @@ const ChordChart = ({ chord_data, onStakeholderClick, onScoreClick }) => {
       ref={containerRef}
       style={{
         position: "relative",
-        left: "10%",
+        left: "8%",
         // top: "150px",
         height: "90%",
         width: "100%",

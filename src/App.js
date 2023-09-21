@@ -20,6 +20,7 @@ import RadarChart from "./components/0.4_charts/RadarChart";
 // import Modal from "./components/Modal";
 import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
 
+// read data from backend
 const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 const BUBBLE_DATA_PATH = "/data/bubble_data.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
@@ -30,7 +31,7 @@ const RADAR_DATA_PATH = '/data/radar_data_3.json';
 function App() {
 
   const [showGraph, setShowGraph] = useState(false);
-  const [selectedStakeholder, setSelectedStakeholder] = useState(null);
+  const [selectedStakeholder, setSelectedStakeholder] = useState('Developer');
   const [selectedScore, setSelectedScore] = useState(0);
 
   function enterSite() {
@@ -44,9 +45,19 @@ function App() {
     height: undefined,
   });
 
+  // for test
   const [version, setVersion] = useState(1);
+  // for real
+  const [bcr, setBCR] = useState(0.6);
+  const [tier, setTier] = useState(3);
+  const [residential, setResidential] = useState(0.2);
+  const [office, setOffice] = useState(0.5);
+  const [amenity, setAmenity] = useState(0.2);
+  const [civic, setCivic] = useState(0.1);
+
   const [isMobile, setIsMobile] = useState(false);
   const [chordData, setChordData] = useState({});
+  const [indicatorData, setIndicatorData] = useState({}); 
   const [bubbleData, setBubbleData] = useState({});
   // const [pieData, setPieData] = useState({});
   const [radarData, setRadarData] = useState({});
@@ -58,20 +69,47 @@ function App() {
   // };
   const [selectedButton, setSelectedButton] = useState('label1');
 
+  // ------------------key from user input-------------------------------
+  // --------------------------------------------------------------------
+  // for test  
+  // const handleChange1 = (value) => {
+  //   setVersion(value);
+  // };
+  // const handleChange2 = (value) => {
+  //   setVersion(value);
+  // };
+  // const handleChange3 = (value) => {
+  //   setVersion(value);
+  // };
+  // const handleChange4 = (value) => {
+  //   setVersion(value);
+  // };
+
+  // for real
   const handleChange1 = (value) => {
-    setVersion(value);
+    setResidential(value);
   };
 
   const handleChange2 = (value) => {
-    setVersion(value);
+    setOffice(value);
   };
 
   const handleChange3 = (value) => {
-    setVersion(value);
+    setAmenity(value);
   };
 
   const handleChange4 = (value) => {
-    setVersion(value);
+    setCivic(value);
+  };
+
+  // BCR
+  const handleChange5 = (value) => {
+    setBCR(value);
+  };
+
+  // Tier
+  const handleChange6 = (value) => {
+    setTier(value);
   };
 
   // const ProgressBar = (props) => {
@@ -85,6 +123,7 @@ function App() {
   //   );
   // };
 
+  // color setting for progress bar
   const bgColor = [
     {stakeholder: "Developer", bgcolor: "#7178B5"},
     {stakeholder: "Government", bgcolor: "#0FACA3"},
@@ -94,7 +133,9 @@ function App() {
     {stakeholder: "Residents", bgcolor: "#e27c40"},
     {stakeholder: "Workforce", bgcolor: "#9b47a2"}
   ];
-
+  // data for progress bar & indicator bar
+  // data from backend：
+  // stakeholders.py: index_score.csv (data for chord chart: interaction value)
   const allTestData = [
     { stakeholder: "Developer", indicator: "Taxes", baseline: 25, score: 60 },
     { stakeholder: "Developer", indicator: "Social cohesion",baseline: 50, score: 55 },
@@ -130,8 +171,9 @@ function App() {
     return stakeholderObj ? stakeholderObj.bgcolor : '#e0e0de';  // Default color in case stakeholder not found
   }
 
+  // progress bar component （right up）
   const ProgressBar = (props) => {
-    const { score, indicator, stakeholder, baseline } = props;
+    const { score, indicator, stakeholder} = props;
 
     const bgcolor = getBgColor(stakeholder);
 
@@ -168,6 +210,16 @@ function App() {
     );
   };
 
+  const bubbleTestData = [
+    { stakeholder: "Developer", score: 70, radius: 40, distance: 25 },
+    { stakeholder: "Government", score: 30, radius: 62, distance: 200 },
+    { stakeholder: "Industry group", score: 30, radius: 85, distance: 30 },
+    { stakeholder: "Local Business Owners", score: 40, radius: 95, distance: 200 },
+    { stakeholder: "Nonprofit Institution", score: 100, radius: 105, distance: 100 },
+    { stakeholder: "Residents", score: 10, radius: 25, distance: 10 },
+    { stakeholder: "Workforce", score: 80, radius: 25, distance: 80 }
+  ];
+    
   // handle windows resize
   useEffect(() => {
     function handleResize() {
@@ -196,7 +248,8 @@ function App() {
         let names = Array.from(
           new Set(data.flatMap((d) => [d.Stakeholders, d.Target]))
         );
-        let ver = `value_${version}`;
+        // let ver = `value_${version}`;
+        let ver = `value_1`;  // this should be simulated result
         let index = new Map(names.map((name, i) => [name, i]));
         let matrix = Array.from(index, () => new Array(names.length).fill(0));
         for (const { Stakeholders, Target, [ver]: value } of data)
@@ -214,44 +267,46 @@ function App() {
         console.error("Error fetching the data:", error);
       });
 
-  }, [version]);
+  // }, [version]);
+    }, []);
+
 
   // load bubble data
-  useEffect(() => {
-    fetch(BUBBLE_DATA_PATH)
-      .then((response) => response.text())
-      .then((csvData) => {
-        let data = d3.csvParse(csvData);
-        delete data.columns;
-        let names = Array.from(
-          new Set(data.flatMap((d) => [d.Stakeholders, d.Target]))
-        );
-        let ver = `value_${version}`;
-        let index = new Map(names.map((name, i) => [name, i]));
-        let matrix = Array.from(index, () => new Array(names.length).fill(0));
-        for (const { Stakeholders, Target, [ver]: value } of data)
-          matrix[index.get(Stakeholders)][index.get(Target)] += Number(value);
+  // useEffect(() => {
+  //   fetch(BUBBLE_DATA_PATH)
+  //     .then((response) => response.text())
+  //     .then((csvData) => {
+  //       let data = d3.csvParse(csvData);
+  //       delete data.columns;
+  //       let names = Array.from(
+  //         new Set(data.flatMap((d) => [d.Stakeholders, d.Target]))
+  //       );
+  //       let ver = `value_${version}`;
+  //       let index = new Map(names.map((name, i) => [name, i]));
+  //       let matrix = Array.from(index, () => new Array(names.length).fill(0));
+  //       for (const { Stakeholders, Target, [ver]: value } of data)
+  //         matrix[index.get(Stakeholders)][index.get(Target)] += Number(value);
 
-        let content_matrix = Array.from(index, () => new Array(names.length).fill(0));
-        for (const { Stakeholders, Target, content } of data)
-          content_matrix[index.get(Stakeholders)][index.get(Target)] = content;
+  //       let content_matrix = Array.from(index, () => new Array(names.length).fill(0));
+  //       for (const { Stakeholders, Target, content } of data)
+  //         content_matrix[index.get(Stakeholders)][index.get(Target)] = content;
 
-        console.log(names, matrix, content_matrix, data);
-        setBubbleData({ names: names, matrix: matrix, content: content_matrix, data: data });
-      })
+  //       console.log(names, matrix, content_matrix, data);
+  //       setBubbleData({ names: names, matrix: matrix, content: content_matrix, data: data });
+  //     })
 
-      .catch((error) => {
-        console.error("Error fetching the data:", error);
-      });
+  //     .catch((error) => {
+  //       console.error("Error fetching the data:", error);
+  //     });
 
-  }, [version]);
+  // }, [version]);
 
   // load radar data
   useEffect(() => {
     fetch(RADAR_DATA_PATH)
       .then((response) => response.json())
       .then(data => {
-        let vers = data[version];
+        let vers = data[1];
         const axesLength = vers[0].length;
         const axesDomain = vers[0].map(d => d.axis)
         const axesCategory = vers[0].map(d => d.category) // Add this line
@@ -264,7 +319,7 @@ function App() {
       .catch((error) => {
         console.error("Error fetching the data:", error);
       });
-  }, [version]);
+  }, []);
 
   // --------------------------------------------welcomepage--------------------------------------------
   if (!showGraph) {
@@ -295,13 +350,7 @@ function App() {
           }
 
           <div className="left">
-            {/* <p>Graph</p > */}
-            {/* <p>version: {version}</p > */}
-
-            {/* <div className="chart-container">
-            <ChordChart className='chord-chart' chord_data={chordData} />
-          </div> */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
                 <button
                   onClick={() => setSelectedButton('label1')}
@@ -309,9 +358,11 @@ function App() {
                     backgroundColor: selectedButton === 'label1' ? '#5A5A89' : '#191932',
                     color: 'white',
                     border: 'none',
-                    width: '100px',
+                    width: '120px',
                     height: '30px',
-                    marginRight: '5px'
+                    // marginRight: '5px',
+                    borderRadius: '5px',
+                    marginLeft: '140px'
                   }}
                 >
                   Label1
@@ -322,9 +373,11 @@ function App() {
                     backgroundColor: selectedButton === 'label2' ? '#5A5A89' : '#191932',
                     color: 'white',
                     border: 'none',
-                    width: '100px',
+                    width: '120px',
                     height: '30px',
-                    marginLeft: '5px'
+                    // marginLeft: '5px',
+                    borderRadius: '5px',
+                    // marginLeft: '200px'
                   }}
                 >
                   Label2
@@ -348,20 +401,20 @@ function App() {
           </div> */}
             <div className="chart-container">
               {selectedButton === 'label1' ?
-                <ChordChart className='chord-chart' chord_data={chordData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore}/>
+                <ChordChart className='chord-chart' chord_data={chordData} indicator_data={allTestData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore}/>
                 :
-                <BubbleChart className='chord-chart' chord_data={chordData} bubble_data={bubbleData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore} />
+                <BubbleChart className='chord-chart' chord_data={chordData} bubble_data={bubbleTestData} onStakeholderClick={setSelectedStakeholder} onScoreClick={setSelectedScore} />
                 // <div><p>Another component</p></div>
               }
             </div>
 
           </div>
 
-          <div className="right" style={{ fontSize: '14px', width: '600px', height: '30%', boxSizing: 'border-box', color: 'white', padding: '0 20px 0 0' }}>
-            <p style={{ fontFamily: 'inter', fontWeight: 'bold',fontSize: '22px', textAlign: 'left' }}>{selectedStakeholder ? `${selectedStakeholder}` : "Stakeholder"}</p>
-            <p style={{ fontFamily: 'sans-serif', fontSize: '28px', textAlign: 'left', fontWeight: 'bold', fontStyle:'italic' }}>{selectedScore ? `${selectedScore}` : "Score"} </p>
+          <div className="right" style={{ fontSize: '14px', width: '600px', height: '28%', boxSizing: 'border-box', color: 'white', padding: '0 20px 0 0' }}>
+            <p style={{ fontFamily: 'inter', fontWeight: 'bold',fontSize: '22px', textAlign: 'left',marginBottom:'10px' }}>{selectedStakeholder ? `${selectedStakeholder}` : "Stakeholder"}</p>
+            <p style={{ fontFamily: 'sans-serif', fontSize: '28px', textAlign: 'left', fontWeight: 'bold', fontStyle:'italic',marginTop:'0px', marginBottom:'20px' }}>{selectedScore ? `${selectedScore}` : "Score"} </p>
             {splitTestData.map((chunk, chunkIndex) => (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }} key={chunkIndex}>
+              <div style={{ width: '80%', display: 'flex', justifyContent: 'space-between', marginTop:'0px',marginBottom:'0px' }} key={chunkIndex}>
                 {chunk.map((data, idx) => (
                   <div style={{ width: '45%' }} key={idx}>
                     <ProgressBar
@@ -386,26 +439,32 @@ function App() {
             <div className="slider-container">
               {/* <p>INPUT</p > */}
 
+              <div className='slider-label' style={{ display: 'flex', flexDirection: 'column', padding: '2px 0 0 0'}}>
+                Building Coverage Ratio
+                <input type="number" placeholder="0.6" step="0.1" min="0" max="1" handleChange5={handleChange5} />
+              </div>
+
+              <div className='slider-label' style={{ display: 'flex', flexDirection: 'column', padding: '2px 0 0 0'}}>
+                Tier Number    
+                <input type="number" placeholder="3" step="1" min="0" max="30" handleChange6={handleChange6} />
+              </div>
+
               <div className="slider-label">
-                Residential Space:
                 <Slider_1 handleChange1={handleChange1} />
               </div>
 
               <div className="slider-label" >
-                Office Space:
-                <Slider_2 handleChange2={handleChange2} />
+                <Slider_2 handleChange2={handleChange2} max={1 - residential} />
               </div>
 
 
               <div className="slider-label" >
-                Amenity Space:
-                <Slider_3 handleChange3={handleChange3} />
+                <Slider_3 handleChange3={handleChange3} max={1 - residential - office}/>
               </div>
 
 
               <div className="slider-label" >
-                Civic Space:
-                <Slider_4 handleChange4={handleChange4} />
+                <Slider_4 handleChange4={handleChange4} max={1- residential-office-amenity}/>
               </div>
 
             </div>

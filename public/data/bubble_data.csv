@@ -1,7 +1,7 @@
-stakeholder,value_0,value_1,value_2,value_3,value_4,value_4
-resident,84,71,77,79,65,65
-workforce,35,35,35,36,36,36
-local_business_owner,65,60,63,62,60,58
-government,50,48,49,49,48,49
-developer,0,25,13,10,36,37
-non_profit_institution,51,46,47,49,41,44
+stakeholder,score,radius,distance
+Resident,84,71,77
+Workforce,35,35,35
+Local Business Wwner,65,60,63
+Government,50,48,49
+Developer,0,25,13
+Nonprofit Institution,51,46,47

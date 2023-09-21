@@ -8,10 +8,10 @@ import {create, select as selectDOM} from "d3-selection"
 // import { partition } from "d3";
 
 // const width = 900;
-const height = 600;
+const height = 690;
 const margin_ = 30;
 const radius = (height-(margin_*2)) / 4.5;
-const dotRadius = 3.5;
+const dotRadius = 5.5;
 const axisLabelFactor = 1.12;
 // const wrapWidth = 60;
 // const formatPercent = d3.format(',.0%')
@@ -198,8 +198,8 @@ const RadarChart = ({ radar_data }) => {
         .attr('class', 'category-arc')
         .attr('id', (d, i) => `category-arc-${i}`) // Add an id to each path
         .attr('d', d => arc_({
-          startAngle: angleSlice * (d[1][0].index-1),
-          endAngle: angleSlice * (d[1][d[1].length - 1].index + 1)
+          startAngle: angleSlice * (d[1][0].index-0.9),
+          endAngle: angleSlice * (d[1][d[1].length - 1].index + 0.9)
         }))
         // .style('fill', 'white')
         .style('fill', (d, i) => color(d[0]))
@@ -212,8 +212,8 @@ const RadarChart = ({ radar_data }) => {
       const categories = axesByCategory();
     
       const arc = d3.arc()
-        .innerRadius(radius * 1.6)
-        .outerRadius(radius * 1.61)
+        .innerRadius(radius * 1.54)
+        .outerRadius(radius * 1.55)
         .padAngle(30/ radius)
         .cornerRadius(5);
       const arcs = container.append('g')
@@ -226,7 +226,7 @@ const RadarChart = ({ radar_data }) => {
         .attr('class', 'category-arcs')
         .attr('id', (d, i) => `category-arcs-${i}`) // Add an id to each path
         .attr('d', d => arc({
-          startAngle: angleSlice * (d[1][0].index-1),
+          startAngle: angleSlice * (d[1][0].index-0.9),
           endAngle: angleSlice * (d[1][d[1].length - 1].index + 1)
         }))
         // .style('fill', 'white')
@@ -264,7 +264,7 @@ const RadarChart = ({ radar_data }) => {
       ref={containerRef}
       style={{
         position: "relative",
-        right: 0,
+        right: 60,
         // top: "150px",
         height: "100%",
         width: "100%",
