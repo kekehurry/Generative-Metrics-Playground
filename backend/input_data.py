@@ -1,47 +1,41 @@
-import random
+import os
+import json
 
-random.seed(10)
-far = random.uniform(0, 3.25)
-# input_values = [far,0.3, 0.2, 0.1, 0.4]
+file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api/output/input.json'))
 
-# input_values = [0,0, 0, 0, 0]
+with open(file_path, 'r') as file:
+    input_value = json.load(file)
 
-# input_list = [
-#     [far, 0.1, 0.2, 0.3, 0.4],
-#     [far,0.1, 0.3, 0.2, 0.4],
-#     [far,0.2, 0.1, 0.3, 0.4],
-#     [far,0.2, 0.3, 0.1, 0.4],
-#     [far,0.3, 0.1, 0.2, 0.4],
-#     [far,0.3, 0.2, 0.1, 0.4],
-#     [far,0.1, 0.2, 0.4, 0.3],
-#     [far,0.1, 0.3, 0.4, 0.2],
-#     [far,0.2, 0.1, 0.4, 0.3],
-#     [far,0.2, 0.3, 0.4, 0.1],
-#     [far,0.3, 0.1, 0.4, 0.2],
-#     [far,0.3, 0.2, 0.4, 0.1],
-#     [far,0.1, 0.4, 0.2, 0.3],
-#     [far,0.1, 0.4, 0.3, 0.2],
-#     [far,0.2, 0.4, 0.1, 0.3],
-#     [far,0.2, 0.4, 0.3, 0.1],
-#     [far,0.3, 0.4, 0.1, 0.2],
-#     [far,0.3, 0.4, 0.2, 0.1],
-#     [far,0.4, 0.1, 0.2, 0.3],
-#     [far,0.4, 0.1, 0.3, 0.2],
-#     [far,0.4, 0.2, 0.1, 0.3],
-#     [far,0.4, 0.2, 0.3, 0.1],
-#     [far,0.4, 0.3, 0.1, 0.2],
-#     [far,0.4, 0.3, 0.2, 0.1],
-#     [far,0.6, 0.2, 0,   0.1],
-#     [far,0  , 0,   0.2, 0.8]
-# ]
+print(input_value)
 
-# input_values = input_list[25]
+# input_value = [
+#     0.6,  # bcr
+#     3, # tier
+#     0.2, # residential
+#     0.5, # office
+#     0.2, #amenity
+#     0.1 # civic
+#     ]
 
-input_value = [
-    0.6,  # bcr
-    3, # tier
-    0.2, # residential
-    0.5, # office
-    0.2, #amenity
-    0.1 # civic
-    ] 
+
+# 如果 received_data 中的值都不是 None，就使用它，否则使用默认值
+# if all(value is not None for value in received_data.values()):
+#     input_value = [
+#         received_data['bcr'],
+#         received_data['tier'],
+#         received_data['residential'],
+#         received_data['office'],
+#         received_data['amenity'],
+#         received_data['civic']
+#     ]
+# else:
+#     # 默认值
+#     input_value = [
+#         0.6,  # bcr
+#         3,    # tier
+#         0.2,  # residential
+#         0.5,  # office
+#         0.2,  # amenity
+#         0.1   # civic
+#     ]
+

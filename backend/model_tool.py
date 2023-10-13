@@ -54,12 +54,25 @@ Office
 # Data Preparation
 # -----------------------------------------------------
 #读取数据
-land_file = './data/CDD_LandUseKD.geojson'
-building_file = './data/BASEMAP_BuildingsKD.geojson'
-boundary_file ='./data/kendallsquare.geojson'
-pop_file = './data/replica-residents_dataset.csv'
-work_file = './data/replica-workforce_dataset.csv'
-bgrp_file = './data/bgrp_cambridge.geojson'
+
+# 获取当前脚本的绝对路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 构造各个文件的绝对路径
+land_file = os.path.join(current_dir, '..', 'backend', 'data', 'CDD_LandUseKD.geojson')
+building_file = os.path.join(current_dir, '..', 'backend', 'data', 'BASEMAP_BuildingsKD.geojson')
+boundary_file = os.path.join(current_dir, '..', 'backend', 'data', 'kendallsquare.geojson')
+pop_file = os.path.join(current_dir, '..', 'backend', 'data', 'replica-residents_dataset.csv')
+work_file = os.path.join(current_dir, '..', 'backend', 'data', 'replica-workforce_dataset.csv')
+bgrp_file = os.path.join(current_dir, '..', 'backend', 'data', 'bgrp_cambridge.geojson')
+
+# 规范化路径，删除多余的 ".."
+land_file = os.path.normpath(land_file)
+building_file = os.path.normpath(building_file)
+boundary_file = os.path.normpath(boundary_file)
+pop_file = os.path.normpath(pop_file)
+work_file = os.path.normpath(work_file)
+bgrp_file = os.path.normpath(bgrp_file)
 
 def get_land_data(land_file):
     land_data = gpd.read_file(land_file)
@@ -251,7 +264,7 @@ def get_before_after(before,after):
 
 # -----------------------------------------------------
 
-def test():
+def model_test():
     land_building = join_land_building(land_file, building_file)
     LB_data = cal_stakeholder(land_building)
     print(LB_data.head())
@@ -260,4 +273,5 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    # model_test()
+    print(land_file)

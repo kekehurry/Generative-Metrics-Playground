@@ -1,19 +1,32 @@
 import pandas as pd
 import numpy as np
-from model_tool import *
 import random
-from input_data import input_values
+
+import sys
+import os
+current_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.join(current_directory, '..')
+sys.path.append(project_directory)
+
+# sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
+from backend.model_tool import *
+from backend.input_data import input_value
+import requests
+
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 VOLPE_area = 30593
 max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
 max_floor_area = 99427
 
-floor_area = VOLPE_area * input_values[0]
+floor_area = VOLPE_area * input_value['bcr'] * input_value['tier']  # 0.6 is the bcr, 3 is the tier
 
-office_space = floor_area * input_values[1] # a
-amenity_space = floor_area * input_values[2] # b
-civic_space = floor_area * input_values[3] # c
-resident_space = floor_area * input_values[4] # d
+office_space = floor_area * input_value['office'] 
+amenity_space = floor_area * input_value['amenity']
+civic_space = floor_area * input_value['civic']
+resident_space = floor_area * input_value['residential'] 
 
 # Economic nested classes
 
@@ -728,46 +741,73 @@ class Social:
 
 
 
-def test():
+def ese_test():
     economic = Economic()
     environmental = Environmental()
     social = Social()
 
     # Create a list of dictionaries for storing the information
-    data = [
-        {"category": "Economic", "indicator": "Employment", "baseline": economic.employment.current_employment_score,
-         "value": economic.employment.future_employment_score},
-        {"category": "Economic", "indicator": "Equity", "baseline": economic.equity.current_equity_score, "value": economic.equity.future_equity_score},
-        {"category": "Economic", "indicator": "Income", "baseline": economic.income.current_income_score, "value": economic.income.future_income_score},
-        {"category": "Economic", "indicator": "Innovation", "baseline": economic.innovation.current_innovation_score, "value": economic.innovation.future_innovation_score},
-        {"category": "Economic", "indicator": "Attractiv & Competitive", "baseline": economic.attractive_competitive.current_AC_score, "value": economic.attractive_competitive.future_AC_score},
-        {"category": "Economic", "indicator": "Build up area", "baseline": economic.build_up_area.current_build_up_score, "value": economic.build_up_area.future_build_up_score},
-        {"category": "Economic", "indicator": "Displacement", "baseline": economic.displacement.current_displacement_score, "value": economic.displacement.future_displacement_score},
-        {"category": "Economic", "indicator": "ProfitConstruction", "baseline": economic.profit_construction.current_profit_score, "value": economic.profit_construction.future_profit_score},
-        {"category": "Environmental", "indicator": "Pollution", "baseline": environmental.pollution.current_pollution_score, "value": environmental.pollution.future_pollution_score},
-        {"category": "Environmental", "indicator": "Ecosystem", "baseline": environmental.ecosystem.current_ecosystem_score, "value": environmental.ecosystem.future_ecosystem_score},
-        {"category": "Environmental", "indicator": "Public Service", "baseline": environmental.public_service.current_public_service_score, "value": environmental.public_service.future_public_service_score},
-        {"category": "Environmental", "indicator": "Energy", "baseline": environmental.energy.current_energy_score, "value": environmental.energy.future_energy_score},
-        {"category": "Environmental", "indicator": "Land", "baseline": environmental.land.current_land_score, "value": environmental.land.future_land_score},
-        {"category": "Social", "indicator": "Health", "baseline": social.health.current_health_score, "value": social.health.future_health_score},
-        {"category": "Social", "indicator": "Safety & Security", "baseline": social.safety_security.current_safety_security_score, "value": social.safety_security.future_safety_security_score},
-        {"category": "Social", "indicator": "Access to Service", "baseline": social.access_to_service.current_access_to_service_score, "value": social.access_to_service.future_access_to_service_score},
-        {"category": "Social", "indicator": "Education", "baseline": social.education.current_education_score, "value": social.education.future_education_score},
-        {"category": "Social", "indicator": "Housing", "baseline": social.housing.current_housing_score, "value": social.housing.future_housing_score},
-        {"category": "Social", "indicator": "Social Exposure", "baseline": social.social_exposure.current_social_exposure_score, "value": social.social_exposure.future_social_exposure_score},
-        {"category": "Social", "indicator": "Density", "baseline": social.density.current_density_score, "value": social.density.future_density_score},
-        {"category": "Social", "indicator": "Job Housing", "baseline": social.job_housing.current_job_housing_score, "value": social.job_housing.future_job_housing_score}
-    ]
+    #  data[0] for baseline value / data[1] for simulated value
+    data = [[{"category": "Economic", "indicator": "Employment", "value": economic.employment.current_employment_score},
+        {"category": "Economic", "indicator": "Equity", "value": economic.equity.current_equity_score},
+        {"category": "Economic", "indicator": "Income", "value": economic.income.current_income_score},
+        {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.current_innovation_score},
+        {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.current_AC_score},
+        {"category": "Economic", "indicator": "Build up area", "value": economic.build_up_area.current_build_up_score},
+        {"category": "Economic", "indicator": "Displacement", "value": economic.displacement.current_displacement_score},
+        {"category": "Economic", "indicator": "ProfitConstruction", "value": economic.profit_construction.current_profit_score},
+        {"category": "Environmental", "indicator": "Pollution", "value": environmental.pollution.current_pollution_score},
+        {"category": "Environmental", "indicator": "Ecosystem", "value": environmental.ecosystem.current_ecosystem_score},
+        {"category": "Environmental", "indicator": "Public Service", "value": environmental.public_service.current_public_service_score},
+        {"category": "Environmental", "indicator": "Energy", "value": environmental.energy.current_energy_score},
+        {"category": "Environmental", "indicator": "Land", "value": environmental.land.current_land_score},
+        {"category": "Social", "indicator": "Health", "value": social.health.current_health_score},
+        {"category": "Social", "indicator": "Safety & Security", "value": social.safety_security.current_safety_security_score},
+        {"category": "Social", "indicator": "Access to Service", "value": social.access_to_service.current_access_to_service_score},
+        {"category": "Social", "indicator": "Education", "value": social.education.current_education_score},
+        {"category": "Social", "indicator": "Housing", "baseline": social.housing.current_housing_score},
+        {"category": "Social", "indicator": "Social Exposure", "value": social.social_exposure.current_social_exposure_score},
+        {"category": "Social", "indicator": "Density", "value": social.density.current_density_score},
+        {"category": "Social", "indicator": "Job Housing", "value": social.job_housing.current_job_housing_score}],
+        [{"category": "Economic", "indicator": "Employment", "value": economic.employment.future_employment_score},
+        {"category": "Economic", "indicator": "Equity", "value": economic.equity.future_equity_score},
+        {"category": "Economic", "indicator": "Income", "value": economic.income.future_income_score},
+        {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.future_innovation_score},
+        {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.future_AC_score},
+        {"category": "Economic", "indicator": "Build up area", "value": economic.build_up_area.future_build_up_score},
+        {"category": "Economic", "indicator": "Displacement", "value": economic.displacement.future_displacement_score},
+        {"category": "Economic", "indicator": "ProfitConstruction", "value": economic.profit_construction.future_profit_score},
+        {"category": "Environmental", "indicator": "Pollution", "value": environmental.pollution.future_pollution_score},
+        {"category": "Environmental", "indicator": "Ecosystem", "value": environmental.ecosystem.future_ecosystem_score},
+        {"category": "Environmental", "indicator": "Public Service", "value": environmental.public_service.future_public_service_score},
+        {"category": "Environmental", "indicator": "Energy", "value": environmental.energy.future_energy_score},
+        {"category": "Environmental", "indicator": "Land", "value": environmental.land.future_land_score},
+        {"category": "Social", "indicator": "Health", "value": social.health.future_health_score},
+        {"category": "Social", "indicator": "Safety & Security", "value": social.safety_security.future_safety_security_score},
+        {"category": "Social", "indicator": "Access to Service", "value": social.access_to_service.future_access_to_service_score},
+        {"category": "Social", "indicator": "Education", "value": social.education.future_education_score},
+        {"category": "Social", "indicator": "Housing", "value": social.housing.future_housing_score},
+        {"category": "Social", "indicator": "Social Exposure", "value": social.social_exposure.future_social_exposure_score},
+        {"category": "Social", "indicator": "Density", "value": social.density.future_density_score},
+        {"category": "Social", "indicator": "Job Housing", "value": social.job_housing.future_job_housing_score}]]
 
     # Print the information in the desired format
-    print(f"{'category':<15} {'indicator':<20} {'baseline'} {'value'}")
-    for row in data:
-        print(f"{row['category']:<15} {row['indicator']:<20} {row['baseline']} {row['value']}")
+    # print(f"{'category':<15} {'indicator':<20} {'baseline'} {'value'}")
+    # for row in data:
+    #     print(f"{row['category']:<15} {row['indicator']:<20} {row['baseline']} {row['value']}")
+    # print(data)
+    console_log(f"ESE data updated!")
+    print('ESE data updated')
 
     # Create a dataframe for storing the information
-    df = pd.DataFrame(data)
+    # df = pd.DataFrame(data)
     # save dataframe to csv file
-    df.to_csv('output/radar_data.csv', index=False)
+    # output_file = os.path.abspath("./backend/output/radar_data.csv")
+    # df.to_csv(output_file, index=False)
+    
+    # Convert data to JSON format
+    data_json = json.dumps(data)
+    send_to_api(data_json, "radar_data")
 
 
     # print(environmental.pollution.air_quality)
@@ -776,6 +816,22 @@ def test():
     # social = Social("social.csv")
     # print(social.safety_security.traffic_accidents)
     # print(social.get_statistics())
+    
+def send_to_api(data_json, filename):
+    # Define the API endpoint (assuming Flask app is running on localhost:5000)
+    api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
+    # Use the POST method to send data
+    response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
 
+    # Check the response
+    if response.status_code == 200:
+        console_log(f"Data successfully sent to API for {filename}!")
+        print(f"Data successfully sent to API for {filename}!")
+    else:
+        print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
+        
+def console_log(message):
+    print("[CONSOLE.LOG]", message)
+    
 if __name__ == '__main__':
-    test()
+    ese_test()

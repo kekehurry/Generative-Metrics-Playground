@@ -199,6 +199,24 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
     let group = svg.selectAll("g")
       .data(chords.groups.map((d, i) => ({ ...d, radius: bubble_data[i].radius, distance: bubble_data[i].distance, score: bubble_data[i].score })))
       .join("g");
+    
+    // let group = svg.selectAll("g")
+    //   .data(chords.groups.map((d, i) => {
+    //     // Log data for inspection
+    //     console.log('Bubble Data Length:', bubble_data.length);
+    //     console.log('Chords Groups Length:', chords.groups.length);
+    //     console.log("Chord Group Item:", d);
+    //     console.log("Bubble Data Item:", bubble_data[i]);
+
+    //     // Validate bubble_data item and its radius property before mapping
+    //     if(bubble_data[i] && "radius" in bubble_data[i]) {
+    //       return { ...d, radius: bubble_data[i].radius, distance: bubble_data[i].distance, score: bubble_data[i].score };
+    //     } else {
+    //       console.error("Invalid bubble_data item at index", i);
+    //       return { ...d, radius: 0, distance: 0, score: 0 }; // Default values, adjust as needed
+    //     }
+    //   }))
+    //   .join("g");
 
 
     // Draw outside standard arcs

@@ -1,19 +1,24 @@
-from model_tool import *
-from ESE_metrics import *
+import sys
+import os
+current_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.join(current_directory, '..')
+sys.path.append(project_directory)
+from backend.model_tool import *
+from backend.ESE_metrics import *
 import pandas as pd
 import numpy as np
 import random
-from input_data import input_values
+from backend.input_data import input_value
 # -----------------------------------------------------
 VOLPE_area = 30593
 max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
 max_floor_area = 99427
-floor_area = VOLPE_area * input_values[0]
+floor_area = VOLPE_area * input_value['bcr'] * input_value['tier']  # 0.6 is the bcr, 3 is the tier
 
-office_space = floor_area * input_values[1] # a
-amenity_space = floor_area * input_values[2] # b
-civic_space = floor_area * input_values[3] # c
-resident_space = floor_area * input_values[4] # d
+office_space = floor_area * input_value['office'] 
+amenity_space = floor_area * input_value['amenity']
+civic_space = floor_area * input_value['civic']
+resident_space = floor_area * input_value['residential'] 
 
 LB_data = cal_stakeholder()
 work_num = get_work_num()

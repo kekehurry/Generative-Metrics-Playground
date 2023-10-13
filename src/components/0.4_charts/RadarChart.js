@@ -47,7 +47,7 @@ const RadarChart = ({ radar_data }) => {
   useEffect(() => {
     if (!containerWidth) return;
 
-    if ((!radar_data.data) ||  (!radar_data.vers)) return;
+    if ((!radar_data.data) ) return;
     
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
@@ -147,7 +147,7 @@ const RadarChart = ({ radar_data }) => {
       // point
     const plots = container.append('g')
     .selectAll('g')
-    .data(radar_data.vers)
+    .data(radar_data.data)
     .join('g')
         .attr("data-name", (d, i) => device(i))
         .attr("fill", (d, i) => color_2(i+1))

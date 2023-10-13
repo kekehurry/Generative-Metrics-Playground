@@ -56,7 +56,7 @@ const mousearc = d3
   .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 
-const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreClick }) => {
+const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClick, onScoreClick }) => {
   const ref = useRef();
   const containerRef = useRef();
 
@@ -114,13 +114,13 @@ const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreCli
       for (let j = 0; j < chord_data.data.length; j++) {
         if (
           chord_data.names[chords[i].source.index] ===
-          chord_data.data[j].Stakeholders
+          chord_data.data[j].stakeholder
         ) {
           if (
             chord_data.names[chords[i].target.index] ===
-            chord_data.data[j].Target
+            chord_data.data[j].target
           ) {
-            chords[i].content = chord_data.data[j].content;
+            chords[i].indicator = chord_data.data[j].indicator;
           }
         }
       }
@@ -164,7 +164,8 @@ const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreCli
 
     // 创建总分
     // 未来更改为input的score
-    const score = [10, 30, 30, 40, 100, 10, 80];
+    // const score = [10, 30, 30, 40, 100, 10, 80];
+    const score = bubble_data.map(item => item.score);
 
     // 设置画面中心
     const centerX = 0;
@@ -268,7 +269,8 @@ const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreCli
               x1: centerX + Math.cos(angle) * 180,
               y1: centerY + Math.sin(angle) * 180,
               x2: centerX + Math.cos(angle) * 280,
-              y2: centerY + Math.sin(angle) * 280
+              y2: centerY + Math.sin(angle) * 280,
+              index: d.index
           });
       }
 
@@ -317,11 +319,23 @@ const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreCli
 
     group.selectAll('line.helper-line')
       .each(function(d, i) {
-        const correspondingData = indicator_data[i];
+        // console.log('d:', d); // 打印 d
+        // console.log('i:', i); // 打印 i
+        // console.log('d.index:', d.index);  // 打印 d.index
+
+        const currentStakeholder = chord_data.names[d.index];  // 这里获取当前的stakeholder
+        // const correspondingData = indicator_data[i];
+        // console.log('currentStakeholder:',currentStakeholder);
+        const correspondingDataItems = indicator_data.filter(item => item.stakeholder === currentStakeholder);
+
+        const correspondingData = correspondingDataItems[i]; // 使用索引 i 来获取对应的数据条目
+        // console.log('correspondingData:', correspondingData);
 
         // 获取大圆和小圆的位置
         const bigCirclePos = computeCirclePosition(d3.select(this).data()[0], correspondingData.score);
         const smallCirclePos = computeCirclePosition(d3.select(this).data()[0], correspondingData.baseline);
+        // console.log('Data score:', correspondingData.score);
+        // console.log('Data baseline:', correspondingData.baseline);
 
         // 绘制大圆
         d3.select(this.parentNode)
@@ -390,20 +404,17 @@ const ChordChart = ({ chord_data, indicator_data, onStakeholderClick, onScoreCli
       .attr("class", "chord")
       .attr("fill", (d) => color(d.source.index))
       .attr("d", ribbon)
-      // .style("mix-blend-mode", "multiply")
       .on("mouseover", onMouseOver_chord)
-      // .on('mouseover', tooltip.show)
       .on("mouseout", onMouseOut)
-      // .on('mouseout', tooltip.hide)
       .append("title")
       .text(
         (d) =>
           `${chord_data.names[d.source.index]} -> ${chord_data.names[d.target.index]
-          }: \n${chord_data.content[d.source.index][d.target.index]} ${d.source.index === d.target.index ? "" : `\n${chord_data.names[d.target.index]} -> ${chord_data.names[d.source.index]}: \n${chord_data.content[d.target.index][d.source.index]}`}
+          }: \n${chord_data.indicator[d.source.index][d.target.index]} ${d.source.index === d.target.index ? "" : `\n${chord_data.names[d.target.index]} -> ${chord_data.names[d.source.index]}: \n${chord_data.indicator[d.target.index][d.source.index]}`}
           `
       );
     svg.raise()
-  }, [chord_data, indicator_data, containerWidth, containerHeight]);
+  }, [chord_data, bubble_data, indicator_data, containerWidth, containerHeight]);
 
 
   return (

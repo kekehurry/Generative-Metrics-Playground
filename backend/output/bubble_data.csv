@@ -1,0 +1,7 @@
+stakeholder,score,radius,distance
+resident,-39,40,20
+workforce,-1,60,30
+local_business_owner,-7,80,40
+government,-6,100,50
+developer,5007,120,60
+non_profit_institution,-25,140,70
