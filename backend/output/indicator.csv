@@ -1,0 +1,27 @@
+stakeholder,indicator,target,value
+Resident,Access to service,Local Business Owner,0.29
+Resident,Access to service,Non-Profit Institution,0.53
+Resident,Civic space,Government,0.43
+Resident,Safety & security,Government,0.53
+Workforce,Access to service,Local Business Owner,0.05
+Workforce,Opportunity,Local Business Owner,0.0
+Workforce,Opportunity,Industry Group,0.0
+Workforce,Safety & security,Government,0.97
+Local business owner,Finance,Resident,0.29
+Local business owner,Finance,Workforce,0.05
+Local business owner,Safety & security,Government,1.0
+Government,Tax revenue,Local Business Owner,0.0
+Government,Tax revenue,Developer,0.57
+Government,Tax revenue,Industry Group,0.0
+Government,Tax revenue,Resident,0.46
+Government,Tax revenue,Workforce,0.03
+Government,Management Cost,Developer,0.11
+Government,Safety & security,Resident,0.53
+Government,Safety & security,Workforce,0.97
+Developer,Profit,Local Business Owner,0.0
+Developer,Profit,Resident,0.46
+Developer,Profit,Industry Group,0.0
+Developer,Tax,Government,100.0
+Nonprofit Institution,Access to service,Local Business Owner,0.29
+Nonprofit Institution,Safety & security,Government,0.53
+Nonprofit Institution,Innovation,Industry Group,0.0
