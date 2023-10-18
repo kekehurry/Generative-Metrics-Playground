@@ -7,7 +7,11 @@ from pathlib import Path
 import subprocess
 
 import sys
-sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
+import os
+current_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.join(current_directory, '..')
+sys.path.append(project_directory)
+# sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
 from backend.ESE_metrics import ese_test
 from backend.stakeholders import stake_test
 

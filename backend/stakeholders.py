@@ -8,7 +8,7 @@ sys.path.append(project_directory)
 
 from backend.model_tool import *
 from backend.ESE_metrics import *
-from backend.resident_model import *
+from backend.resident_model import score_res, indicator_res, index_res
 from backend.workforce_model import *
 from backend.localbisness_model import *
 from backend.government_model import *
@@ -28,47 +28,6 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # -----------------------------------------------------
 # input_value = [random.uniform(0, 3.25),0.3, 0.2, 0.1, 0.4]
 # -----------------------------------------------------
-
-class Resident():
-    def __init__(self):
-        self.access_to_service1 = {
-            "target": 'Local Business Owners',
-            "value": get_access_business()
-        }
-        self.access_to_service2 = {
-            "target": 'Nonprofit Institution',
-            "value": get_access_NPI()
-        }
-        # self.job_housing = {
-        #     "target": 'Workforce',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        self.civic_space = {
-            "target": 'Government',
-            "value": get_access_civic()
-        }
-        self.safety_security = {
-            "target": 'Government',
-            "value": get_access_police()
-        }
-        # self.tax_cost = {
-        #     "target": 'Government',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        # self.build_up_area = {
-        #     "target": 'Developer',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        self.access_score = get_before_after(0.77, 0.5* self.access_to_service1['value']+ 0.5* self.access_to_service2['value'])
-        self.civic_score =  get_before_after(0.76, self.civic_space['value'])
-        self.safety_security_score = get_before_after(1, self.safety_security['value'])
-        # self.tax_cost_score = get_before_after(0, self.tax_cost['value'])
-        self.resident_score = self.get_resident_score() *100
-
-    def get_resident_score(self):
-        score = 0.33 * self.access_score['after'] + 0.33 * self.civic_score['after'] + 0.34 * self.safety_security_score['after']
-        return score
-
 
 class Workforce():
     def __init__(self):
@@ -183,38 +142,6 @@ class Government():
         return score
 
 
-class Developer():
-    def __init__(self):
-        self.profit_construction1 = {
-            "target": 'Local Business Owners',
-            "value": get_profit_LBO()
-        }
-        self.profit_construction2 = {
-            "target": 'Residents',
-            "value": get_profit_res()
-        }
-        self.profit_construction3 = {
-            "target": 'Industry Group',
-            "value": get_profit_IG()
-        }
-        self.tax_cost = {
-            "target": 'Government',
-            "value": get_tax_cost()
-        }
-        # self.innovation = {
-        #     "target": 'Non-Profit Institution',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-
-        self.profit_construction_score = get_before_after(0, 0.33 * self.profit_construction1['value'] + 0.33 * self.profit_construction2['value'] + 0.34 * self.profit_construction3['value'])
-        self.tax_cost_score = get_before_after(0, self.tax_cost['value'])
-        # self.innovation_score = get_before_after(0, 1)
-        self.developer_score = self.get_developer_score() *100
-
-    def get_developer_score(self):
-        score = 0.5 * self.profit_construction_score['after'] + 0.5 * self.tax_cost_score['after']
-        return score
-
 class NonProfitInstitution():
     def __init__(self):
         self.access_to_service = {
@@ -251,7 +178,7 @@ class IndustryGroup():
         }
         self.innovation = {
             "target": 'Nonprofit Institution',
-            "value": get_access_NPI()
+            "value": get_access_LBO()
         }
 
         self.access_score = get_before_after(0.55,  self.access_to_service['value'] )
@@ -280,7 +207,7 @@ def create_indicator_list(stakeholder, stakeholder_name):
 
 
 def stake_test():
-    resident = Resident()
+    # resident = Resident()
     workforce = Workforce()
     local_business_owner = LocalBusinessOwner()
     government = Government()
@@ -293,7 +220,7 @@ def stake_test():
     # --------------------------------------------#
     # Creat a list of stakeholders
     score = [
-        {"stakeholder": "Residents","score": (int(resident.resident_score) - 84), "radius": 40, 'distance': 40},
+        score_res,
         {"stakeholder": "Local Business Owners", "score": (int(local_business_owner.local_business_owner_score) -65), "radius": 80, 'distance': 70},
         {"stakeholder": "Nonprofit Institution", "score": (int(non_profit_institution.non_profit_score) -51), "radius": 140, 'distance': 100},
         {"stakeholder": "Government", "score": (int(government.government_score) -10), "radius": 100, 'distance': 80},
@@ -314,14 +241,7 @@ def stake_test():
     # --------------------------------------------#
 
     # Creat a list of stakeholders
-    indicator_list = [
-        {"stakeholder": "Residents", "indicator": "Access to service", "target": resident.access_to_service1["target"], "value": resident.access_to_service1["value"]},
-        {"stakeholder": "Residents", "indicator": "Access to service", "target": resident.access_to_service2["target"], "value": resident.access_to_service2["value"]},
-        # {"stakeholder": "Resident", "indicator": "Job-housing balance", "target": resident.job_housing["target"], "value": resident.job_housing["value"]},
-        {"stakeholder": "Residents", "indicator": "Civic space", "target": resident.civic_space["target"], "value": resident.civic_space["value"]},
-        {"stakeholder": "Residents", "indicator": "Safety & security", "target": resident.safety_security["target"], "value": resident.safety_security["value"]},
-        # {"stakeholder": "Resident", "indicator": "Tax", "target": resident.tax_cost["target"], "value": resident.tax_cost["value"]},
-        # {"stakeholder": "Resident", "indicator": "Build-up area", "target": resident.build_up_area["target"], "value": resident.build_up_area["value"]},
+    indicator_list = indicator_res + [
         {"stakeholder": "Workforce", "indicator": "Access to service", "target": workforce.access_to_service["target"], "value": workforce.access_to_service["value"]},
         {"stakeholder": "Workforce", "indicator": "Opportunity", "target": workforce.opportunity1["target"], "value": workforce.opportunity1["value"]},
         {"stakeholder": "Workforce", "indicator": "Opportunity", "target": workforce.opportunity2["target"], "value": workforce.opportunity2["value"]},
@@ -359,11 +279,7 @@ def stake_test():
     # Data for indicator chart: indicator value
     # --------------------------------------------#
     # Create a list of index score
-    index_score = [
-        {"stakeholder": "Residents","indicator": "Access to service", "baseline": resident.access_score['before'],"score": resident.access_score['after']},
-        {"stakeholder": "Residents","indicator": "Civic space", "baseline": resident.civic_score['before'],"score": resident.civic_score['after']},
-        {"stakeholder": "Residents","indicator": "Safety & security", "baseline": resident.safety_security_score['before'],"score": resident.safety_security_score['after']},
-        # {"stakeholder": "Resident","indicator": "Tax", "baseline": resident.tax_cost_score['before'],"score": resident.tax_cost_score['after']},
+    index_score = index_res + [
         {"stakeholder": "Workforce","indicator": "Access to service", "baseline": workforce.access_score['before'],"score": workforce.access_score['after']},
         {"stakeholder": "Workforce","indicator": "Opportunity", "baseline": workforce.opportunity_score['before'],"score": workforce.opportunity_score['after']},
         {"stakeholder": "Workforce","indicator": "Safety & security", "baseline": workforce.safety_security_score['before'],"score": workforce.safety_security_score['after']},

@@ -26,6 +26,15 @@ import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 // const RADAR_DATA_PATH = '/data/radar_data_3.json';
 
+const Button = styled.button`
+  background-color: darkblue;
+  color: #FFFFFF;
+  border-radius: 5px;
+  box-shadow: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  `;
+
 
 
 function App() {
@@ -676,6 +685,10 @@ function App() {
               <div className="slider-label" >
                 <Slider_4 handleChange4={handleChange4} max={1- residential-office-amenity}/>
               </div>
+
+              {/* <div className="slider-label" >
+                <Button onClick={sendDataToServer}>Send Data</Button>
+                < */}
 
             </div>
 

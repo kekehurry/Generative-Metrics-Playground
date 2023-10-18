@@ -3,28 +3,36 @@ import os
 current_directory = os.path.dirname(os.path.abspath(__file__))
 project_directory = os.path.join(current_directory, '..')
 sys.path.append(project_directory)
-from backend.model_tool import *
-from backend.ESE_metrics import *
+
 import pandas as pd
 import numpy as np
 import random
 
-from backend.input_data import input_value
+from backend.input_data import *
+from backend.model_tool import *
+from backend.ESE_metrics import *
+from backend.NPI_model import mit_commuter_home_all
+from backend.workforce_model import volpe_workforce_home_all
 # -----------------------------------------------------
-VOLPE_area = 30593
-max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
-max_floor_area = 99427
-floor_area = VOLPE_area * input_value['bcr'] * input_value['tier']  # 0.6 is the bcr, 3 is the tier
-
-office_space = floor_area * input_value['office'] 
-amenity_space = floor_area * input_value['amenity']
-civic_space = floor_area * input_value['civic']
-resident_space = floor_area * input_value['residential'] 
 
 LB_data = cal_stakeholder()
 work_num = get_work_num()
 pop_num = get_res_num()
 
+#-----------------------------------------------------
+# kendall sq program
+#-----------------------------------------------------
+
+# ## number of homes needed for MIT commuters(existing) + volpe workforce(future)
+# ## unit is household number
+# home_demand = volpe_workforce_home_all + mit_commuter_home_all
+# print("Home demand:", home_demand)
+
+
+
+
+
+net_to_gross = 1.2
 
 
 
@@ -119,6 +127,37 @@ def developer():
     score = get_profit_developer() * weight_profit + get_tax_cost() * weight_tax
     return score
 
+class Developer():
+    def __init__(self):
+        self.profit_construction1 = {
+            "target": 'Local Business Owners',
+            "value": get_profit_LBO()
+        }
+        self.profit_construction2 = {
+            "target": 'Residents',
+            "value": get_profit_res()
+        }
+        self.profit_construction3 = {
+            "target": 'Industry Group',
+            "value": get_profit_IG()
+        }
+        self.tax_cost = {
+            "target": 'Government',
+            "value": get_tax_cost()
+        }
+        # self.innovation = {
+        #     "target": 'Non-Profit Institution',
+        #     "value": round(random.uniform(0, 1), 2)
+        # }
+
+        self.profit_construction_score = get_before_after(0, 0.33 * self.profit_construction1['value'] + 0.33 * self.profit_construction2['value'] + 0.34 * self.profit_construction3['value'])
+        self.tax_cost_score = get_before_after(0, self.tax_cost['value'])
+        # self.innovation_score = get_before_after(0, 1)
+        self.developer_score = self.get_developer_score() *100
+
+    def get_developer_score(self):
+        score = 0.5 * self.profit_construction_score['after'] + 0.5 * self.tax_cost_score['after']
+        return score
 
 if __name__ == '__main__':
     get_profit_LBO()

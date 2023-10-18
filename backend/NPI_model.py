@@ -24,6 +24,32 @@ LB_data = cal_stakeholder()
 work_num = get_work_num()
 pop_num = get_res_num()
 
+#-----------------------------------------------------
+# kendall sq program
+#-----------------------------------------------------
+
+mit_commuter_home_all = 8132 #person
+
+mit_pop_profile = [   # = housing demand
+    0.65, # single -> single occupancy
+    0.15, # partners -> dual occupancy
+    0.1, # partners+1 child ->triple occupancy
+    0.05, # partners+2 children -> quad occupancy
+    0.05, # partners+3 children -> family occupancy
+]
+
+mit_commuters = [
+    int(mit_commuter_home_all * mit_pop_profile[0]),
+    int(mit_commuter_home_all * mit_pop_profile[1] * 2),
+    int(mit_commuter_home_all * mit_pop_profile[2] * 3),
+    int(mit_commuter_home_all * mit_pop_profile[3] * 4),
+    int(mit_commuter_home_all * mit_pop_profile[4] * 5)
+]
+mit_commuters_all = sum(mit_commuters)
+# print('MIT commuters:', mit_commuters, mit_commuters_all)
+
+
+
 
 # -----------------------------------------------------
 
@@ -60,5 +86,5 @@ def get_access_police_4():
 
 
 if __name__ == '__main__':
-    get_access_NPI()
+    get_access_LBO()
 
