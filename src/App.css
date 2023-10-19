@@ -147,14 +147,14 @@
 .App .slider-container {
   position: relative;
   top: 20%;
-  left: 14%;
+  left: 7%;
   /* transform: translateX(-50%); */
   display: flex;
   justify-content: space-between;
   /* align-items: center; */
   flex-direction: row;
   height: 50%;
-  width: 85%;
+  width: 90%;
   padding: auto;
   /* margin: 0  10px ; */
   /* background-color: rgb(243, 234, 234); */
@@ -260,3 +260,19 @@
   border-radius: 5px;
   color: #ffffffd1;
 } 
+
+/* 设置 .values div 的布局为横向排列 */
+.values {
+  display: flex;
+  justify-content: space-evenly; /* 这会使每个 div 元素之间和周围有相等的空间 */
+  width: 40%; /* 设置 .values 的宽度为 container 的 40% */
+  margin: 0 auto; /* 居中 .values */
+  padding: 2; /* 设置 .values 的内边距 */
+}
+
+/* 设置 .values div 中的每个 div 元素的字体大小 */
+.values div {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem; /* 你可以根据需要调整这个值 */
+  flex: 1; /* 使每个元素有相同的flex值，它们将平均分配可用空间 */
+}

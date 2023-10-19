@@ -11,11 +11,10 @@ project_directory = os.path.join(current_directory, '..')
 sys.path.append(project_directory)
 from backend.model_tool import *
 from backend.ESE_metrics import *
-from backend.input_data import *
+import backend.input_data
 from backend.workforce_model import volpe_workforce_family_all, volpe_workforce_home_all
 from backend.NPI_model import mit_commuters_all, mit_commuter_home_all
 # -----------------------------------------------------
-
 
 LB_data = cal_stakeholder()
 work_num = get_work_num()
@@ -33,7 +32,7 @@ new_resident_demand = volpe_workforce_family_all + mit_commuters_all
 ## number of homes needed for MIT commuters(existing) + volpe workforce(future)
 ## unit is household number
 ##-----------------
-# !!!we can adjust if consider the demand from mit commuters
+# !!!we can adjust if consider the demand from mit commuters!!!
 ##-----------------
 # home_demand = volpe_workforce_home_all + mit_commuter_home_all  
 home_demand = volpe_workforce_home_all 
@@ -47,6 +46,14 @@ housing_demand_profile = [
     0.05 # family occupancy 2+3
 ]
 
+occupants_per_unit = [
+    1,  # single occupancy
+    2,  # dual occupancy
+    3,  # triple occupancy
+    4,  # quad occupancy
+    5   # family occupancy
+]
+
 unit_area = [ # sqft
     300, 
     300,
@@ -57,19 +64,19 @@ unit_area = [ # sqft
 
 ## calculate the new demand of housing area
 unit_num_type = [int(home_demand * p) for p in housing_demand_profile]
-print("Unit number count by type:",unit_num_type)
+# print("Unit number count by type:",unit_num_type)
 
 net_area = [a * b for a, b in zip(unit_area, unit_num_type)]
 net_area_sum = sum(net_area)
-print("Net area by type:", net_area, net_area_sum)
+# print("Net area by type:", net_area, net_area_sum)
 
 net_to_gross = 1.2
 
 gross_area = [a * net_to_gross for a in net_area]
 gross_area_sum = sum(gross_area)
-print("Gross area by type:", gross_area, gross_area_sum)
+# print("Gross area by type:", gross_area, gross_area_sum)
 
-gross_area_demand = gross_area_sum * 0.8
+# gross_area_demand = gross_area_sum * 0.8
 
 ## current data for the area
 average_resident_income = 101985 # USD median household income in kendall sq year 2021
@@ -105,13 +112,13 @@ def rent_price_model(demand=gross_area_sum, supply=0, current_rent_price = avera
 ## test model for rent price, affordability and goodness index
 def test_rent_price_model():
     initial_rent_price = 3658 * 12
-    resident_space = np.linspace(0, gross_area_demand*1.5, 100000)
-    rent_prices = [rent_price_model(gross_area_sum, space, initial_rent_price) for space in resident_space]
+    resident_spaces = np.linspace(0, gross_area_sum*1.5, 100000)
+    rent_prices = [rent_price_model(gross_area_sum, space, initial_rent_price) for space in resident_spaces]
     
     ## rent price -- resident space
     # 绘制结果
     plt.figure(figsize=(10,6))
-    plt.plot(resident_space, rent_prices, '-o', label="Average Rent Price")
+    plt.plot(resident_spaces, rent_prices, '-o', label="Average Rent Price")
     plt.axhline(y=initial_rent_price, color='r', linestyle='--', label="Initial Rent Price")
     plt.xlabel("Resident Space")
     plt.ylabel("Average Rent Price")
@@ -122,7 +129,7 @@ def test_rent_price_model():
     ## resident space -- affordability
     affordabilities = [affordability(average_resident_income, rent) for rent in rent_prices]
     plt.figure(figsize=(10,6))
-    plt.plot(resident_space, affordabilities, '-o', label="Affordability")
+    plt.plot(resident_spaces, affordabilities, '-o', label="Affordability")
     plt.xlabel("Resident Space")
     plt.ylabel("Affordability")
     plt.title("Effect of Resident Space on Affordability")
@@ -158,13 +165,12 @@ def cal_current_affordability_index():
     return round(affordability_index, 2)
 
 def cal_future_affordability_index():
-    volpe_resident_space = resident_space * 10.7639
+    volpe_resident_space = backend.input_data.resident_space * 10.7639
     # volpe_office_space = office_space * 10.7639
     rent_price = rent_price_model(gross_area_sum, volpe_resident_space, average_rent_price, 1.5, 0.5)
     affordability_index = affordability(average_resident_income, rent_price)
     # print(volpe_resident_space, volpe_office_space)
     # print("Rent price:", rent_price)
-    # print("Affordability index:", affordability_index)
     
     return round(affordability_index, 2)
 
@@ -189,7 +195,22 @@ def affordability(income, rent):
 
     return affordability_index
 
+## --------------------------------------------
+## calculate new residents number
+## --------------------------------------------
+def new_resident_num(resident_space):
+    total_units = [
+        (resident_space * demand) // area 
+        for demand, area in zip(housing_demand_profile, unit_area)
+    ]
 
+    total_occupants = sum(
+        unit * occupants 
+        for unit, occupants in zip(total_units, occupants_per_unit)
+    )
+    print("Total occupants:", total_occupants)
+    return total_occupants
+    
 # -----------------------------------------------------
 # def goodness(x,optimal_value):
 #     variance = 0.1  # adjustable
@@ -199,15 +220,15 @@ def affordability(income, rent):
 
 
 def get_access_service(service_area):
-    num_res = pop_num + resident_space/ 50
+    num_res = pop_num + backend.input_data.resident_space/ 50
     value = service_area / num_res
     return value
 
 def get_access_business():
-    business_area = amenity_space + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()
+    business_area = backend.input_data.amenity_space + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()
     value = get_access_service(business_area)
-    max = (max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())/pop_num
-    min = LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()/(pop_num + max_floor_area/50)
+    max = ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())/pop_num
+    min = LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()/(pop_num + backend.input_data.max_floor_area/50)
     score = norm(value, max, min)
     return score
 
@@ -215,16 +236,16 @@ def get_access_NPI():
     MIT = 10000
     value = get_access_service(MIT)
     max = MIT/pop_num
-    min = MIT/(pop_num + max_floor_area/50)
+    min = MIT/(pop_num +  backend.input_data.max_floor_area/50)
     score = norm(value, max, min)
     return score
 
 # -----------------------------------------------------
 def get_access_civic():
-    civic_area = civic_space + LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()
+    civic_area = backend.input_data.civic_space + LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()
     value = get_access_service(civic_area)
-    max = (max_floor_area + LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()) /pop_num
-    min = LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()/(pop_num + max_floor_area/50)
+    max = ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()) /pop_num
+    min = LB_data[LB_data['stakeholder'] == 'GOV']['floor_area'].sum()/(pop_num +  backend.input_data.max_floor_area/50)
     score = norm(value, max, min)
     return score
 
@@ -233,127 +254,128 @@ def get_access_police():
     police_area = 500
     value = get_access_service(police_area)
     max = police_area / pop_num
-    min = police_area / (pop_num + max_floor_area / 50)
+    min = police_area / (pop_num +  backend.input_data.max_floor_area / 50)
     score = norm(value, max, min)
     return score
 
-class Resident():
-    def __init__(self):
 
-        self.access_to_service1 = {
-            "target": 'Local Business Owners',
-            "value": get_access_business()
-        }
-        self.access_to_service2 = {
-            "target": 'Nonprofit Institution',
-            "value": get_access_NPI()
-        }
-        # self.job_housing = {
-        #     "target": 'Workforce',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        self.civic_space = {
-            "target": 'Government',
-            "value": get_access_civic()
-        }
-        self.safety_security = {
-            "target": 'Government',
-            "value": get_access_police()
-        }
-        
-        # self.tax_cost = {
-        #     "target": 'Government',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        # self.build_up_area = {
-        #     "target": 'Developer',
-        #     "value": round(random.uniform(0, 1), 2)
-        # }
-        
-        self.affordable_score = get_before_after(
-            cal_current_affordability_index(),
-            cal_future_affordability_index())
-        self.access_score = get_before_after(
-            0.77, 
-            0.5* self.access_to_service1['value']+ 0.5* self.access_to_service2['value']
-            )
-        self.civic_score =  get_before_after(
-            0.76, self.civic_space['value'])
-        self.safety_security_score = get_before_after(
-            1, 
-            self.safety_security['value'])
-        # self.tax_cost_score = get_before_after(0, self.tax_cost['value'])
+def compute_resident():
+
+    access_to_service1 = {
+        "target": 'Local Business Owners',
+        "value": get_access_business()
+    }
+    access_to_service2 = {
+        "target": 'Nonprofit Institution',
+        "value": get_access_NPI()
+    }
+    # job_housing = {
+    #     "target": 'Workforce',
+    #     "value": round(random.uniform(0, 1), 2)
+    # }
+    civic_space_ = {
+        "target": 'Government',
+        "value": get_access_civic()
+    }
+    safety_security = {
+        "target": 'Government',
+        "value": get_access_police()
+    }
+    
+    # tax_cost = {
+    #     "target": 'Government',
+    #     "value": round(random.uniform(0, 1), 2)
+    # }
+    # build_up_area = {
+    #     "target": 'Developer',
+    #     "value": round(random.uniform(0, 1), 2)
+    # }
+    
+    affordable_score = get_before_after(
+        cal_current_affordability_index(),
+        cal_future_affordability_index())
+    access_score = get_before_after(
+        0.77, 
+        0.5* access_to_service1['value']+ 0.5* access_to_service2['value']
+        )
+    civic_score =  get_before_after(
+        0.76, civic_space_['value'])
+    safety_security_score = get_before_after(
+        1, 
+        safety_security['value'])
+    # tax_cost_score = get_before_after(0, tax_cost['value'])
 
 
-    def get_resident_score(self):
+    def get_resident_score():
         weights = [1]
         scores_after = [
-            self.affordable_score['after'],
-            # self.access_score['after'],
-            # self.civic_score['after'],
-            # self.safety_security_score['after']
+            affordable_score['after'],
+            # access_score['after'],
+            # civic_score['after'],
+            # safety_security_score['after']
         ]
         scores_before = [
-            self.affordable_score['before'],
-            # self.access_score['before'],
-            # self.civic_score['before'],
-            # self.safety_security_score['before']
+            affordable_score['before'],
+            # access_score['before'],
+            # civic_score['before'],
+            # safety_security_score['before']
         ]
         score_before = int(sum(w * s for w, s in zip(weights, scores_before)) / sum(weights))
         score_after = int(sum(w * s for w, s in zip(weights, scores_after)) / sum(weights))
         return score_before, score_after
-    
-    def get_resident_radius(self):
-        radius = self.get_resident_score()[1]
+
+    def get_resident_radius():
+        radius = get_resident_score()[1]
         return radius
-    
-    def get_resident_distance(self):
-        distance = self.get_resident_score()[1] - self.get_resident_score()[0]
+
+    def get_resident_distance():
+        distance = get_resident_score()[1] - get_resident_score()[0]
         return distance
+    
+    # --------------------------------------------#
+    # Data for bubble: score
+    # --------------------------------------------#
+    
+    score_res = {
+        "stakeholder": "Residents",
+        "score": get_resident_score()[1],
+        "radius": get_resident_radius(),
+        'distance': get_resident_distance() * 2
+        }
+
+    # --------------------------------------------#
+    # Data for chord chart: interaction
+    # --------------------------------------------#
+    indicator_res = [
+        # {"stakeholder": "Residents", "indicator": "Affordability", "target": access_to_service1["target"], "value": access_to_service1["value"]},
+        {"stakeholder": "Residents", "indicator": "Access to service", "target": access_to_service1["target"], "value": access_to_service1["value"]},
+        {"stakeholder": "Residents", "indicator": "Access to service", "target": access_to_service2["target"], "value": access_to_service2["value"]},
+        # {"stakeholder": "Resident", "indicator": "Job-housing balance", "target": job_housing["target"], "value": job_housing["value"]},
+        {"stakeholder": "Residents", "indicator": "Civic space", "target": civic_space_["target"], "value": civic_space_["value"]},
+        {"stakeholder": "Residents", "indicator": "Safety & security", "target": safety_security["target"], "value": safety_security["value"]}
+        # {"stakeholder": "Resident", "indicator": "Tax", "target": tax_cost["target"], "value": tax_cost["value"]},
+        # {"stakeholder": "Resident", "indicator": "Build-up area", "target": build_up_area["target"], "value": build_up_area["value"]}
+    ]
+
+    # --------------------------------------------#
+    # Data for indicator chart: indicator value
+    # --------------------------------------------#
+    index_res = [
+        {"stakeholder": "Residents","indicator": "Affordability", "baseline": affordable_score['before'],"score": affordable_score['after']}
+        # {"stakeholder": "Residents","indicator": "Access to service", "baseline": access_score['before'],"score": access_score['after']},
+        # {"stakeholder": "Residents","indicator": "Civic space", "baseline": civic_score['before'],"score": civic_score['after']},
+        # {"stakeholder": "Residents","indicator": "Safety & security", "baseline": safety_security_score['before'],"score": safety_security_score['after']}
+        # {"stakeholder": "Resident","indicator": "Tax", "baseline": tax_cost_score['before'],"score": tax_cost_score['after']}
+    ]
+    
+    return score_res, indicator_res, index_res
 
 
-##--------------------------------------------##
-resident = Resident()
-# --------------------------------------------#
-# Data for chord chart: interaction
-# --------------------------------------------#
-score_res = {
-    "stakeholder": "Residents",
-    "score": resident.get_resident_score()[1],
-    "radius": resident.get_resident_radius(),
-    'distance': resident.get_resident_distance()
-    }
-
-# --------------------------------------------#
-# Data for chord chart: interaction
-# --------------------------------------------#
-indicator_res = [
-    # {"stakeholder": "Residents", "indicator": "Affordability", "target": resident.access_to_service1["target"], "value": resident.access_to_service1["value"]},
-    {"stakeholder": "Residents", "indicator": "Access to service", "target": resident.access_to_service1["target"], "value": resident.access_to_service1["value"]},
-    {"stakeholder": "Residents", "indicator": "Access to service", "target": resident.access_to_service2["target"], "value": resident.access_to_service2["value"]},
-    # {"stakeholder": "Resident", "indicator": "Job-housing balance", "target": resident.job_housing["target"], "value": resident.job_housing["value"]},
-    {"stakeholder": "Residents", "indicator": "Civic space", "target": resident.civic_space["target"], "value": resident.civic_space["value"]},
-    {"stakeholder": "Residents", "indicator": "Safety & security", "target": resident.safety_security["target"], "value": resident.safety_security["value"]}
-    # {"stakeholder": "Resident", "indicator": "Tax", "target": resident.tax_cost["target"], "value": resident.tax_cost["value"]},
-    # {"stakeholder": "Resident", "indicator": "Build-up area", "target": resident.build_up_area["target"], "value": resident.build_up_area["value"]}
-]
-
-# --------------------------------------------#
-# Data for indicator chart: indicator value
-# --------------------------------------------#
-index_res = [
-    {"stakeholder": "Residents","indicator": "Affordability", "baseline": resident.affordable_score['before'],"score": resident.affordable_score['after']}
-    # {"stakeholder": "Residents","indicator": "Access to service", "baseline": resident.access_score['before'],"score": resident.access_score['after']},
-    # {"stakeholder": "Residents","indicator": "Civic space", "baseline": resident.civic_score['before'],"score": resident.civic_score['after']},
-    # {"stakeholder": "Residents","indicator": "Safety & security", "baseline": resident.safety_security_score['before'],"score": resident.safety_security_score['after']}
-    # {"stakeholder": "Resident","indicator": "Tax", "baseline": resident.tax_cost_score['before'],"score": resident.tax_cost_score['after']}
-]
-
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # print(goodness(affordability(average_resident_income, average_rent_price), 0.3))
     # test_rent_price_model()
-    print("score_res:\n",score_res)
-    print("indicator_res:\n",indicator_res)
-    print("index_res:\n",index_res)
+    # new_resident_num(resident_space)
+    # print("score_res:\n",score_res)
+    # print("indicator_res:\n",indicator_res)
+    # print("index_res:\n",index_res)
     

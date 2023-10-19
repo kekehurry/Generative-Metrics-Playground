@@ -6,7 +6,7 @@ file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file_
 with open(file_path, 'r') as file:
     input_value = json.load(file)
 
-print(input_value)
+# print(input_value)
 
 VOLPE_area = 30593
 max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
@@ -20,6 +20,41 @@ resident_space = floor_area * input_value['residential']
 
 open_space = VOLPE_area * (1-input_value['bcr'])
 green_space = open_space * 0.5
+
+print("office_space:", office_space, 
+      "amenity_space:", amenity_space, 
+      "civic_space:", civic_space, 
+      "resident_space:", resident_space, 
+      "open_space:", open_space, 
+      "green_space:", green_space)
+
+
+def refresh_input():
+    global input_value, resident_space, office_space, amenity_space, civic_space, open_space, green_space
+    file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api/output/input.json'))
+
+    with open(file_path, 'r') as file:
+        input_value = json.load(file)
+
+    VOLPE_area = 30593
+    max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
+    max_floor_area = 99427
+    floor_area = VOLPE_area * input_value['bcr'] * input_value['tier']  # 0.6 is the bcr, 3 is the tier
+
+    office_space = floor_area * input_value['office'] 
+    amenity_space = floor_area * input_value['amenity']
+    civic_space = floor_area * input_value['civic']
+    resident_space = floor_area * input_value['residential']
+
+    open_space = VOLPE_area * (1-input_value['bcr'])
+    green_space = open_space * 0.5
+
+    # print("office_space:", office_space, 
+    #     "amenity_space:", amenity_space, 
+    #     "civic_space:", civic_space, 
+    #     "resident_space:", resident_space, 
+    #     "open_space:", open_space, 
+    #     "green_space:", green_space)
 
 # input_value = [
 #     0.6,  # bcr
