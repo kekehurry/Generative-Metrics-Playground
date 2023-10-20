@@ -23,7 +23,7 @@ const Slider_1 = (props) => {
           trackClassName="example-track"
           min={0}
           max={1}
-          step={0.01}
+          step={0.1}
           onChange={(value) => {
             setSelectedValue(value);
             props.handleChange1(value);
@@ -49,7 +49,7 @@ const Slider_2 = (props) => {
           trackClassName="example-track"
           min={0}
           max={props.max}
-          step={0.01}
+          step={0.1}
           onChange={(value) => {
             setSelectedValue(value);
             props.handleChange2(value);
@@ -75,7 +75,7 @@ const Slider_3 = (props) => {
           trackClassName="example-track"
           min={0}
           max={props.max}
-          step={0.01}
+          step={0.1}
           onChange={(value) => {
             setSelectedValue(value);
             props.handleChange3(value);
@@ -101,7 +101,7 @@ const Slider_4 = (props) => {
           trackClassName="example-track"
           min={0}
           max={props.max}
-          step={0.01}
+          step={0.1}
           onChange={(value) => {
             setSelectedValue(value);
             props.handleChange4(value);

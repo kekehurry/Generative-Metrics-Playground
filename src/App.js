@@ -18,13 +18,24 @@ import RadarChart from "./components/0.4_charts/RadarChart";
 
 
 // import Modal from "./components/Modal";
-import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
+// import { Slider_1, Slider_2, Slider_3, Slider_4 } from "./components/Slider"
+
+import CombinedSlider from './components/Slider_new';
 
 // read data from backend
 // const CHORD_DATA_PATH = "/data/chord_data_2.csv";
 // const BUBBLE_DATA_PATH = "/data/bubble_data.csv";
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 // const RADAR_DATA_PATH = '/data/radar_data_3.json';
+
+const Button = styled.button`
+  background-color: darkblue;
+  color: #FFFFFF;
+  border-radius: 5px;
+  box-shadow: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  `;
 
 
 
@@ -157,9 +168,9 @@ function App() {
   const [bcr, setBCR] = useState(0.6);
   const [tier, setTier] = useState(3);
   const [residential, setResidential] = useState(0.2);
-  const [office, setOffice] = useState(0.5);
+  const [office, setOffice] = useState(0.3);
   const [amenity, setAmenity] = useState(0.2);
-  const [civic, setCivic] = useState(0.1);
+  const [civic, setCivic] = useState(0.3);
 
   const [isMobile, setIsMobile] = useState(false);
   const [chordData, setChordData] = useState({});
@@ -174,6 +185,7 @@ function App() {
   //   setVersion(randomNumber);
   // };
   const [selectedButton, setSelectedButton] = useState('label1');
+
 
   // ------------------key from user input-------------------------------
   // --------------------------------------------------------------------
@@ -192,25 +204,45 @@ function App() {
   // };
 
   // for real
-  const handleChange1 = (value) => {
-    setResidential(value);
-    sendDataToServer();
+  const handleChange1 = (values) => {
+
+    // 从 values 数组中提取值
+    const [receivedValue1, receivedValue2, receivedValue3, receivedValue4] = values;
+
+    console.log("Received values: ", values);
+    // console.log("Calculated values: ", residential, office, amenity, civic);
+
+    // 更新状态
+    setResidential(receivedValue1);
+    // sendDataToServer(receivedValue1);
+    setOffice(receivedValue2);
+    // sendDataToServer(receivedValue2);
+    setAmenity(receivedValue3);
+    // sendDataToServer(receivedValue3);
+    setCivic(receivedValue4);
+    // sendDataToServer(receivedValue4);
+    
   };
 
-  const handleChange2 = (value) => {
-    setOffice(value);
-    sendDataToServer();
-  };
+  // const handleChange1 = (value) => {
+  //   setResidential(value);
+  //   sendDataToServer();
+  // };
 
-  const handleChange3 = (value) => {
-    setAmenity(value);
-    sendDataToServer();
-  };
+  // const handleChange2 = (value) => {
+  //   setOffice(value);
+  //   sendDataToServer();
+  // };
 
-  const handleChange4 = (value) => {
-    setCivic(value);
-    sendDataToServer();
-  };
+  // const handleChange3 = (value) => {
+  //   setAmenity(value);
+  //   sendDataToServer();
+  // };
+
+  // const handleChange4 = (value) => {
+  //   setCivic(value);
+  //   sendDataToServer();
+  // };
 
   // // BCR
   // const handleChange5 = (value) => {
@@ -225,13 +257,13 @@ function App() {
   // BCR
   const handleChange5 = (e) => {
     setBCR(parseFloat(e.target.value));
-    sendDataToServer();
+    // sendDataToServer();
   };
 
   // Tier
   const handleChange6 = (e) => {
     setTier(parseInt(e.target.value, 10));
-    sendDataToServer();
+    // sendDataToServer();
   };
 
   // const ProgressBar = (props) => {
@@ -628,9 +660,8 @@ function App() {
           <div className="down">
             {/* <p>slider</p > */}
 
-            <div className="slider-container">
+            <div className="slider-container" >
               {/* <p>INPUT</p > */}
-
               <div className='slider-label' style={{ display: 'flex', flexDirection: 'column', padding: '2px 0 0 0'}}>
                 Building Coverage Ratio
                 {/* <input type="number" placeholder="0.6" step="0.1" min="0" max="1" handleChange5={handleChange5} /> */}
@@ -660,10 +691,22 @@ function App() {
               </div>
 
               <div className="slider-label">
-                <Slider_1 handleChange1={handleChange1} />
+                <CombinedSlider value = {[residential, office, amenity, civic]} handleChange={handleChange1}
+                />
               </div>
 
-              <div className="slider-label" >
+              <div className="values">
+                <div style={{margin: '0 10px'}}>Residential Space: {residential.toFixed(2)}</div>
+                <div style={{margin: '0 10px'}}>Office Space: {office.toFixed(2)}</div>
+                <div style={{margin: '0 10px'}}>Amenity Space: {amenity.toFixed(2)}</div>
+                <div style={{margin: '0 10px'}}>Civic Space: {civic.toFixed(2)}</div>
+              </div>
+
+              {/* <div className="slider-label">
+                <Slider_1 handleChange1={handleChange1} />
+              </div> */}
+
+              {/* <div className="slider-label" >
                 <Slider_2 handleChange2={handleChange2} max={1 - residential} />
               </div>
 
@@ -675,6 +718,10 @@ function App() {
 
               <div className="slider-label" >
                 <Slider_4 handleChange4={handleChange4} max={1- residential-office-amenity}/>
+              </div> */}
+
+              <div className="button" style={{margin: '0 30px'}}>
+                <Button onClick={sendDataToServer}>Send Data</Button>
               </div>
 
             </div>

@@ -10,23 +10,13 @@ sys.path.append(project_directory)
 
 # sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
 from backend.model_tool import *
-from backend.input_data import input_value
+import backend.input_data
 import requests
 
 import warnings
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-VOLPE_area = 30593
-max_FAR = 3.25  # from cambridge zoning regulation https://www.cambridgema.gov/~/media/Files/CDD/ZoningDevel/zoningguide/zguide.ashx
-max_floor_area = 99427
-
-floor_area = VOLPE_area * input_value['bcr'] * input_value['tier']  # 0.6 is the bcr, 3 is the tier
-
-office_space = floor_area * input_value['office'] 
-amenity_space = floor_area * input_value['amenity']
-civic_space = floor_area * input_value['civic']
-resident_space = floor_area * input_value['residential'] 
 
 # Economic nested classes
 
@@ -78,37 +68,38 @@ class Employment:
         return round(score, 2)
 
 
-class Equity:
-    def __init__(self, resident_space):
-        self.resident_space = resident_space
+# class Equity:
+#     def __init__(self, resident_space, VOLPE_area):
+#         self.resident_space = resident_space
+#         self.VOLPE_area = 30593
 
-        self.current_equity_score = self.get_equity_score(self.get_current_affordability(), self.get_current_cost_of_housing())
-        self.future_equity_score = self.get_equity_score(self.get_future_affordability(), self.get_future_cost_of_housing())
+#         self.current_equity_score = self.get_equity_score(self.get_current_affordability(), self.get_current_cost_of_housing())
+#         self.future_equity_score = self.get_equity_score(self.get_future_affordability(), self.get_future_cost_of_housing())
 
-    def get_current_affordability(self):
-        value = 0.1
-        return value
-        # return value
+#     def get_current_affordability(self):
+#         value = 0.1
+#         return value
+#         # return value
 
-    def get_future_affordability(self):
-        # 25 % of the new housing will be below market rate, with 20% inclusionary housing and 5% middle income housing (https://courbanize.com/projects/kendall-sq-urban-renewal/information)
-        value = (0.1 * VOLPE_area + 0.25 * self.resident_space)/VOLPE_area
-        return value
+#     def get_future_affordability(self):
+#         # 25 % of the new housing will be below market rate, with 20% inclusionary housing and 5% middle income housing (https://courbanize.com/projects/kendall-sq-urban-renewal/information)
+#         value = (0.1 * self.VOLPE_area + 0.25 * self.resident_space)/self.VOLPE_area
+#         return value
 
-    def get_current_cost_of_housing(self):
-        score = (148 + 171 + 135 + 137) / 4  # data from https://www.city-data.com/neighborhood/Kendall-Square-Cambridge-MA.html
-        value = norm(score, 171, 135)
-        return value
+#     def get_current_cost_of_housing(self):
+#         score = (148 + 171 + 135 + 137) / 4  # data from https://www.city-data.com/neighborhood/Kendall-Square-Cambridge-MA.html
+#         value = norm(score, 171, 135)
+#         return value
 
-    def get_future_cost_of_housing(self): # should be improved
-        score = round(random.uniform(135* (1- self.resident_space/max_floor_area), 135), 2)  # now it is randomly generated
-        value = norm(score, 171, 0)
-        return value
+#     def get_future_cost_of_housing(self): # should be improved
+#         score = round(random.uniform(135* (1- self.resident_space/max_floor_area), 135), 2)  # now it is randomly generated
+#         value = norm(score, 171, 0)
+#         return value
 
-    def get_equity_score(self, normalize_affordability, normalize_cost_of_housing):
-        score = 0.5 * normalize_affordability + 0.5 * normalize_cost_of_housing
-        score = round(score, 2)
-        return round(score, 2)
+#     def get_equity_score(self, normalize_affordability, normalize_cost_of_housing):
+#         score = 0.5 * normalize_affordability + 0.5 * normalize_cost_of_housing
+#         score = round(score, 2)
+#         return round(score, 2)
 
 class Income:
     def __init__(self):
@@ -249,8 +240,9 @@ class BuildUpArea:
         return value
 
     def get_future_built_area(self):
+        max_floor_area=99427
         area = self.floor_area
-        value = norm(area, max_floor_area, 0)
+        value = norm(area, max_floor_area , 0)
         return value
 
     def get_build_up_score(self, normalize_built_area):
@@ -332,14 +324,14 @@ class ProfitConstruction:
 
 class Economic:
     def __init__(self):
-        self.employment = Employment(office_space, amenity_space, civic_space)
-        self.equity = Equity(resident_space)
+        self.employment = Employment(backend.input_data.office_space, backend.input_data.amenity_space, backend.input_data.civic_space)
+        # self.equity = Equity(backend.input_data.resident_space)
         self.income = Income()
-        self.innovation = Innovation(office_space)
+        self.innovation = Innovation(backend.input_data.office_space)
         self.attractive_competitive = AttractivenessCompetitiveness()
-        self.build_up_area = BuildUpArea(floor_area)
-        self.displacement = Displacement(floor_area, amenity_space, resident_space)
-        self.profit_construction = ProfitConstruction(floor_area, resident_space, amenity_space, office_space)
+        self.build_up_area = BuildUpArea(backend.input_data.floor_area)
+        self.displacement = Displacement(backend.input_data.floor_area, backend.input_data.amenity_space, backend.input_data.resident_space)
+        self.profit_construction = ProfitConstruction(backend.input_data.floor_area, backend.input_data.resident_space, backend.input_data.amenity_space, backend.input_data.office_space)
         # self._preprocess(data)
 
     # def _preprocess(self, data):
@@ -373,7 +365,8 @@ class Pollution:
         return value
 
     def get_future_noise_pollution(self):
-        value = (12.14 + 14.58 + 12.14 + 10.75)/4 + (floor_area/VOLPE_area)
+        VOLPE_area = 30593
+        value = (12.14 + 14.58 + 12.14 + 10.75)/4 + (self.floor_area/VOLPE_area)
         value = norm(value, 14.58, 10.75)
         return value
 
@@ -481,9 +474,9 @@ class Land:
 
 class Environmental:
     def __init__(self):
-        self.pollution = Pollution(floor_area)
-        self.ecosystem = Ecosystem(civic_space, floor_area)
-        self.public_service = PublicService(civic_space, floor_area)
+        self.pollution = Pollution(backend.input_data.floor_area)
+        self.ecosystem = Ecosystem(backend.input_data.civic_space, backend.input_data.floor_area)
+        self.public_service = PublicService(backend.input_data.civic_space, backend.input_data.floor_area)
         self.energy = Energy()
         self.land = Land()
         # self._preprocess(data)
@@ -749,7 +742,7 @@ def ese_test():
     # Create a list of dictionaries for storing the information
     #  data[0] for baseline value / data[1] for simulated value
     data = [[{"category": "Economic", "indicator": "Employment", "value": economic.employment.current_employment_score},
-        {"category": "Economic", "indicator": "Equity", "value": economic.equity.current_equity_score},
+        # {"category": "Economic", "indicator": "Equity", "value": economic.equity.current_equity_score},
         {"category": "Economic", "indicator": "Income", "value": economic.income.current_income_score},
         {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.current_innovation_score},
         {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.current_AC_score},
@@ -770,7 +763,7 @@ def ese_test():
         {"category": "Social", "indicator": "Density", "value": social.density.current_density_score},
         {"category": "Social", "indicator": "Job Housing", "value": social.job_housing.current_job_housing_score}],
         [{"category": "Economic", "indicator": "Employment", "value": economic.employment.future_employment_score},
-        {"category": "Economic", "indicator": "Equity", "value": economic.equity.future_equity_score},
+        # {"category": "Economic", "indicator": "Equity", "value": economic.equity.future_equity_score},
         {"category": "Economic", "indicator": "Income", "value": economic.income.future_income_score},
         {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.future_innovation_score},
         {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.future_AC_score},

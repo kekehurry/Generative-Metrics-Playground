@@ -7,9 +7,15 @@ from pathlib import Path
 import subprocess
 
 import sys
-sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
+import os
+current_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.join(current_directory, '..')
+sys.path.append(project_directory)
+# sys.path.append('/Users/majue/Documents/MIT/multi_stakeholders_indicator_d3')
 from backend.ESE_metrics import ese_test
 from backend.stakeholders import stake_test
+from backend.resident_model import cal_future_affordability_index
+import backend.input_data
 
 
 
@@ -52,13 +58,13 @@ def receive_values():
     #     residential, office, amenity, civic, bcr, tier, VOLPE_area)
 
 
-    print("Residential:", residential)
-    print("Office:", office)
-    print("Amenity:", amenity)
-    print("Civic:", civic)
-    print("BCR:", bcr)
-    print("Tier:", tier)
-    print("Received data:", data)
+    # print("Residential:", residential)
+    # print("Office:", office)
+    # print("Amenity:", amenity)
+    # print("Civic:", civic)
+    # print("BCR:", bcr)
+    # print("Tier:", tier)
+    # print("Received data:", data)
     return jsonify({"message": "Values received successfully!"})
 
 
@@ -98,7 +104,7 @@ def receive_values():
 @app.route('/api/save_data/<filename>', methods=['POST'])
 def save_data(filename):
     data = request.json
-    print("Received data:", data)
+    # print("Received data:", data)
     
     if not data:
         return jsonify({"message": "No data!"}), 400
@@ -137,6 +143,7 @@ def get_data(filename):
 @app.route('/api/compute', methods=['POST'])
 def compute():
     try:
+        backend.input_data.refresh_input()
         ese_test()  # 调用你的计算函数
         print('ESE metrics computed!')
         stake_test() 
