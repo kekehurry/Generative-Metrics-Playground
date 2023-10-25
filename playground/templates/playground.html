@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative City Playground</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.126.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div id="sceneContainer"></div>
+    <div id="echartsContainer">
+        <div id="radarChart"></div>
+        <div id="barChart"></div>
+        <div id="link"><button id="linkButton">Link to City Matrix</button></div>
+    </div>
+    <script src="{{ url_for('static', filename='echartscode.js') }}"></script>
+    <script src="{{ url_for('static', filename='playground.js') }}"></script>
+</body>
+</html>

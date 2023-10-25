@@ -144,24 +144,28 @@ def stake_test():
     send_to_api(data_json, "index_score")
 
 def send_to_api(data_json, filename):
-    # Define the API endpoint (assuming Flask app is running on localhost:5000)
-    api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
-    # api_url = f'http://localhost:5000/api/save_data'
+    output_path = f'output/{filename}.json' # 添加 .json 扩展名
+    # output_path.parent.mkdir(parents=True, exist_ok=True)  # 确保目录存在
+    with open(output_path,'w') as json_file:
+        json_file.write(data_json)
+    # # Define the API endpoint (assuming Flask app is running on localhost:5000)
+    # api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
+    # # api_url = f'http://localhost:5000/api/save_data'
     
-    # Adding filename as a parameter or in the data body
-    # params = {'filename': filename}
-    # Use the POST method to send data
-    # response = requests.post(api_url, params=params, data=data_json, headers={'Content-Type': 'application/json'})
-    print(api_url)
-    response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
-    print(response.text)
+    # # Adding filename as a parameter or in the data body
+    # # params = {'filename': filename}
+    # # Use the POST method to send data
+    # # response = requests.post(api_url, params=params, data=data_json, headers={'Content-Type': 'application/json'})
+    # print(api_url)
+    # response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
+    # print(response.text)
 
-    # Check the response
-    if response.status_code == 200:
-        console_log(f"Data successfully sent to API for {filename}!")
-        print(f"Data successfully sent to API for {filename}!")
-    else:
-        print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
+    # # Check the response
+    # if response.status_code == 200:
+    #     console_log(f"Data successfully sent to API for {filename}!")
+    #     print(f"Data successfully sent to API for {filename}!")
+    # else:
+    #     print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
 
 def console_log(message):
     print("[CONSOLE.LOG]", message)

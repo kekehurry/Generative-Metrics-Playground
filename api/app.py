@@ -1,11 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import json
 import time
 import pandas as pd
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from pathlib import Path
 import subprocess
-
+import gevent
 import sys
 import os
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -16,12 +17,14 @@ from backend.ESE_metrics import ese_test
 from backend.stakeholders import stake_test
 from backend.resident_model import cal_future_affordability_index
 import backend.input_data
+from backend.input_data import refresh_input
 
 
-
-app = Flask(__name__)
-CORS(app)  # Allow all origins to access this server
+app = Flask(__name__,static_folder=os.path.join(project_directory,'build'))
+CORS(app)  # Allow all origins to access this serve
+socketio = SocketIO(app,cors_allowed_origins="*")
 # CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+# socketio = SocketIO(app)
 
 # 用于存储接收到的数据
 received_data = {
@@ -37,9 +40,16 @@ received_data = {
 def get_current_time():
     return {'time': time.time()}
 
-@app.route('/')
-def index():
-    return 'Welcome to My API!'
+# @app.route('/')
+# def index():
+#     return 'Welcome to My API!'
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/api/receive_values', methods=['POST'])
 def receive_values():
@@ -101,27 +111,24 @@ def receive_values():
     
 #     return jsonify({"message": f"data successfully saved to {output_path}!"}), 200
 
+
 @app.route('/api/save_data/<filename>', methods=['POST'])
 def save_data(filename):
     data = request.json
-    # print("Received data:", data)
-    
     if not data:
         return jsonify({"message": "No data!"}), 400
-
     # 保存 JSON 数据
     try:
-        output_path = Path(f'output/{filename}.json')  # 添加 .json 扩展名
-        output_path.parent.mkdir(parents=True, exist_ok=True)  # 确保目录存在
-        with output_path.open('w') as json_file:
+        output_path = f'output/{filename}.json' # 添加 .json 扩展名
+        # output_path.parent.mkdir(parents=True, exist_ok=True)  # 确保目录存在
+        with open(output_path,'w') as json_file:
             json.dump(data, json_file)
-            
+
         # # 运行后端计算程序
         # result = subprocess.run(['python', 'ESE_metrics.py'], capture_output=True, text=True)
         # print(result.stdout)  # 打印后端程序的输出
         
         # return jsonify({"message": f"Radar data update!"}), 200
-
     except Exception as e:
         return jsonify({"message": f"Error when saving data: {e}"}), 500
     
@@ -131,7 +138,7 @@ def save_data(filename):
 def get_data(filename):
     try:
         # filepath = f'{filename}.csv'
-        filepath = f'output/{filename}'
+        filepath =  f'output/{filename}'
         # df = pd.read_csv(filepath)
         # return df.to_json(orient="records"), 200
         with open(filepath, 'r') as file:
@@ -140,10 +147,11 @@ def get_data(filename):
     except Exception as e:
         return jsonify({"message": f"error when reading or sending data: {e}"}), 500
 
-@app.route('/api/compute', methods=['POST'])
+@app.route('/api/compute', methods=['POST','GET'])
 def compute():
     try:
         backend.input_data.refresh_input()
+        # refresh_input()
         ese_test()  # 调用你的计算函数
         print('ESE metrics computed!')
         stake_test() 
@@ -153,6 +161,15 @@ def compute():
         print(e)
         return jsonify({"message": "An error occurred during the computation"}), 500
 
+@socketio.on('connect')
+@app.route('/api/refresh', methods=['GET'])
+def handle_connect():
+    print('Client connected')
+    socketio.emit('refresh', {'data': 'Refresh the data now!'})
+    return jsonify({"message": "Refresh the data now!"}), 500
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True,threaded=True)
+    socketio.run(app,host='0.0.0.0',port=5001,debug=False)
 

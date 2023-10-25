@@ -28,6 +28,8 @@ import CombinedSlider from './components/Slider_new';
 // const PIE_DATA_PATH = "/data/pie_data_2.csv";
 // const RADAR_DATA_PATH = '/data/radar_data_3.json';
 
+import io from 'socket.io-client';
+
 const Button = styled.button`
   background-color: darkblue;
   color: #FFFFFF;
@@ -37,7 +39,7 @@ const Button = styled.button`
   text-transform: uppercase;
   `;
 
-
+const server_address = 'http://127.0.0.1:5001';
 
 function App() {
 
@@ -52,7 +54,7 @@ function App() {
   // 这是一个异步函数，用于触发后端的计算
   async function triggerComputation() {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/compute`, {
+        const response = await fetch(server_address+'/api/compute', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -63,8 +65,8 @@ function App() {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log(data.message);
+        const data = response.json();
+        console.log('in API repsonse: '+data.message);
     } catch (error) {
         console.error('Error during the computation:', error);
         throw error; // 重新抛出错误，以便外部代码可以捕获它
@@ -74,10 +76,10 @@ function App() {
   const fetchDataFromServer = async () => {
     try {
         const responses = await Promise.all([
-          fetch('http://127.0.0.1:5000/api/get_data/indicator.json'),
-          fetch('http://127.0.0.1:5000/api/get_data/bubble_data.json'),
-          fetch('http://127.0.0.1:5000/api/get_data/index_score.json'),
-          fetch('http://127.0.0.1:5000/api/get_data/radar_data.json')
+          fetch(server_address+'/api/get_data/indicator.json'),
+          fetch(server_address+'/api/get_data/bubble_data.json'),
+          fetch(server_address+'/api/get_data/index_score.json'),
+          fetch(server_address+'/api/get_data/radar_data.json')
         ]);
 
         // 解析 JSON 数据
@@ -111,7 +113,7 @@ function App() {
     console.log("Sending data:", payload); // 打印将要发送的数据
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/api/receive_values", {
+        const response = await fetch(server_address+"/api/receive_values", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -125,7 +127,7 @@ function App() {
         console.log('INPUT Data sent to receive_values');
 
         // 然后发送数据到 save_data 路由
-        const saveResponse = await fetch('http://127.0.0.1:5000/api/save_data/input', { 
+        const saveResponse = await fetch('/api/save_data/input', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -426,7 +428,7 @@ function App() {
 
   // load chord data
   const loadChordData = () => {
-    fetch("http://127.0.0.1:5000/api/get_data/indicator.json")
+    fetch(server_address+"/api/get_data/indicator.json")
         .then((response) => response.json())  // 解析返回的 JSON 数据
         .then((data) => {
             console.log('Received chord JSON data:', data); // 打印 JSON 数据
@@ -462,7 +464,7 @@ function App() {
 
   // load bubble data
   const loadBubbleData = () => {
-    fetch("http://127.0.0.1:5000/api/get_data/bubble_data.json")
+    fetch(server_address+"/api/get_data/bubble_data.json")
       .then((response) => response.json())  // 解析返回的 JSON 数据
       .then((data) => {
         console.log('Received bubble JSON data:', data); // 打印 JSON 数据
@@ -481,7 +483,7 @@ function App() {
 
   // load indicator data
   const loadIndicatorData = () => {
-    fetch("http://127.0.0.1:5000/api/get_data/index_score.json")
+    fetch(server_address+"/api/get_data/index_score.json")
       .then((response) => response.json())  // 解析返回的 JSON 数据
       .then((data) => {
         console.log('Received indicator JSON data:', data); // 打印 JSON 数据
@@ -523,7 +525,7 @@ function App() {
 
   // load radar data
   const loadRadarData = () => {
-    fetch("http://127.0.0.1:5000/api/get_data/radar_data.json")
+    fetch(server_address+"/api/get_data/radar_data.json")
       .then((response) => response.json()) // 解析返回的 JSON 数据
       .then(data => {
         console.log('Received radar JSON data:', data); // 打印 JSON 数据
@@ -544,6 +546,23 @@ function App() {
   useEffect(() => {
     loadRadarData();
     } , []);
+
+  useEffect(() => {
+      const socket = io(server_address);
+  
+      socket.on('connect', () => {
+          console.log('Connected to the server!');
+      });
+  
+      socket.on('refresh', (data) => {
+          console.log('Received message:', data);
+          fetchDataFromServer();
+      });
+  
+      return () => {
+          socket.disconnect();
+      };
+  }, []);
 
   // --------------------------------------------welcomepage--------------------------------------------
   if (!showGraph) {
@@ -740,3 +759,5 @@ export default App;
 export function renderToDOM(container) {
   render(<App />, container);
 }
+
+

@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    background-color: black;
+    color: white;
+}
+
+#sceneContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+h1 {
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    transform: translateY(-50%);
+    font-size: 4em;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.6);
+}
+
+#echartsContainer {
+    position: absolute;
+    top: 2%;  
+    right: 2%; 
+    width: 30%; 
+    height: 90%;
+    background-color: rgba(50, 50, 50, 0.5);
+    padding: 10px;
+    border-radius: 0 0 0 10px;
+}
+
+#radarChart {
+    width: 100%;
+    height: 50%;
+    background-color: rgba(50, 50, 50, 0.3);
+}
+
+#barChart {
+    width: 100%;
+    height: 40%; 
+    background-color: rgba(50, 50, 50, 0.3);
+}
+#link {
+    margin-top: 2px;
+    width: 100%;
+    height: 8%;
+}
+#linkButton {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(2, 61, 188, 0.7);
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: rgba(2, 61, 188, 0.5);
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Arial Black';
+}
+#linkButton:hover {
+    background-color: rgba(2, 61, 188, 1);
+}
+#playButton {
+    position: absolute;
+    top: 55%;
+    left: 45%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#playButton:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+#playButton i {
+    font-size: 1.5em;
+    color: black;
+}
+

@@ -1,8 +1,9 @@
 import os
 import json
+from pathlib import Path
 
-file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api/output/input.json'))
-
+file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output/input.json'))
+print(file_path)
 with open(file_path, 'r') as file:
     input_value = json.load(file)
 
@@ -31,7 +32,7 @@ print("office_space:", office_space,
 
 def refresh_input():
     global input_value, resident_space, office_space, amenity_space, civic_space, open_space, green_space
-    file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api/output/input.json'))
+    file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output/input.json'))
 
     with open(file_path, 'r') as file:
         input_value = json.load(file)

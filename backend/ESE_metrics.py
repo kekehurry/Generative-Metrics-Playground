@@ -801,6 +801,7 @@ def ese_test():
     # Convert data to JSON format
     data_json = json.dumps(data)
     send_to_api(data_json, "radar_data")
+    # Use the POST method to send data
 
 
     # print(environmental.pollution.air_quality)
@@ -811,18 +812,23 @@ def ese_test():
     # print(social.get_statistics())
     
 def send_to_api(data_json, filename):
-    # Define the API endpoint (assuming Flask app is running on localhost:5000)
-    api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
-    # Use the POST method to send data
-    response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
+    output_path = f'output/{filename}.json' # 添加 .json 扩展名
+    # output_path.parent.mkdir(parents=True, exist_ok=True)  # 确保目录存在
+    with open(output_path,'w') as json_file:
+        json_file.write(data_json)
+    # # Define the API endpoint (assuming Flask app is running on localhost:5000)
+    # api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
+    # # Use the POST method to send data
+    # # response = requests.post(api_url, json=data_json)
+    # response = requests.post(api_url, json=data_json)
 
-    # Check the response
-    if response.status_code == 200:
-        console_log(f"Data successfully sent to API for {filename}!")
-        print(f"Data successfully sent to API for {filename}!")
-    else:
-        print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
-        
+    # # Check the response
+    # if response.status_code == 200:
+    #     console_log(f"Data successfully sent to API for {filename}!")
+    #     print(f"Data successfully sent to API for {filename}!")
+    # else:
+    #     print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
+
 def console_log(message):
     print("[CONSOLE.LOG]", message)
     
