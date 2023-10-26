@@ -18,7 +18,7 @@ document.getElementById('sceneContainer').appendChild( renderer.domElement );
 //CAMERA
 let playground_scene = new THREE.Scene();
 let playground_camera = new THREE.PerspectiveCamera( 45, renderWidth / renderHeight, 1, 10000 );
-playground_camera.position.set( width, 80*height, 140*height );
+playground_camera.position.set( 100*width, 100*height, -140*height );
 playground_camera.lookAt( 0, 0, 0 );
 //ROLLOVER CUBE
 let rollOverGeo = new THREE.BoxGeometry( box_size, box_size, box_size );
@@ -27,8 +27,8 @@ let rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
 playground_scene.add( rollOverMesh );
 // CUBE
 let cubeGeo = new THREE.BoxGeometry( box_size, box_size, box_size );
-let cubeMaterial1 = new THREE.MeshLambertMaterial( { color: 0xfeb74c} );
-let cubeMaterial2 = new THREE.MeshLambertMaterial( { color: 0x559ced} );
+let cubeMaterial1 = new THREE.MeshLambertMaterial( { color: 0x9C5D08} );
+let cubeMaterial2 = new THREE.MeshLambertMaterial( { color: 0x08599C} );
 let materialList = [];
 materialList.push(cubeMaterial1);
 materialList.push(cubeMaterial2);
@@ -63,9 +63,9 @@ playground_scene.add( plane );
 let objects = [];
 objects.push(plane);
 //LIGHT
-let ambientLight = new THREE.AmbientLight( 0x606060);
+let ambientLight = new THREE.AmbientLight( 0x606060,10);
 playground_scene.add( ambientLight );
-let directionalLight = new THREE.DirectionalLight( 0xffffff,3);
+let directionalLight = new THREE.DirectionalLight( 0xffffff,10);
 directionalLight.position.set( 1, 0.75, 0.5 ).normalize();
 playground_scene.add( directionalLight );
 //ORBIT CONTROL
@@ -77,6 +77,27 @@ controls.mouseButtons = {
 // playground_scene.traverse((object) => {
 //     object.position.x += shift_distance;  // 'distance' is how far you want to move it to the left
 // });
+
+// loader
+const loader = new THREE.OBJLoader();
+loader.load( "/static/volpe.obj", function ( object ) {
+    object.position.x +=  100;
+    object.position.y +=  40;
+    object.scale.setScalar( 10 );
+    object.rotation.y += 0.5;
+    var material = new THREE.MeshPhongMaterial({
+        color: 0x282828,
+        transparent: true,
+        opacity: 0.8
+    });
+    object.traverse(function (child) {
+        if (child.isMesh) {
+            child.material = material;
+        }
+    });
+    playground_scene.add( object );
+    render();
+});
 
 //EVENTLISTENER
 renderer.domElement.addEventListener( 'pointermove', onPointerMove );
@@ -93,7 +114,7 @@ document.addEventListener('keyup', function(event) {
 });
 window.addEventListener( 'resize', onWindowResize );
 
-renderer.render(playground_scene, playground_camera);
+render();
 
 // Define an async function to fetch server address
 async function fetchServer() {
@@ -218,7 +239,7 @@ function onPointerMove(event) {
             rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
             rollOverMesh.position.divideScalar(box_size).floor().multiplyScalar(box_size).addScalar(box_size / 2);
             
-            renderer.render(playground_scene,playground_camera);
+            render();
         }
     }
 }
@@ -263,7 +284,7 @@ function onPointerDown(event) {
                     objects.push(voxel);
                     get_suggestion();
                     get_score();
-                    renderer.render(playground_scene,playground_camera);
+                    render();
                     console.log("add_cube_location:", i_, j_, k_, "remain_num:", 100 - objects.length + 1);
             }
         }
@@ -278,7 +299,7 @@ function onPointerDown(event) {
             objects.splice( objects.indexOf( intersect.object ), 1 );
             get_suggestion();
             get_score();
-            renderer.render(playground_scene,playground_camera);
+            render();
             console.log("add_cube_location:", i_, j_, z_, "remain_num:", 100 - objects.length + 1);
             }
         }
@@ -318,4 +339,6 @@ function onWindowResize() {
     renderer.setSize( renderWidth, renderHeight );
 }
 
-
+function render() {
+    renderer.render( playground_scene, playground_camera );
+}

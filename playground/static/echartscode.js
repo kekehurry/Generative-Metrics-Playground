@@ -1,5 +1,5 @@
 let radarChart = echarts.init(document.getElementById('radarChart'), 'dark');
-let scoreHistory = [[0,0,0,0,0,0]];
+var scoreHistory = [[0,0,0,0,0,0]];
 let indexList = [0,0,0,0,0,0]
 function updateRadarPlot() {
     let seriesRadarData = [];
