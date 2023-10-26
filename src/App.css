@@ -19,7 +19,7 @@
 
 .App-Content {
   background-color: #13121a;
-  /* background-color: #d7d7e4; */
+  /* background-color: #ffffff; */
   height: calc(100vh - 60px);
   display: flex;
   flex-direction: row;
@@ -31,7 +31,7 @@
 
 .left {
   flex: 3;
-  /* background-color: #e8dada; */
+  /* background-color: #ffffff; */
   background-color: #13121a;
   display: flex;
   flex-direction: column;
@@ -85,7 +85,7 @@
 .App .right {
   /* flex: 1; */
   background-color: #13121a;
-  /* background-color: #f7f7fa; */
+  /* background-color: #ffffff; */
   /* height: 100%; */
   width: 35%;
   /* padding: 1rem;   */
@@ -99,7 +99,7 @@
   width: 40%;
   height: 60%;
   background-color: #13121a;
-  /* background-color: #604d95; */
+  /* background-color: #ffffff; */
   z-index: 10
 }
 
@@ -221,8 +221,8 @@
 
 .example-track {
   position: relative;
-  /* background: #dddddd33; */
-  background: white;
+  background: #dddddd33;
+  /* background: white; */
 }
 
 .example-track.example-track-0 {
@@ -276,3 +276,4 @@
   font-size: 1rem; /* 你可以根据需要调整这个值 */
   flex: 1; /* 使每个元素有相同的flex值，它们将平均分配可用空间 */
 }
+

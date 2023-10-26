@@ -81,13 +81,13 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
     const height = containerHeight ? containerHeight : 0;
     const width = containerWidth ? containerWidth : 500;
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
-    const color = d3.scaleOrdinal()
-      .domain(chord_data.names)
-      .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
+    // const color = d3.scaleOrdinal()
+    //   .domain(chord_data.names)
+    //   .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
 
     const color_2 = d3.scaleOrdinal()
       .domain(chord_data.names)
-      .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
+      .range(['#7178B5', '#0FACA3',  '#7ec1ca', '#a5ba37', '#f6bd0d', '#9b47a2']); //,'#e27c40'
 
 
     // build SVG
@@ -192,12 +192,22 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
     const centerX = 0;
     const centerY = 0;
 
+    // 设置circle的分数映射距离
+    function mapScore(score, b) {
+      if(score <= b) {
+          return (outerRadius * 1.8 * score) / b;
+      } else {
+          let mappedScore = ((score - b) / (100 - b)) * (outerRadius * 1.8); 
+          return (outerRadius * 1.8) + mappedScore;
+      }
+    }
+
     // Tax max width
     // const maxWidth = 100;
 
     // create Chart
     let group = svg.selectAll("g")
-      .data(chords.groups.map((d, i) => ({ ...d, radius: bubble_data[i].radius, distance: bubble_data[i].distance, score: bubble_data[i].score })))
+      .data(chords.groups.map((d, i) => ({ ...d, radius: bubble_data[i].radius, distance: bubble_data[i].distance, score: bubble_data[i].score, initial: bubble_data[i].initial_score, best: bubble_data[i].best })))
       .join("g");
     
     // let group = svg.selectAll("g")
@@ -225,6 +235,7 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       // .attr("id", textId.id)
       .attr("id", (d, i) => `arc${i}`) // 添加弧的id
       .attr("fill", (d) => 'white')
+      // .attr("fill", (d) => 'black')
       .attr("fill-opacity", "10%")
       // .attr("stroke", "black")
       .attr("d", arc_out_out)
@@ -253,7 +264,8 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       .append("circle")
       .attr("cx", function (d) {
         var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        var mappedScore = mapScore(d.score, d.best);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
         console.log("*****************************************")
         console.log(d)
         console.log(centroid)
@@ -263,7 +275,8 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       })
       .attr("cy", function (d) {
         var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+        var mappedScore = mapScore(d.score, d.best);
+        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
         return newPosition[1];
       })
       .attr("r", d => d.radius)  // 设置半径
@@ -276,6 +289,38 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       .on("mouseover", onMouseOver_group)
       .on("mouseout", onMouseOut);
     group.raise()
+
+
+    // Draw background circles - initial scenario
+    // group
+    //   .append("circle")
+    //   .attr("cx", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var mappedScore = mapScore(d.initial, d.best);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
+    //     console.log("*****************************************")
+    //     console.log(d)
+    //     console.log(centroid)
+    //     console.log(newPosition)
+    //     console.log("*****************************************")
+    //     return newPosition[0];
+    //   })
+    //   .attr("cy", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var mappedScore = mapScore(d.initial, d.best);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
+    //     return newPosition[1];
+    //   })
+    //   .attr("r", d => d.initial)  // 设置半径
+    //   .style("fill", (d) => color_2(d.index)) // 设置填充颜色
+    //   .style("fill-opacity", "20%")  // 设置透明度
+    //   .on('click', (event, d) => {
+    //     handleStakeholderClick(bubble_data[d.index].stakeholder);
+    //     handleScoreClick(bubble_data[d.index].score);
+    //   })
+    //   .on("mouseover", onMouseOver_group)
+    //   .on("mouseout", onMouseOut);
+    // group.raise()
     
     // Label name text
     // group
@@ -304,14 +349,17 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       var text = d3.select(this)
           .append("text")
           .attr("fill", "white")
+          // .attr("fill", "black")
           .attr("x", function (d) {
               var centroid = arc_out_out.centroid(d);
-              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+              var mappedScore = mapScore(d.score, d.best);
+              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
               return newPosition[0];
           })
           .attr("y", function (d) {
               var centroid = arc_out_out.centroid(d);
-              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
+              var mappedScore = mapScore(d.score, d.best);
+              var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
               return newPosition[1];
           })
           .attr("text-anchor", "middle")  // 让文本在指定的坐标中居中
@@ -334,28 +382,30 @@ const BubbleChart = ({ chord_data, bubble_data, onStakeholderClick, onScoreClick
       });
   });
 
-    // Label Score Value
-    group
-      .append("text")
-      .attr("fill", "white")
-      .attr("x", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-        return newPosition[0];
-      })
-      .attr("y", function (d) {
-        var centroid = arc_out_out.centroid(d);
-        var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - d.distance);
-        return newPosition[1] + 30;
-      })
-      .attr("text-anchor", "start")  // 让文本在指定的坐标中居中
-      .attr("font-family", "inter")
-      .attr("font-weight", "bold")
-      .attr("font-size", "25px")  // 设置字体大小
-      .attr("font-style", "italic")
-      .style("fill-opacity", "70%")  // 设置透明度
-      .text((d) => d.score);
-    group.raise()
+    // // Label Score Value
+    // group
+    //   .append("text")
+    //   .attr("fill", "white")
+    //   .attr("x", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var mappedScore = mapScore(d.score, d.best);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
+    //     return newPosition[0];
+    //   })
+    //   .attr("y", function (d) {
+    //     var centroid = arc_out_out.centroid(d);
+    //     var mappedScore = mapScore(d.score, d.best);
+    //     var newPosition = computeNewPosition(centerX, centerY, centroid[0], centroid[1], outerRadius * 1.8 - mappedScore);
+    //     return newPosition[1] + 30;
+    //   })
+    //   .attr("text-anchor", "start")  // 让文本在指定的坐标中居中
+    //   .attr("font-family", "inter")
+    //   .attr("font-weight", "bold")
+    //   .attr("font-size", "25px")  // 设置字体大小
+    //   .attr("font-style", "italic")
+    //   .style("fill-opacity", "70%")  // 设置透明度
+    //   .text((d) => d.score);
+    // group.raise()
 
 
     svg.raise()

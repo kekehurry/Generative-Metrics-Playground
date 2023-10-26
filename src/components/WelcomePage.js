@@ -2,8 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './WelcomePage.css';
 import { Link, Element } from 'react-scroll';
 import Sketch from './Sketch.js';
-import Page1Image from './image/test1.png';
-import Page2Image from './image/test2.png';
+import Page1Image from './image/1.jpg';
+import Page2Image from './image/2.jpg';
+import Page3Image from './image/3.jpg';
+import Page4Image from './image/4.jpg';
+import Page5Image from './image/5.jpg';
+import Page6Image from './image/6.jpg';
+import Page7Image from './image/7.jpg';
 
 function WelcomePage({ enterSite }) {
     const sketchRef = useRef();
@@ -43,14 +48,44 @@ function WelcomePage({ enterSite }) {
             </Element>
 
             <Element name="page3" className="page">
-                <h1>Page 3</h1>
+                {/* <h1>Page 3</h1> */}
                 {/* <p>Even more text content... Phasellus id dapibus velit. Cras interdum egestas tortor, nec interdum ante facilisis non. Fusce lacinia, arcu eget dictum posuere, felis lorem tempor tellus, a tristique elit enim sit amet nisi.</p> */}
+                <img src={Page3Image} alt="page3" className='pageImage'/>
                 <Link to="welcomePage" spy={true} smooth={true}></Link>
             </Element>
 
-            <Element name="welcomePage" className="page">
-                <button className="enterButton" onClick={enterSite}>Enter</button>
+            <Element name="page4" className="page">
+                {/* <h1>Page 4</h1> */}
+                {/* <p>Even more text content... Phasellus id dapibus velit. Cras interdum egestas tortor, nec interdum ante facilisis non. Fusce lacinia, arcu eget dictum posuere, felis lorem tempor tellus, a tristique elit enim sit amet nisi.</p> */}
+                <img src={Page4Image} alt="page4" className='pageImage'/>
+                <Link to="welcomePage" spy={true} smooth={true}></Link>
             </Element>
+
+            <Element name="page5" className="page">
+                {/* <h1>Page 5</h1> */}
+                {/* <p>Even more text content... Phasellus id dapibus velit. Cras interdum egestas tortor, nec interdum ante facilisis non. Fusce lacinia, arcu eget dictum posuere, felis lorem tempor tellus, a tristique elit enim sit amet nisi.</p> */}
+                <img src={Page5Image} alt="page5" className='pageImage'/>
+                <Link to="welcomePage" spy={true} smooth={true}></Link>
+            </Element>
+
+            <Element name="page6" className="page">
+                {/* <h1>Page 6</h1> */}
+                {/* <p>Even more text content... Phasellus id dapibus velit. Cras interdum egestas tortor, nec interdum ante facilisis non. Fusce lacinia, arcu eget dictum posuere, felis lorem tempor tellus, a tristique elit enim sit amet nisi.</p> */}
+                <img src={Page6Image} alt="page6" className='pageImage'/>
+                <Link to="welcomePage" spy={true} smooth={true}></Link>
+            </Element>
+
+            <Element name="page7" className="page">
+                {/* <h1>Page 7</h1> */}
+                {/* <p>Even more text content... Phasellus id dapibus velit. Cras interdum egestas tortor, nec interdum ante facilisis non. Fusce lacinia, arcu eget dictum posuere, felis lorem tempor tellus, a tristique elit enim sit amet nisi.</p> */}
+                <img src={Page7Image} alt="page7" className='pageImage'/>
+                <button className="enterButton" onClick={enterSite}>Enter</button>
+                <Link to="welcomePage" spy={true} smooth={true}></Link>
+            </Element>
+
+            {/* <Element name="welcomePage" className="page">
+                <button className="enterButton" onClick={enterSite}>Enter</button>
+            </Element> */}
 
             {/* <div className="welcomepage">
                 <div className="Circle">Community</div>

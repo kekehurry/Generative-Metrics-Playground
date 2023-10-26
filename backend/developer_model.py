@@ -7,6 +7,8 @@ sys.path.append(project_directory)
 import pandas as pd
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 import backend.input_data
 from backend.model_tool import *
@@ -30,6 +32,8 @@ pop_num = get_res_num()
 def cal_gross_income(resident_space, office_space, amenity_space):
     res_develop_cost = 150 # $/sqft estimated value
     office_develop_cost = 300 # $/sqft estimated value  high-rise office: $660/sqft
+    ## 10% or residential space is affordable housing
+    resident_space = resident_space * 0.9
     all_develop_cost = (
         (res_develop_cost * resident_space  + 
          office_develop_cost * (office_space + amenity_space)) * 10.7639
@@ -63,7 +67,6 @@ def cal_gross_income(resident_space, office_space, amenity_space):
     )
     return all_develop_cost, gross_income, expense
 
-
 def pro_forma(resident_space, office_space, amenity_space):
     
     all_develop_cost, gross_income, expense = cal_gross_income(resident_space, office_space, amenity_space)
@@ -80,29 +83,36 @@ def pro_forma(resident_space, office_space, amenity_space):
     return roa_index
 
 def test_pro_forma():
-    # Test the function with varying resident_space
-    resident_spaces = np.linspace(0, 100000, 1000)
-    roas = [pro_forma(res,  backend.input_data.office_space,  backend.input_data.amenity_space) for res in resident_spaces]
+    resident_spaces = np.linspace(0, 100000, 100)
+    office_spaces = np.linspace(0, 100000, 100)
+    amenity_spaces = np.linspace(0, 100000, 100)
 
-    plt.figure(figsize=(10,6))
-    plt.plot(resident_spaces, roas, '-o')
-    plt.title('Return on Asset vs Resident Space')
-    plt.xlabel('Resident Space (sqft)')
-    plt.ylabel('Return on Asset')
-    plt.grid(True)
-    plt.show()
+    combinations = [
+        ('Resident', 'Office', 'Amenity', resident_spaces, office_spaces, backend.input_data.amenity_space),
+        ('Resident', 'Amenity', 'Office', resident_spaces, amenity_spaces, backend.input_data.office_space),
+        ('Office', 'Amenity', 'Resident', office_spaces, amenity_spaces, backend.input_data.resident_space)
+    ]
     
-    # test the function with varying office_space
-    office_spaces = np.linspace(0, 100000, 1000)
-    roas = [pro_forma( backend.input_data.resident_space, off,  backend.input_data.amenity_space) for off in office_spaces]
-    
-    plt.figure(figsize=(10,6))
-    plt.plot(office_spaces, roas, '-o')
-    plt.title('Return on Asset vs Office Space')
-    plt.xlabel('Office Space (sqft)')
-    plt.ylabel('Return on Asset')
-    plt.grid(True)
-    plt.show()
+    for comb in combinations:
+        X_name, Y_name, Z_name, X_spaces, Y_spaces, Z_space_fixed = comb
+        X_spaces, Y_spaces = np.meshgrid(X_spaces, Y_spaces)
+        
+        roas = np.array([pro_forma(x, y, Z_space_fixed)
+                        for x, y in zip(np.ravel(X_spaces), np.ravel(Y_spaces))])
+        roas = roas.reshape(X_spaces.shape)
+
+        fig = plt.figure(figsize=(10, 6))
+        ax = fig.add_subplot(111, projection='3d')
+        surf = ax.plot_surface(X_spaces, Y_spaces, roas, cmap='viridis')
+
+        ax.set_title(f'Return on Asset vs {X_name} Space and {Y_name} Space\n'
+                     f'{Z_name} Space Fixed at {Z_space_fixed} sqft')
+        ax.set_xlabel(f'{X_name} Space (sqft)')
+        ax.set_ylabel(f'{Y_name} Space (sqft)')
+        ax.set_zlabel('Return on Asset')
+        fig.colorbar(surf)
+
+        plt.show()  # 这将会在每次循环结束时显示图像，关闭图像窗口后继续下一次循环
 
 # 找到ROA的最大和最小值
 def find_roa_extremes(res_spaces, off_spaces, amen_spaces):
@@ -120,25 +130,59 @@ def calculate_normalized_roa(roa, roa_min, roa_max):
     normalized_roa = max(0, min(100, normalized_roa))
     return round(normalized_roa, 2)
 
+# def test_return_range():
+#     # 设置参数范围
+#     resident_spaces = np.linspace(10, 900000, 100)  # 示例值，可以调整
+#     office_spaces = np.linspace(10, 900000, 100)    # 示例值，可以调整
+#     amenity_spaces = np.linspace(10, 900000, 100)    # 示例值，可以调整
+
+#     # 找到ROA的极值
+#     roa_min, roa_max = find_roa_extremes(resident_spaces, office_spaces, amenity_spaces)
+#     print("roa_min:", roa_min, "roa_max:", roa_max)
+#     # 计算一个特定情况下的ROA
+#     example_roa = pro_forma( backend.input_data.resident_space, backend.input_data.office_space, backend.input_data.amenity_space)  # 示例参数值，可以调整
+
+#     # 标准化ROA到0-100的范围
+#     normalized_roa = calculate_normalized_roa(example_roa, roa_min, roa_max)
+
+#     print(f"Original ROA: {example_roa}")
+#     print(f"Normalized ROA (0-100 scale): {normalized_roa}")
+#     # get roa_min = 0.265, roa_max = 0.32
+#     return normalized_roa
+
 def test_return_range():
     # 设置参数范围
-    resident_spaces = np.linspace(0, 100000, 100)  # 示例值，可以调整
-    office_spaces = np.linspace(0, 100000, 100)    # 示例值，可以调整
-    amenity_spaces = np.linspace(0, 50000, 100)    # 示例值，可以调整
+    resident_spaces = np.linspace(10, 900000, 100)  # 示例值，可以调整
+    office_spaces = np.linspace(10, 900000, 100)    # 示例值，可以调整
+    amenity_spaces = np.linspace(10, 900000, 100)    # 示例值，可以调整
 
-    # 找到ROA的极值
-    roa_min, roa_max = find_roa_extremes(resident_spaces, office_spaces, amenity_spaces)
-    print("roa_min:", roa_min, "roa_max:", roa_max)
-    # 计算一个特定情况下的ROA
-    example_roa = pro_forma( backend.input_data.resident_space, backend.input_data.office_space, backend.input_data.amenity_space)  # 示例参数值，可以调整
+    roas = []
+    combinations = []
 
-    # 标准化ROA到0-100的范围
-    normalized_roa = calculate_normalized_roa(example_roa, roa_min, roa_max)
+    # 计算不同参数组合下的 ROA
+    for res in resident_spaces:
+        for off in office_spaces:
+            for ame in amenity_spaces:
+                roa = pro_forma(res, off, ame)
+                roas.append(roa)
+                combinations.append((res, off, ame))
 
-    print(f"Original ROA: {example_roa}")
-    print(f"Normalized ROA (0-100 scale): {normalized_roa}")
-    # get roa_min = 0.265, roa_max = 0.32
-    return normalized_roa
+    # 画出 ROA 的散点图
+    plt.figure(figsize=(10,6))
+    plt.scatter(range(len(roas)), roas, c=roas, cmap='viridis', marker='o')
+    plt.colorbar(label='ROA Value')
+    plt.xlabel('Combination Index')
+    plt.ylabel('ROA Value')
+    plt.title('ROA for Different Parameter Combinations')
+    plt.show()
+
+    min_roa = min(roas)
+    max_roa = max(roas)
+
+    print(f"min ROA: {min_roa}")
+    print(f"max ROA: {max_roa}")
+
+    return min_roa, max_roa
     
 
 def cal_current_profit_index():
@@ -161,13 +205,13 @@ def cal_future_profit_index():
 #     score = norm(value, max, min)
 #     return score, value
     
-def get_profit_LBO():
-    unit = 20000
-    value = unit * (LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum() +  backend.input_data.amenity_space)
-    max = unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())
-    min = unit * LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()
-    score = norm(value, max, min)
-    return score
+# def get_profit_LBO():
+#     unit = 20000
+#     value = unit * (LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum() +  backend.input_data.amenity_space)
+#     max = unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())
+#     min = unit * LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()
+#     score = norm(value, max, min)
+#     return score
     
 # def get_profit_res():
 #     unit = 10000
@@ -177,13 +221,13 @@ def get_profit_LBO():
 #     score = norm(value, max, min)
 #     return score, value
     
-def get_profit_res():
-    unit = 10000
-    value = unit * (LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum() +  backend.input_data.resident_space)
-    max =  unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum())
-    min = unit * LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum()
-    score = norm(value, max, min)
-    return score
+# def get_profit_res():
+#     unit = 10000
+#     value = unit * (LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum() +  backend.input_data.resident_space)
+#     max =  unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum())
+#     min = unit * LB_data[LB_data['stakeholder'] == 'RS']['floor_area'].sum()
+#     score = norm(value, max, min)
+#     return score
 
 # def get_profit_off():
 #     unit = 20000
@@ -193,85 +237,56 @@ def get_profit_res():
 #     score = norm(value, max, min)
 #     return score, value
 
-def get_profit_IG():
-    unit = 30000
-    value = unit * (LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum() +  backend.input_data.office_space)
-    max = unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum())
-    min = unit * LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum()
-    score = norm(value, max, min)
-    return score
-
-# -----------------------------------------------------
-def get_profit_developer():
-    standard = 100 # (合适推荐数值)
-    pro_LBO1, pro_LBO2 = get_profit_LBO()
-    pro_res1, pro_res2 = get_profit_res()
-    # pro_off1, pro_off2 = get_profit_off()
-    pro_IG1, pro_IG2 = get_profit_IG()
-    value = pro_LBO2 + pro_res2 + pro_IG2
-    max =  backend.input_data.floor_area * 30000
-    min = 0
-    score = 100 - 100 * abs(value - standard) / max(abs(max - standard), abs(min - standard))
-    return score
-
-def get_tax_cost():
-    standard = 10 #(合适推荐数值)
-    tax_LBO = 50
-    tax_res = 40
-    tax_IG = 10
-    tax_max = max(tax_LBO, tax_res, tax_IG)
-
-    # pro_LBO1, pro_LBO2 = get_profit_LBO()
-    # pro_res1, pro_res2 = get_profit_res()
-    # # pro_off1, pro_off2 = get_profit_off()
-    # pro_IG1, pro_IG2 = get_profit_IG()
-    pro_LBO2 = get_profit_LBO()
-    pro_res2 = get_profit_res()
-    pro_IG2 = get_profit_IG()
-    value = pro_LBO2 + pro_res2 + pro_IG2
-    # value = tax_LBO * pro_LBO2 + tax_res * pro_res2 + tax_off * pro_IG2
-    max_value =  backend.input_data.floor_area * tax_max
-    min_value = 0
-    score = 1 - 100 * abs(value - standard) / max(abs(max_value - standard), abs(min_value - standard))
-    return score
-
-# -----------------------------------------------------
-# def developer():
-#     #表达对整体环境的贡献情况，负数表示退步,weight不一定是定值？
-#     weight_profit = 0.3
-#     weight_tax = 0.7
-#     score = get_profit_developer() * weight_profit + get_tax_cost() * weight_tax
+# def get_profit_IG():
+#     unit = 30000
+#     value = unit * (LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum() +  backend.input_data.office_space)
+#     max = unit * ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum())
+#     min = unit * LB_data[LB_data['stakeholder'] == 'IG']['floor_area'].sum()
+#     score = norm(value, max, min)
 #     return score
 
+# -----------------------------------------------------
+# def get_profit_developer():
+#     standard = 100 # (合适推荐数值)
+#     pro_LBO1, pro_LBO2 = get_profit_LBO()
+#     pro_res1, pro_res2 = get_profit_res()
+#     # pro_off1, pro_off2 = get_profit_off()
+#     pro_IG1, pro_IG2 = get_profit_IG()
+#     value = pro_LBO2 + pro_res2 + pro_IG2
+#     max =  backend.input_data.floor_area * 30000
+#     min = 0
+#     score = 100 - 100 * abs(value - standard) / max(abs(max - standard), abs(min - standard))
+#     return score
+
+# def get_tax_cost():
+#     standard = 10 #(合适推荐数值)
+#     tax_LBO = 50
+#     tax_res = 40
+#     tax_IG = 10
+#     tax_max = max(tax_LBO, tax_res, tax_IG)
+
+#     # pro_LBO1, pro_LBO2 = get_profit_LBO()
+#     # pro_res1, pro_res2 = get_profit_res()
+#     # # pro_off1, pro_off2 = get_profit_off()
+#     # pro_IG1, pro_IG2 = get_profit_IG()
+#     pro_LBO2 = get_profit_LBO()
+#     pro_res2 = get_profit_res()
+#     pro_IG2 = get_profit_IG()
+#     value = pro_LBO2 + pro_res2 + pro_IG2
+#     # value = tax_LBO * pro_LBO2 + tax_res * pro_res2 + tax_off * pro_IG2
+#     max_value =  backend.input_data.floor_area * tax_max
+#     min_value = 0
+#     score = 1 - 100 * abs(value - standard) / max(abs(max_value - standard), abs(min_value - standard))
+#     return score
+
+# -----------------------------------------------------
+
 def compute_developer():
-    profit_construction1 = {
-        "target": 'Local Business Owners',
-        "value": get_profit_LBO()
-    }
-    profit_construction2 = {
-        "target": 'Residents',
-        "value": get_profit_res()
-    }
-    profit_construction3 = {
-        "target": 'Industry Group',
-        "value": get_profit_IG()
-    }
-    tax_cost = {
-        "target": 'Government',
-        "value": get_tax_cost()
-    }
-    # innovation = {
-    #     "target": 'Non-Profit Institution',
-    #     "value": round(random.uniform(0, 1), 2)
-    # }
+
     profit_score = get_before_after(
         cal_current_profit_index(),
         cal_future_profit_index()
     )
-    tax_cost_score = get_before_after(0, tax_cost['value'])
-    # innovation_score = get_before_after(0, 1)
-    # developer_score = get_developer_score()
-
 
     def get_developer_score():
         weights = [1]
@@ -294,7 +309,8 @@ def compute_developer():
         return radius
     
     def get_resident_distance():
-        distance = get_developer_score()[1] - get_developer_score()[0]
+        # distance = get_developer_score()[1] - get_developer_score()[0]
+        distance = get_developer_score()[1]
         return distance
     
 
@@ -304,18 +320,20 @@ def compute_developer():
     score_dev = {
         "stakeholder": "Developer", 
         "score": get_developer_score()[1], 
+        "initial_score": get_developer_score()[0],
         "radius": get_developer_radius(), 
-        'distance': get_resident_distance() * 2
+        'distance': get_resident_distance(),
+        'best': 50
         }
 
     # --------------------------------------------#
     # Data for chord chart: interaction
     # --------------------------------------------#
     indicator_dev = [
-        {"stakeholder": "Developer", "indicator": "Profit", "target": profit_construction1["target"], "value": profit_construction1["value"]},
-        {"stakeholder": "Developer", "indicator": "Profit", "target": profit_construction2["target"], "value": profit_construction2["value"]},
-        {"stakeholder": "Developer", "indicator": "Profit", "target": profit_construction3["target"], "value": profit_construction3["value"]},
-        {"stakeholder": "Developer", "indicator": "Tax", "target": tax_cost["target"], "value": tax_cost["value"]}
+        {"stakeholder": "Developer", "indicator": "Profit", "target": 'Local Business Owners', "value": cal_future_profit_index()/2/100},
+        {"stakeholder": "Developer", "indicator": "Profit", "target": 'Residents', "value": cal_future_profit_index()/2/100},
+        # {"stakeholder": "Developer", "indicator": "Profit", "target": 'Industry Group', "value": profit_construction3["value"]},
+        # {"stakeholder": "Developer", "indicator": "Tax", "target":'Government', "value": tax_cost["value"]}
         ]
 
     # --------------------------------------------#
@@ -323,18 +341,25 @@ def compute_developer():
     # --------------------------------------------#
     index_dev = [
         {"stakeholder": "Developer","indicator": "Profit", "baseline": profit_score['before'],"score": profit_score['after']},
-        # {"stakeholder": "Developer","indicator": "Innovation", "baseline": innovation_score['before'],"score": innovation_score['after']}
         ]
+    
+    # print(score_dev)
+    # print(indicator_dev)
+    # print(index_dev)
     
     return score_dev, indicator_dev, index_dev
 
 
 # if __name__ == '__main__':
-#     # pro_forma()
-#     # test_pro_forma()
-#     # test_return_range()
-#     # cal_future_profit_index()
+#     compute_developer()
+    # pro_forma()
+    # test_pro_forma()
+    # test_return_range()
+    # cal_future_profit_index()
     
+    # test the score for the best return
+    # print(calculate_normalized_roa( , 0.265, 0.32))
+        
 #     print("score_dev:\n",score_dev)
 #     print("indicator_dev:\n",indicator_dev)
 #     print("index_dev:\n",index_dev)

@@ -81,9 +81,9 @@ def stake_test():
         score_local,
         score_non_profit,
         score_gov,
-        score_dev,
         score_work,
-        score_ind
+        # score_ind,
+        score_dev
     ]
 
     # Creat a dataframe of stakeholders
@@ -98,8 +98,10 @@ def stake_test():
     # --------------------------------------------#
 
     # Creat a list of stakeholders
-    indicator_list = (indicator_res + indicator_gov + indicator_dev
-                      + indicator_work + indicator_ind + indicator_local + indicator_non_profit)
+    indicator_list = (indicator_res + indicator_local + indicator_non_profit + indicator_gov 
+                      + indicator_work 
+                    #   + indicator_ind 
+                      + indicator_dev)
     indicator_df = pd.DataFrame(indicator_list)
     # indicator_df['value'] = indicator_df['value'].round(2)
     # print(indicator_df)
@@ -110,8 +112,10 @@ def stake_test():
     # Data for indicator chart: indicator value
     # --------------------------------------------#
     # Create a list of index score
-    index_score = (index_res + index_gov + index_dev
-                   + index_work + index_ind + index_local + index_non_profit)
+    index_score = (index_res + index_local + index_non_profit + index_gov
+                   + index_work 
+                #    + index_ind 
+                    + index_dev)
     index_score_df = pd.DataFrame(index_score)
     # index_score_df['score'] = index_score_df['score'].round(2)
     # print(index_score_df)
@@ -149,18 +153,18 @@ def send_to_api(data_json, filename):
     with open(output_path,'w') as json_file:
         json_file.write(data_json)
     # # Define the API endpoint (assuming Flask app is running on localhost:5000)
-    # api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
+    # api_url = f'http://127.0.0.1:5001/api/save_data/{filename}'
     # # api_url = f'http://localhost:5000/api/save_data'
     
     # # Adding filename as a parameter or in the data body
     # # params = {'filename': filename}
     # # Use the POST method to send data
     # # response = requests.post(api_url, params=params, data=data_json, headers={'Content-Type': 'application/json'})
-    # print(api_url)
+    # # print(api_url)
     # response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
     # print(response.text)
 
-    # # Check the response
+    # Check the response
     # if response.status_code == 200:
     #     console_log(f"Data successfully sent to API for {filename}!")
     #     print(f"Data successfully sent to API for {filename}!")

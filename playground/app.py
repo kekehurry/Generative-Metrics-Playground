@@ -6,8 +6,10 @@ import numpy as np
 from torch.distributions import Normal, Categorical
 from PIL import Image
 import requests
-import os
-
+import os,sys
+current_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.join(current_directory, '..')
+sys.path.append(project_directory)
 from backend.resident_model import cal_future_affordability_index
 from backend.government_model import cal_future_tax_revenue_index
 from backend.developer_model import cal_future_profit_index

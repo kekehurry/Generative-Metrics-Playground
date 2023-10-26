@@ -123,6 +123,7 @@ const RadarChart = ({ radar_data }) => {
     .attr("y2", (d, i) => rScale(maxValue*1) * Math.sin(angleSlice*i - Math.PI/2))
     .attr("class", "line")
     .style("stroke", "white")
+    // .style("stroke", "black")
     .style("fill-opacity", "100%")
     .style("stroke-width", "0.1px");
 
@@ -131,6 +132,7 @@ const RadarChart = ({ radar_data }) => {
 		.attr("class", "legend")
 		.style("font-size", "10px")
         .attr("fill","white")
+        // .attr("fill","black")
 		.attr("text-anchor", "middle")
     .attr("font-family", "sans-serif")
     .attr("dy", "0.35em")
@@ -152,6 +154,7 @@ const RadarChart = ({ radar_data }) => {
         .attr("data-name", (d, i) => device(i))
         .attr("fill", (d, i) => color_2(i+1))
         .attr("stroke", 'white')
+        // .attr("stroke", 'black')
         .style("stroke-width", "1px");
 
     plots.append('path')
@@ -244,6 +247,7 @@ const RadarChart = ({ radar_data }) => {
           .attr('startOffset', '0%') // This can be adjusted to position the text along the path
           // .style('fill', (d, i) => color(d))
           .style('fill', 'white')
+          // .style('fill', 'black')
           .style('font-family', 'inter')
           .style('font-size', '15px'); 
       });

@@ -11,12 +11,15 @@ import random
 import backend.input_data
 from backend.model_tool import *
 from backend.ESE_metrics import *
+# from backend.workforce_model import new_volpe_workforce
 # -----------------------------------------------------
 
 LB_data = cal_stakeholder()
 work_num = get_work_num()
 pop_num = get_res_num()
 
+# -----------------------------------------------------
+# accessibility
 # -----------------------------------------------------
 
 def get_access_service_2(service_area):
@@ -29,7 +32,15 @@ def get_access_business_2():
     value = get_access_service_2(business_area)
     max = ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())/work_num
     min = LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()/(work_num + backend.input_data.max_floor_area/200)
-    score = norm(value, max, min)
+    score = norm(value, max, min) * 100
+    return score
+
+def current_access_business():
+    business_area = LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()
+    value = business_area / work_num
+    max = ( backend.input_data.max_floor_area + LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum())/work_num
+    min = LB_data[LB_data['stakeholder'] == 'LBO']['floor_area'].sum()/(work_num + backend.input_data.max_floor_area/200)
+    score = norm(value, max, min) * 100
     return score
 
 
@@ -63,20 +74,20 @@ def compute_industry():
 
     access_to_service = {
         "target": 'Local Business Owners',
-        "value": get_access_business_2()
+        "value": get_access_business_2()/100
     }
     safety_security = {
         "target": 'Government',
-        "value": get_access_police_2()
+        "value": get_access_police_2() 
     }
     innovation = {
         "target": 'Nonprofit Institution',
-        "value": get_access_police_2()
+        "value": get_access_police_2() 
     }
 
-    access_score = get_before_after(0.55,  access_to_service['value'] )
-    safety_security_score = get_before_after(1, safety_security['value'])
-    innovation_score = get_before_after(0, innovation['value'])
+    access_score = get_before_after(current_access_business(),  access_to_service['value']*100 )
+    safety_security_score = get_before_after(50, safety_security['value']*100)
+    innovation_score = get_before_after(60, innovation['value']*100)
     # industry_score = get_industry_score() *100
 
     def get_industry_score(self):
@@ -101,12 +112,12 @@ def compute_industry():
 
     def get_industry_radius():
         # radius = get_industry_score()[1]
-        radius = 0
+        radius = 30
         return radius
 
     def get_industry_distance():
         # distance = get_industry_score()[1] - get_industry_score()[0]
-        distance = 0
+        distance = 30
         return distance
     
     # --------------------------------------------#
@@ -117,9 +128,10 @@ def compute_industry():
         "stakeholder": "Industry Group",
         "score": get_industry_score()[1],
         "radius": get_industry_radius(),
-        'distance': get_industry_distance() * 2
+        'distance': get_industry_distance(),
+        'best': 50
         }
-
+    # print(score_ind)
     # --------------------------------------------#
     # Data for chord chart: interaction
     # --------------------------------------------#
@@ -128,7 +140,7 @@ def compute_industry():
         {"stakeholder": "Industry Group", "indicator": "Safety & security", "target": safety_security["target"], "value": safety_security["value"]},
         {"stakeholder": "Industry Group", "indicator": "Innovation", "target": innovation["target"], "value": innovation["value"]}
     ]
-    print(indicator_ind)
+    # print(indicator_ind)
 
     # --------------------------------------------#
     # Data for indicator chart: indicator value
@@ -139,7 +151,7 @@ def compute_industry():
         {"stakeholder": "Industry Group","indicator": "Safety & security", "baseline": safety_security_score['before'],"score": safety_security_score['after']},
         {"stakeholder": "Industry Group","indicator": "Innovation", "baseline": innovation_score['before'],"score": innovation_score['after']}
       ]
-    
+    # print(index_ind)
     return score_ind, indicator_ind, index_ind
     
     

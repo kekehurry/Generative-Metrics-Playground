@@ -83,11 +83,11 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
     // const color = d3.scaleOrdinal(chord_data.names, d3.schemeCategory10);
     const color = d3.scaleOrdinal()
       .domain(chord_data.names)
-      .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
+      .range(['#7178b5', '#0faca3', '#7ec1ca', '#a5ba37', '#f6bd0d',  '#9b47a2']); // '#e27c40',
 
     const color_2 = d3.scaleOrdinal()
       .domain(chord_data.names)
-      .range(['#4F5698', '#0C8A82', '#7ec1ca', '#a5ba37', '#f6bd0d', '#e27c40', '#9b47a2']);
+      .range(['#7178B5', '#0FACA3',  '#7ec1ca', '#a5ba37', '#f6bd0d', '#9b47a2']); //,'#e27c40'
 
 
     // build SVG
@@ -173,14 +173,22 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
 
 
     const bgColor = [
-      {stakeholder: "Developer", bgcolor: "#7178B5"},
-      {stakeholder: "Government", bgcolor: "#0FACA3"},
-      {stakeholder: "Industry group", bgcolor: "#7ec1ca"},
-      {stakeholder: "Local Business Owners", bgcolor: "#a5ba37"},
-      {stakeholder: "Nonprofit Institution", bgcolor: "#f6bd0d"},
-      {stakeholder: "Residents", bgcolor: "#e27c40"},
-      {stakeholder: "Workforce", bgcolor: "#9b47a2"}
+      // {stakeholder: "Developer", bgcolor: "#9b47a2"},
+      // {stakeholder: "Government", bgcolor: "#0FACA3"},
+      // // {stakeholder: "Industry group", bgcolor: "#7ec1ca"},
+      // {stakeholder: "Local Business Owners", bgcolor: "#a5ba37"},
+      // {stakeholder: "Nonprofit Institution", bgcolor: "#f6bd0d"},
+      // {stakeholder: "Residents", bgcolor: "#e27c40"},
+      // {stakeholder: "Workforce", bgcolor: "#7178B5"}
+      {stakeholder: "Residents", bgcolor: "#7178B5"},
+      {stakeholder: "Local Business Owners", bgcolor: "#0FACA3"},
+      {stakeholder: "Nonprofit Institution", bgcolor: "#7ec1ca"},
+      {stakeholder: "Government", bgcolor: "#a5ba37"},
+      {stakeholder: "Workforce", bgcolor: "#f6bd0d"},
+      {stakeholder: "Industry Group", bgcolor: "#e27c40"},
+      {stakeholder: "Developer", bgcolor: "#9b47a2"}
     ];
+
 
     // create Chart
     let group = svg.selectAll("g")
@@ -194,6 +202,7 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
       // .attr("id", textId.id)
       .attr("id", (d, i) => `arc${i}`) // 添加弧的id
       .attr("fill", (d) => 'white')
+      // .attr("fill", "black")
       .attr("fill-opacity", "10%")
       // .attr("stroke", "black")
       .attr("d", arc_out_out)
@@ -239,6 +248,7 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
     group
       .append("text")
       .attr("fill", "white")
+      // .attr("fill", "black")
       .each((d) => {
         d.angle = (d.startAngle + d.endAngle) / 2;
       })
@@ -344,6 +354,7 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
             .attr("cy", bigCirclePos[1])
             .attr("r", 6.5)
             .style("fill", "white")
+            // .style("fill", "black")
             .style("fill-opacity", "100%");
 
         // 绘制大圆的颜色
@@ -375,6 +386,7 @@ const ChordChart = ({ chord_data, bubble_data, indicator_data, onStakeholderClic
             .attr("cy", smallCirclePos[1])
             .attr("r", 3)
             .style("fill", "white")
+            // .style("fill", "black")
             .style("fill-opacity", "100%")
             .on('click', (event, d) => {
               handleStakeholderClick(chord_data.names[d.index])

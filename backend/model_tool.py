@@ -272,6 +272,6 @@ def model_test():
     print(LB_data['pop_num'].sum())
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # model_test()
-    print(land_file)
+    # print(land_file)

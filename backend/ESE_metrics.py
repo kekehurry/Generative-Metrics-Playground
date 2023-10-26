@@ -176,51 +176,51 @@ class AttractivenessCompetitiveness:
                                                             self.get_future_travel_time())
 
     def get_current_congestion(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_congestion(self):
-        value = 0
+        value = 0.8
         return value
 
     def get_current_public(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_public(self):
-        value = 0
+        value = 0.7
         return value
 
     def get_current_population(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_population(self):
-        value = 0
+        value = 0.3
         return value
 
     def get_current_tourism(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_tourism(self):
-        value = 0
+        value = 0.2
         return value
 
     def get_current_visitor(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_visitor(self):
-        value = 0
+        value = 0.4
         return value
 
     def get_current_travel_time(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_travel_time(self):
-        value = 0
+        value = 0.2
         return value
 
     def get_AC_score(self, normalize_congestion, normalize_public, normalize_population, normalize_tourism, normalize_visitor, normalize_travel_time):
@@ -236,7 +236,7 @@ class BuildUpArea:
         self.future_build_up_score = self.get_build_up_score(self.get_future_built_area())
 
     def get_current_built_area(self):
-        value = 0
+        value = 0.5
         return value
 
     def get_future_built_area(self):
@@ -438,7 +438,7 @@ class Energy:
         return value
 
     def get_current_emission_building(self):
-        value = 1
+        value = 0.5
         return value
 
     def get_future_emission_building(self):
@@ -546,7 +546,7 @@ class AccessToService:
         return value
 
     def get_current_access_to_sharing(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_access_to_sharing(self):
@@ -554,7 +554,7 @@ class AccessToService:
         return value
 
     def get_current_access_to_public_amenities(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_access_to_public_amenities(self):
@@ -562,7 +562,7 @@ class AccessToService:
         return value
 
     def get_current_access_to_commercial_amenities(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_access_to_commercial_amenities(self):
@@ -579,7 +579,7 @@ class Education:
         self.future_education_score = self.get_education_score(self.get_future_educational())
 
     def get_current_educational(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_educational(self):
@@ -596,7 +596,7 @@ class Housing:
         self.future_housing_score = self.get_housing_score(self.get_future_diversity_of_housing(), self.get_future_preservation_of_cultural_heritage(), self.get_future_ground_floor_usage(), self.get_future_public_outdoor_recreation_space(), self.get_future_green_space())
 
     def get_current_diversity_of_housing(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_diversity_of_housing(self):
@@ -604,7 +604,7 @@ class Housing:
         return value
 
     def get_current_preservation_of_cultural_heritage(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_preservation_of_cultural_heritage(self):
@@ -612,7 +612,7 @@ class Housing:
         return value
 
     def get_current_ground_floor_usage(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_ground_floor_usage(self):
@@ -620,7 +620,7 @@ class Housing:
         return value
 
     def get_current_public_outdoor_recreation_space(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_public_outdoor_recreation_space(self):
@@ -628,7 +628,7 @@ class Housing:
         return value
 
     def get_current_green_space(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_green_space(self):
@@ -645,7 +645,7 @@ class SocialExposure:
         self.future_social_exposure_score = self.get_social_exposure_score(self.get_future_exposure())
 
     def get_current_exposure(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_exposure(self):
@@ -662,7 +662,7 @@ class Density:
         self.future_density_score = self.get_density_score(self.get_future_population_density(), self.get_future_building_density())
 
     def get_current_population_density(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_population_density(self):
@@ -670,7 +670,7 @@ class Density:
         return value
 
     def get_current_building_density(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_building_density(self):
@@ -687,7 +687,7 @@ class JobHousing:
         self.future_job_housing_score = self.get_job_housing_score(self.get_future_job_housing_ratio())
 
     def get_current_job_housing_ratio(self):
-        value = round(random.uniform(0, 1), 2)
+        value = 0.5
         return value
 
     def get_future_job_housing_ratio(self):
@@ -745,7 +745,7 @@ def ese_test():
         # {"category": "Economic", "indicator": "Equity", "value": economic.equity.current_equity_score},
         {"category": "Economic", "indicator": "Income", "value": economic.income.current_income_score},
         {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.current_innovation_score},
-        {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.current_AC_score},
+        {"category": "Economic", "indicator": "Attractive & Competitive", "value": economic.attractive_competitive.current_AC_score},
         {"category": "Economic", "indicator": "Build up area", "value": economic.build_up_area.current_build_up_score},
         {"category": "Economic", "indicator": "Displacement", "value": economic.displacement.current_displacement_score},
         {"category": "Economic", "indicator": "ProfitConstruction", "value": economic.profit_construction.current_profit_score},
@@ -766,7 +766,7 @@ def ese_test():
         # {"category": "Economic", "indicator": "Equity", "value": economic.equity.future_equity_score},
         {"category": "Economic", "indicator": "Income", "value": economic.income.future_income_score},
         {"category": "Economic", "indicator": "Innovation", "value": economic.innovation.future_innovation_score},
-        {"category": "Economic", "indicator": "Attractiv & Competitive", "value": economic.attractive_competitive.future_AC_score},
+        {"category": "Economic", "indicator": "Attractive & Competitive", "value": economic.attractive_competitive.future_AC_score},
         {"category": "Economic", "indicator": "Build up area", "value": economic.build_up_area.future_build_up_score},
         {"category": "Economic", "indicator": "Displacement", "value": economic.displacement.future_displacement_score},
         {"category": "Economic", "indicator": "ProfitConstruction", "value": economic.profit_construction.future_profit_score},
@@ -789,8 +789,8 @@ def ese_test():
     # for row in data:
     #     print(f"{row['category']:<15} {row['indicator']:<20} {row['baseline']} {row['value']}")
     # print(data)
-    console_log(f"ESE data updated!")
-    print('ESE data updated')
+    # console_log(f"ESE data updated!")
+    # print('ESE data updated')
 
     # Create a dataframe for storing the information
     # df = pd.DataFrame(data)
@@ -801,7 +801,6 @@ def ese_test():
     # Convert data to JSON format
     data_json = json.dumps(data)
     send_to_api(data_json, "radar_data")
-    # Use the POST method to send data
 
 
     # print(environmental.pollution.air_quality)
@@ -817,18 +816,17 @@ def send_to_api(data_json, filename):
     with open(output_path,'w') as json_file:
         json_file.write(data_json)
     # # Define the API endpoint (assuming Flask app is running on localhost:5000)
-    # api_url = f'http://127.0.0.1:5000/api/save_data/{filename}'
+    # api_url = f'http://127.0.0.1:5001/api/save_data/{filename}'
     # # Use the POST method to send data
-    # # response = requests.post(api_url, json=data_json)
-    # response = requests.post(api_url, json=data_json)
+    # response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
 
-    # # Check the response
+    # Check the response
     # if response.status_code == 200:
     #     console_log(f"Data successfully sent to API for {filename}!")
     #     print(f"Data successfully sent to API for {filename}!")
     # else:
     #     print(f"Failed to send data for {filename}. Status code: {response.status_code}, Response: {response.text}")
-
+        
 def console_log(message):
     print("[CONSOLE.LOG]", message)
     

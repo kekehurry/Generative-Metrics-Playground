@@ -17,6 +17,7 @@
 }
 
 .page {
+  position: relative;
   height: 100vh;
   display: flex;
   background-color: white;
@@ -28,7 +29,8 @@
 
 .enterButton {
   position: relative;
-  top: 35%;
+  top: 35.5%;
+  left: 45.5%;
   width: 120px;
   height: 40px;
   background-color: #000;
@@ -42,7 +44,7 @@
   gap: 12px;
   border-radius: 8px;
   cursor: pointer;
-  /* z-index: 10; */
+  z-index: 10;
 }
 
 .enterButton::before {
@@ -52,8 +54,8 @@
   left: -4px;
   top: -1px;
   margin: auto;
-  width: 128px;
-  height: 48px;
+  width: 100px;
+  height: 58px;
   border-radius: 10px;
   background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
   z-index: -10;
@@ -136,8 +138,10 @@
 }
 
 .pageImage {
-  /* position: absolute; */
   width: 100%;
   height: 100%;
-  /* z-index: -100; */
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  z-index: 1;
 }
