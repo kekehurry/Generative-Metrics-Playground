@@ -16,9 +16,13 @@
     <div id="echartsContainer">
         <div id="radarChart"></div>
         <div id="barChart"></div>
-        <div id="link"><button id="linkButton">Link to City Matrix</button></div>
+        <div id="link">
+            <button id="linkButton">Link to City Matrix</button>
+            <button id="genButton">Function Optimization</button>
+        </div>
     </div>
     <script src="{{ url_for('static', filename='echartscode.js') }}"></script>
     <script src="{{ url_for('static', filename='playground.js') }}"></script>
+    <script src="{{ url_for('static', filename='function.js') }}"></script>
 </body>
 </html>

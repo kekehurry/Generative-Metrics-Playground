@@ -31,7 +31,7 @@ let cubeMaterial1 = new THREE.MeshLambertMaterial( { color: 0x9C5D08} );
 let cubeMaterial2 = new THREE.MeshLambertMaterial( { color: 0x08599C} );
 let materialList = [];
 materialList.push(cubeMaterial1);
-materialList.push(cubeMaterial2);
+materialList.push(cubeMaterial1);
 materialList.push(cubeMaterial2);
 //SUGGESTION CUBE
 let suggestGeo = new THREE.BoxGeometry( box_size, box_size, box_size );
@@ -106,6 +106,9 @@ document.addEventListener('keydown', function(event) {
     if (event.ctrlKey) {
         isCtrl = true;
     }
+    if (event.key === 'p' || event.key === 'P') {
+        autoPlay();
+      }
 });
 document.addEventListener('keyup', function(event) {
     if (!event.ctrlKey) {
@@ -304,6 +307,28 @@ function onPointerDown(event) {
             }
         }
         }
+}
+
+async function autoPlay(){
+    if(objects.length<=100){
+        const suggestion = await fetchSuggestion();
+        if (suggestion) {
+        let action = suggestion.action;
+        let t_;
+        if(action<100){t_ = 1;}else{t_ = 2;};
+        let i_ = Math.floor(action%100/width);
+        let j_ = Math.floor(action%100%height);
+        let k_ = state[i_][j_].filter(value => value !== 0).length;
+        const voxel = new THREE.Mesh(cubeGeo, materialList[t_]);
+        voxel.position.set(box_size*(i_-width/2),k_*box_size,box_size*(j_-height/2));
+        voxel.position.divideScalar( box_size ).floor().multiplyScalar( box_size ).addScalar( box_size/2 );
+        state[i_][j_][k_] = t_
+        objects.push(voxel);
+        playground_scene.add(voxel);
+        get_score();
+        render();
+        console.log("add_cube_location:", i_, j_, k_, "remain_num:", 100 - objects.length + 1);
+    }}
 }
 
 let linkButton = document.getElementById('linkButton')

@@ -51,8 +51,9 @@ h1 {
     height: 8%;
 }
 #linkButton {
-    width: 100%;
+    width: 49%;
     height: 100%;
+    float: left;
     background-color: rgba(2, 61, 188, 0.7);
     border: none;
     border-radius: 5px;
@@ -61,13 +62,34 @@ h1 {
     transition: background-color 0.3s;
     background-color: rgba(2, 61, 188, 0.5);
     color: rgb(255, 255, 255);
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     font-family: 'Arial Black';
 }
 #linkButton:hover {
     background-color: rgba(2, 61, 188, 1);
 }
+
+#genButton {
+    width: 49%;
+    height: 100%;
+    float: right;
+    background-color: rgba(2, 61, 188, 0.7);
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: rgba(2, 61, 188, 0.5);
+    color: rgb(255, 255, 255);
+    font-size: 15px;
+    font-weight: bold;
+    font-family: 'Arial Black';
+}
+#genButton:hover {
+    background-color: rgba(2, 61, 188, 1);
+}
+
 #playButton {
     position: absolute;
     top: 45%;
