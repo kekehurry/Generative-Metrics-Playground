@@ -61,8 +61,8 @@ function updateRadarPlot() {
                 { name: 'AFFORD\nABILITY', max: 100 },
                 { name: 'TAX\nREVENUE', max: 100 },
                 { name: 'PROFIT', max: 100 },
-                { name: 'SVF', max: 100 },
-                { name: 'SHAPE', max: 100 },
+                { name: 'SKYVIEW\nFACTOR', max: 100 },
+                { name: 'FORM\nFACTOR', max: 100 },
             ]
         },
         series: seriesRadarData,
