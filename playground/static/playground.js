@@ -63,9 +63,9 @@ playground_scene.add( plane );
 let objects = [];
 objects.push(plane);
 //LIGHT
-let ambientLight = new THREE.AmbientLight( 0x606060,10);
+let ambientLight = new THREE.AmbientLight( 0x606060,1);
 playground_scene.add( ambientLight );
-let directionalLight = new THREE.DirectionalLight( 0xffffff,10);
+let directionalLight = new THREE.DirectionalLight( 0xffffff,1);
 directionalLight.position.set( 1, 0.75, 0.5 ).normalize();
 playground_scene.add( directionalLight );
 //ORBIT CONTROL
